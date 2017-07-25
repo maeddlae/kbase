@@ -1,1 +1,3 @@
+# exclude content of doc folder but keep one file
 build/doc/*
+!build/doc/.gitkeep
