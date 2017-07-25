@@ -1,0 +1,1 @@
+doxygen "%CD%"\tools\doxygen\doxyfile
