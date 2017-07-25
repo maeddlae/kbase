@@ -4,13 +4,17 @@ Created on 24 Jul 2017
 @author: Mathias Bucher
 '''
 
-class MyClass(object):
+class Controller():
 
 
-    def __init__(self, params):
+    def __init__(self):
         '''
         Constructor
         '''
         
+    def run(self):
+        print("hello world")
 
-print("hello world")
+
+app = Controller()
+app.run()
