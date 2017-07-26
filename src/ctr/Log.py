@@ -4,6 +4,10 @@ Created on 24 Jul 2017
 @author: Mathias Bucher
 '''
 
+import os
+import datetime
+import getpass
+
 class Log():
     '''
     This class writes log entries into a logfile and prints them to the console. 
@@ -16,18 +20,38 @@ class Log():
     Error, Warning, Info = range(3)
     CONSOLE_SEVERITY = Warning
     LOGFILE_SEVERITY = Info
+    filepath = "log.txt"
+    now = datetime.datetime.now()
+    user = getpass.getuser()
+    NAME_SIZE = 15
+    LINE_SIZE = 5
+    TEXT_SIZE = 30
 
 
-    def __init__(self):
+    def __init__(self, filepath):
         '''
         Constructor
         '''
-        print("Severity\tFile\tLine\tText") #print header
+        self.filepath = filepath
+        
+        # print header of console
+        print(self.getRowHeader())
+
+        # print header of logfile
+        f = open(self.filepath,'w')
+        f.write(self.getLogfileHeader())
+        f.close()
         
     def log(self, severity, name, line, text ):
         '''Adds an entry to the logfile and prints it to console'''
-        s = self.severityToString(severity) + "\t" + name + "\t" + line + "\t" + text
-        print(s)    #print log entry to console
+        
+        name = self.resizeString(name, self.NAME_SIZE)
+        line = self.resizeString(line, self.LINE_SIZE)
+        text = self.resizeString(text, self.TEXT_SIZE)
+        
+        s = self.severityToString(severity) + "\t\t" + name + " " + line + " "  + text
+        print(s)    # print log entry to console
+        self.writeToLogfile(s)   # write entry into logfile
     
     def severityToString(self, severity):
         '''Converts the severity into a string'''
@@ -37,3 +61,35 @@ class Log():
             return "Warning"
         else:
             return "Info"
+        
+    def writeToLogfile(self, s):
+        if os.path.exists(self.filepath):
+            f = open(self.filepath,'a')
+            f.write(s + "\n")
+            f.close()
+        
+        
+    def getRowHeader(self):
+        return "Severity\tFile            Line  Text"
+        
+    def getLogfileHeader(self):
+        s = "LOGFILE\n"
+        s += "Date: " + repr(self.now.day) + \
+        "." + repr(self.now.month) + "." + repr(self.now.year) + "\n"
+        s += "Time: " + repr(self.now.hour) + ":" + repr(self.now.minute) + \
+        ":" + repr(self.now.second) + "\n"
+        s += "User: " + self.user + "\n"
+        s += "-----------------------------\n"
+        s += self.getRowHeader() + "\n"
+        return s
+    
+    def resizeString(self, s, n):
+        if len(s) > n:
+            s = s[0:n]
+        else:
+            numberOfSpaces = n - len(s)
+            s += ' ' * numberOfSpaces
+        return s
+
+
+        
