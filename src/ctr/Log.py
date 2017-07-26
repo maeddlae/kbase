@@ -24,7 +24,6 @@ class Log():
     now = datetime.datetime.now()
     user = getpass.getuser()
     NAME_SIZE = 15
-    LINE_SIZE = 5
     TEXT_SIZE = 30
 
 
@@ -42,14 +41,14 @@ class Log():
         f.write(self.getLogfileHeader())
         f.close()
         
-    def log(self, severity, name, line, text ):
+    def add(self, severity, name, text ):
         '''Adds an entry to the logfile and prints it to console'''
         
+        name = os.path.basename(name)
         name = self.resizeString(name, self.NAME_SIZE)
-        line = self.resizeString(line, self.LINE_SIZE)
         text = self.resizeString(text, self.TEXT_SIZE)
         
-        s = self.severityToString(severity) + "\t\t" + name + " " + line + " "  + text
+        s = self.severityToString(severity) + "\t\t" + name + " "  + text
         print(s)    # print log entry to console
         self.writeToLogfile(s)   # write entry into logfile
     
@@ -70,7 +69,7 @@ class Log():
         
         
     def getRowHeader(self):
-        return "Severity\tFile            Line  Text"
+        return "Severity\tFile            Text"
         
     def getLogfileHeader(self):
         s = "LOGFILE\n"
@@ -90,6 +89,4 @@ class Log():
             numberOfSpaces = n - len(s)
             s += ' ' * numberOfSpaces
         return s
-
-
         
