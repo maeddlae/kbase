@@ -13,8 +13,6 @@ from ctr.Log import Log
 
 
 class TestLog(unittest.TestCase):
-    log = 0
-    capturedOutput = 0
     logfile = os.path.dirname(os.path.abspath(__file__)) + "\log.txt"
 
     def setUp(self):

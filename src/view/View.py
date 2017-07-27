@@ -4,18 +4,18 @@ Created on 24 Jul 2017
 @author: Mathias Bucher
 '''
 
-from ctr.Log import Log
 from Tkinter import *
 
 class View(Frame):
     '''
-    classdocs
+    This class holds the entire GUI of the application
     '''
 
 
-    def __init__(self, log):
+    def __init__(self, log, buttonGoAction):
         '''Constructor: Creates the window'''
         self.log = log
+        self.buttonGoAction = buttonGoAction
         
         self.root = Tk()
         self.root.title("kbase")
@@ -52,30 +52,41 @@ class View(Frame):
         
     def drawEntry(self,entry):
         '''Draws an entry. If the entry is None, it prints "nothing found"'''
+        self.clearEntry()
+        
         if entry==None:
-            title = "nothing found"
-        else:
-            title = "todo enter title"
+            self.labelNothingFound = Label(self.app)
+            self.labelNothingFound["text"] = "nothing found"
+            self.labelNothingFound.grid(row=1, column=0, columnspan=3, sticky=W)
+        else:            
+            self.labelTitle = Label(self.app)
+            self.labelTitle["text"] = entry.title
+            self.labelTitle.grid(row=1, column=0, columnspan=3, sticky=W)
             
-        self.labelTitle = Label(self.app)
-        self.labelTitle["text"] = title
-        self.labelTitle.grid(row=1, column=0, columnspan=3, sticky=W)
-        
-        self.labelText = Label(self.app)
-        self.labelText["text"] = "this is the text"
-        self.labelText.grid(row=2, column=0, columnspan=3, sticky=W)
-        
-        self.labelKeywords = Label(self.app)
-        self.labelKeywords["text"] = "these are the keywords"
-        self.labelKeywords.grid(row=3, column=0, columnspan=3, sticky=W)
+            self.labelText = Label(self.app)
+            self.labelText["text"] = entry.text
+            self.labelText.grid(row=2, column=0, columnspan=3, sticky=W)
+            
+            self.labelKeywords = Label(self.app)
+            self.labelKeywords["text"] = "these are the keywords"
+            self.labelKeywords.grid(row=3, column=0, columnspan=3, sticky=W)
+            
+    def clearEntry(self):
+        if hasattr(self, 'labelNothingFound'):
+            self.labelNothingFound.grid_forget()
+        if hasattr(self, 'labelTitle'):
+            self.labelTitle.grid_forget()
+        if hasattr(self, 'labelText'):
+            self.labelText.grid_forget()
+        if hasattr(self, 'labelKeywords'):
+            self.labelKeywords.grid_forget()
     
     def buttonGo_click(self):
         # todo: connect to action listener here
         self.log.add(self.log.Info, __file__, "button go clicked" )
-        pass
+        self.buttonGoAction(self.entrySearchText.get())
     
     def buttonEdit_click(self):
         # todo: connect to action listener here
         self.log.add(self.log.Info, __file__, "button edit clicked" )
-        pass
         

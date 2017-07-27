@@ -13,16 +13,17 @@ class Controller():
     def __init__(self):
         '''Constructor'''
         self.log = Log("log.txt")
-        self.view = View(self.log)
-        self.model = Model()
+        self.view = View(self.log, self.buttonGoAction)
+        self.model = Model(self.log)
         
         self.log.add(self.log.Info, __file__, "init" )
         
-    def run(self):
-        print("hello world")
-        
+    def run(self):        
         self.view.draw(None)
-
+        
+    def buttonGoAction(self, keyword):
+        self.log.add(self.log.Info, __file__, "search for : " + keyword)
+        self.view.draw(entry=self.model.getEntry(keyword))
 
 app = Controller()
 app.run()
