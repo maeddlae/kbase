@@ -9,14 +9,14 @@ class Model():
     '''
     classdocs
     '''
-    entries = []
-
 
     def __init__(self, log):
         '''
         Constructor
         '''
         self.log = log
+        
+        self.entries = []
         
         e = ModelEntry(self.log, "Bla")
         e.keywords.append("blabla")

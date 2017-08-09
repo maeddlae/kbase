@@ -4,15 +4,10 @@ Created on 27 Jul 2017
 @author: Mathias Bucher
 '''
 
-class ModelEntry(object):
+class ModelEntry():
     '''
     classdocs
     '''
-    title = "title"
-    text = "this is the text"
-    keywords = []
-    images = []
-    files = []
 
     def __init__(self, log, title):
         '''
@@ -20,5 +15,9 @@ class ModelEntry(object):
         '''
         self.log = log
         self.title = title
+        self.text = "This is the text"
+        self.keywords = []
+        self.images = []
+        self.files = []
         
         self.log.add(self.log.Info, __file__, "init: " + title)
