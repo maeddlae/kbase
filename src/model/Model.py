@@ -18,13 +18,15 @@ class Model():
         
         self.entries = []
         
-        e = ModelEntry(self.log, "Bla")
-        e.keywords.append("blabla")
-        self.entries.append(e)
+        cars = ModelEntry(self.log, "cars")
+        cars.keywords.append("BMW")
+        cars.keywords.append("Volvo")
+        self.entries.append(cars)
         
-        e = ModelEntry(self.log, "Blu")
-        e.keywords.append("blublu")
-        self.entries.append(e)
+        ships = ModelEntry(self.log, "ships")
+        ships.keywords.append("Queen Mary")
+        ships.keywords.append("Santa Maria")
+        self.entries.append(ships)
         
         self.log.add(self.log.Info, __file__, "init" )
         

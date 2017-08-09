@@ -68,9 +68,15 @@ class View(Frame):
             self.labelText.grid(row=2, column=0, columnspan=3, sticky=W)
             
             self.labelKeywords = Label(self.app)
-            self.labelKeywords["text"] = "these are the keywords"
+            self.labelKeywords["text"] = self.getKeywordString(entry.keywords)
             self.labelKeywords.grid(row=3, column=0, columnspan=3, sticky=W)
             
+    def getKeywordString(self, keywords):
+        s = ""
+        for k in keywords:
+            s += k + " "
+        return s
+    
     def clearEntry(self):
         if hasattr(self, 'labelNothingFound'):
             self.labelNothingFound.grid_forget()
