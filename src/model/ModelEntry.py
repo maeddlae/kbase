@@ -6,18 +6,18 @@ Created on 27 Jul 2017
 
 class ModelEntry():
     '''
-    classdocs
+    Represents an entry and contains all its data.
     '''
 
-    def __init__(self, log, title):
+    def __init__(self, log, name):
         '''
         Constructor
         '''
         self.log = log
-        self.title = title
-        self.text = "This is the text"
+        self.name = name
+        self.description = "This is the description"
         self.keywords = []
         self.images = []
         self.files = []
         
-        self.log.add(self.log.Info, __file__, "init: " + title)
+        self.log.add(self.log.Info, __file__, "init: " + name)

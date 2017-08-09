@@ -4,6 +4,7 @@ Created on 24 Jul 2017
 @author: Mathias Bucher
 '''
 from model.ModelEntry import ModelEntry
+from model.Database import Database
 
 class Model():
     '''
@@ -28,6 +29,8 @@ class Model():
         ships.keywords.append("Santa Maria")
         self.entries.append(ships)
         
+        self.db = Database(self.log)
+        
         self.log.add(self.log.Info, __file__, "init" )
         
         
@@ -38,7 +41,7 @@ class Model():
             for k in e.keywords:
                 if k == keyword and foundEntry == None:
                     foundEntry = e
-            if e.title == keyword and foundEntry == None:
+            if e.name == keyword and foundEntry == None:
                     foundEntry = e
             
         if foundEntry!=None:

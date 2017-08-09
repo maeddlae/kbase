@@ -36,12 +36,12 @@ class TestModel(unittest.TestCase):
         act = self.model.getEntry("melon")
         self.assertEqual(exp,act)
 
-    def testGetEntryByTitle(self):
+    def testGetEntryByName(self):
         exp = self.legumes
         act = self.model.getEntry("legumes")
         self.assertEqual(exp,act)
 
     def testGetEntryIfNotExists(self):
         exp = None
-        act = self.model.getEntry("cars")
+        act = self.model.getEntry("planes")
         self.assertEqual(exp,act)
