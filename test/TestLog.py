@@ -24,9 +24,20 @@ class TestLog(unittest.TestCase):
 
     def tearDown(self):
         sys.stdout = sys.__stdout__
-        os.remove(self.logfile)
+        if os.path.exists(self.logfile):
+            os.remove(self.logfile)
         pass
+    
+    def testIfWritesNotBeforeFirstAdd(self):
+        '''Tests whether log is not printing to console and file before 
+        add has been called'''
+        expected = ""
+        actual = self.capturedOutput.getvalue()
+        self.assertEqual(expected, actual, "Log has already printed out:-(")
 
+        # Logfile should be created at first call of add. So it should not 
+        # exist here
+        self.assertFalse(os.path.exists(self.logfile), "Logfile already exists")
 
     def testConsole(self):
         '''Tests console output and header by adding two log entries'''

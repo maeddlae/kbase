@@ -31,19 +31,25 @@ class Log():
         '''
         Constructor
         '''
+        self.hasHeaderPrinted = False
         self.filepath = filepath
-        
-        # print header of console
-        print(self.getRowHeader())
-
-        # print header of logfile
-        f = open(self.filepath,'w')
-        f.write(self.getLogfileHeader())
-        f.close()
         
     def add(self, severity, name, text ):
         '''Adds an entry to the logfile and prints it to console'''
         
+        # Print header if has not already been done
+        if self.hasHeaderPrinted == False:
+            self.hasHeaderPrinted = True
+        
+            # Print header of console
+            print(self.getRowHeader())
+    
+            # Print header of logfile
+            f = open(self.filepath,'w')
+            f.write(self.getLogfileHeader())
+            f.close()
+        
+        # Prepare filename and text. Shorten them if required
         name = os.path.basename(name)
         name = self.resizeString(name, self.NAME_SIZE)
         text = self.resizeString(text, self.TEXT_SIZE)
