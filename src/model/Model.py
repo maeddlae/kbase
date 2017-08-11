@@ -29,7 +29,7 @@ class Model():
         ships.keywords.append("Santa Maria")
         self.entries.append(ships)
         
-        self.db = Database(self.log)
+        self.db = Database(self.log,"data.db")
         
         self.log.add(self.log.Info, __file__, "init" )
         
