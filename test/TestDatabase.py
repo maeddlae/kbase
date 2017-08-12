@@ -15,7 +15,6 @@ from model.ModelEntry import ModelEntry
 class TestDatabase(unittest.TestCase):
     dbPath = "testdb.db"
 
-
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
@@ -40,11 +39,34 @@ class TestDatabase(unittest.TestCase):
         # kill Database object. This must be done to close the connection to the db
         del self.db
         
-        # deltee db
+        # delete db
         if os.path.exists(self.dbPath):
             os.remove(self.dbPath)
+            
+    def testGetKeywordsFromString(self):
+        exp = ["bla bla", "blu", " bleble", ""]
+        inp = "bla bla,blu, bleble,"
+        act = self.db.getKeywordsFromString(inp)
+        self.assertSequenceEqual(exp,act,str)
+            
+    def testGetStringFromKeywords(self):
+        exp = "asdf,sd swef ,a a, b b,"
+        inp = ["asdf", "sd swef ", "a a", " b b", ""]
+        act = self.db.getStringFromKeywords(inp)
+        self.assertEqual(exp, act)
 
+    def testHasEntryPositive(self):
+        '''Questioned entry exists'''
+        n = ModelEntry(self.log, "planes")
+        self.assertTrue(self.db.hasEntry(n))
+        
+    def testHasEntryNegative(self):
+        '''Questioned entry does not exist'''
+        n = ModelEntry(self.log, "bikes")
+        self.assertFalse(self.db.hasEntry(n))
+    
     def testAddNew(self):
+        '''Adds a new entry which did not exist before'''
         n = ModelEntry(self.log, "bikes")
         n.description = "These are bikes"
         n.keywords.append("Yamaha")
@@ -53,14 +75,20 @@ class TestDatabase(unittest.TestCase):
         self.db.addEntry(n)
         
         rows = self.getAllRows(self.dbPath)
-        self.assertTrue(self.containsEntry(rows, n),"Entry has not been added")
-        pass
+        self.assertTrue(self.containsEntry(rows, n))
     
     def testAddExisting(self):
-        #todo
-        pass
+        '''Trys to add an existing entry'''
+        n = ModelEntry(self.log, "buildings")
+        
+        self.db.addEntry(n)
+        
+        rows = self.getAllRows(self.dbPath)
+        self.assertFalse(self.containsEntry(rows, n),"Entry has been added")
+    
             
     def getAllRows(self, db):
+        '''Returns all entries of the database'''
         con = sqlite3.connect(db)
         con.row_factory = sqlite3.Row
         cur = con.cursor()
@@ -70,9 +98,10 @@ class TestDatabase(unittest.TestCase):
         return rows
     
     def containsEntry(self, rows, entry):
+        '''Checks if an entry exists in the rows. Method checks name, description and keywords'''
         hasRow = False
         
-        keywords = self.getKeywordString(entry.keywords)
+        keywords = self.db.getStringFromKeywords(entry.keywords)
         
         for row in rows:
             if (row["name"] == entry.name and 
@@ -80,22 +109,89 @@ class TestDatabase(unittest.TestCase):
                 row["keywords"] == keywords):
                 hasRow = True
             
-        return hasRow
-                
-    def getKeywordString(self, keywords):
-        "Returns puts all elements of keywords into a string, separated by comma"
-        s = ""
-        first = True
-        for k in keywords:
-            if first:
-                first = False
-            else:
-                s += ","
-            s += k
-                    
-        return s
-    
+        return hasRow   
 
+    def testGetEntryByNamePositive(self):
+        '''Tests if an existing entry will be found'''
+        exp = ModelEntry(self.log, "buildings")
+        exp.description = "This is a building"
+        exp.keywords.append("Louvre")
+        
+        act = self.db.getEntryByName(exp.name)
+        
+        self.assertEqual(exp.name, act.name)
+        self.assertEqual(exp.description, act.description)
+        self.assertSequenceEqual(exp.keywords, act.keywords, str)
+
+    def testGetEntryByNameNegative(self):
+        '''Tests if entry does not exist'''        
+        act = self.db.getEntryByName("bikes")        
+        self.assertEqual(act,None)
+
+    def testGetEntryByKeywordPositive(self):
+        '''Tests if an existing entry will be found'''
+        exp = ModelEntry(self.log, "planes")
+        exp.description = "These are planes"
+        exp.keywords.append("F16")
+        exp.keywords.append("F35")
+        
+        act = self.db.getEntryByKeyword("F35")
+        
+        self.assertEqual(exp.name, act.name)
+        self.assertEqual(exp.description, act.description)
+        self.assertSequenceEqual(exp.keywords, act.keywords, str)
+
+    def testGetEntryByKeywordNegative(self):
+        '''Tests if an not existing entry will not be found'''        
+        act = self.db.getEntryByKeyword("F34")        
+        self.assertEqual(act,None)
+
+    def testGetEntryByDescriptionPositive(self):
+        '''Tests if an existing entry will be found'''
+        exp = ModelEntry(self.log, "planes")
+        exp.description = "These are planes"
+        exp.keywords.append("F16")
+        exp.keywords.append("F35")
+        
+        act = self.db.getEntryByDescription("These")
+        
+        self.assertEqual(exp.name, act.name)
+        self.assertEqual(exp.description, act.description)
+        self.assertSequenceEqual(exp.keywords, act.keywords, str)
+
+    def testGetEntryByDescriptionNegative(self):
+        '''Tests if an not existing entry will not be found'''        
+        act = self.db.getEntryByKeyword("muha")        
+        self.assertEqual(act,None)
+        
+    def testUpdateEntryIfExists(self):
+        '''Trys to update an entries keywords and description'''
+        # update description
+        n = ModelEntry(self.log, "planes")
+        n.description = "These are beautiful planes"
+        n.keywords.append("F16")
+        n.keywords.append("F35")
+        self.db.updateEntry(n)
+        rows = self.getAllRows(self.dbPath)
+        self.assertTrue(self.containsEntry(rows, n))
+        
+        # update keywords
+        n = ModelEntry(self.log, "planes")
+        n.description = "These are beautiful planes"
+        n.keywords.append("Boeing")
+        n.keywords.append("F35")
+        self.db.updateEntry(n)
+        rows = self.getAllRows(self.dbPath)
+        self.assertTrue(self.containsEntry(rows, n))
+        
+    def testUpdateEntryIfNotExists(self):
+        '''Trys to update an entries keywords and description'''
+        
+        # update description
+        n = ModelEntry(self.log, "bikes")
+        self.db.updateEntry(n)
+        rows = self.getAllRows(self.dbPath)
+        self.assertFalse(self.containsEntry(rows, n))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

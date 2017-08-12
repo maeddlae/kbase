@@ -52,13 +52,13 @@ class TestLog(unittest.TestCase):
     
     def testLogfile(self):
         '''Tests logfile output and header by adding two log entries'''
+        time = datetime.datetime.now()
+        self.log.now = time
         self.log.add(Log.Warning, "File1", "This is the text")
         self.log.add(Log.Info, "File2", "This is the text")  
         
         # Overwrite current time for this test. 
         # Otherwise this test would not run stable
-        time = datetime.datetime.now()
-        self.log.now = time
         user = getpass.getuser()
         s = "LOGFILE\n"
         s += "Date: " + repr(time.day) + \
