@@ -3,7 +3,6 @@ Created on 24 Jul 2017
 
 @author: Mathias Bucher
 '''
-from model.ModelEntry import ModelEntry
 from model.Database import Database
 
 class Model():
@@ -21,6 +20,8 @@ class Model():
         
         
     def getEntry(self, word):        
+        '''Searches an entry in the db by name, keyword or description in sequence. 
+        Returns only the first match'''
         # find by name
         foundEntry = self.db.getEntryByName(word)
         
