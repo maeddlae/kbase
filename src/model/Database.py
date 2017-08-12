@@ -4,19 +4,18 @@ Created on 9 Aug 2017
 @author: Mathias Bucher
 '''
 import sqlite3
-import unicodedata
 from model.ModelEntry import ModelEntry
 
 class Database(object):
     '''
-    This class represents the interface to the database. 
+    This class represents the interface to the database and implements some 
+    search and add methods. 
     '''
-
 
     def __init__(self, log, path):
         '''
         Constructor
-        '''
+        '''        
         self.log = log        
         self.path = path                
         self.log.add(self.log.Info, __file__, "init with: " + self.path )
@@ -89,7 +88,7 @@ class Database(object):
             db.close()
             
             if data is None:
-                self.log.add(self.log.Warning, __file__, "entry with name = ? not found", name )
+                self.log.add(self.log.Warning, __file__, "entry with name = " + name + " not found" )
             else:
                 e = self.getEntryFromRowObject( data )
                 
@@ -112,7 +111,7 @@ class Database(object):
             db.close()
             
             if data is None:
-                self.log.add(self.log.Warning, __file__, "entry with keyword = ? not found", keyword )
+                self.log.add(self.log.Warning, __file__, "entry with keyword = " + keyword + " not found" )
             else:
                 e = self.getEntryFromRowObject( data )
                 
@@ -135,7 +134,7 @@ class Database(object):
             db.close()
             
             if data is None:
-                self.log.add(self.log.Warning, __file__, "entry with word = ? not found", word )
+                self.log.add(self.log.Warning, __file__, "entry with word = " + word + " not found" )
             else:
                 e = self.getEntryFromRowObject( data )
                 

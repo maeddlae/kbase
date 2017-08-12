@@ -16,35 +16,23 @@ class Model():
         Constructor
         '''
         self.log = log
-        
-        self.entries = []
-        
-        cars = ModelEntry(self.log, "cars")
-        cars.keywords.append("BMW")
-        cars.keywords.append("Volvo")
-        self.entries.append(cars)
-        
-        ships = ModelEntry(self.log, "ships")
-        ships.keywords.append("Queen Mary")
-        ships.keywords.append("Santa Maria")
-        self.entries.append(ships)
-        
-        self.db = Database(self.log,"data.db")
-        
+        self.db = Database(self.log,"D:\Mathias Bucher\Documents\others\Basteln\Python\kbase\data\data.db")
         self.log.add(self.log.Info, __file__, "init" )
         
         
-    def getEntry(self, keyword):
-        foundEntry = None
+    def getEntry(self, word):        
+        # find by name
+        foundEntry = self.db.getEntryByName(word)
         
-        for e in self.entries:
-            for k in e.keywords:
-                if k == keyword and foundEntry == None:
-                    foundEntry = e
-            if e.name == keyword and foundEntry == None:
-                    foundEntry = e
+        # find by keyword
+        if foundEntry == None:
+            foundEntry = self.db.getEntryByKeyword(word)
+        
+        # find by description
+        if foundEntry == None:
+            foundEntry = self.db.getEntryByDescription(word)
             
-        if foundEntry!=None:
+        if foundEntry != None:
             self.log.add(self.log.Info, __file__, "entry found" )
         else:
             self.log.add(self.log.Info, __file__, "entry not found" )

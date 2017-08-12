@@ -23,10 +23,10 @@ class TestModel(unittest.TestCase):
         self.fruits.text = "This entry is about fruit"
         self.legumes = ModelEntry(self.log, "legumes")
         self.legumes.keywords.append("tomato")
-        self.model.entries.append(self.fruits)
-        self.model.entries.append(self.legumes)
+        
+        self.model.db.addEntry(self.fruits)
+        self.model.db.addEntry(self.legumes)
         pass
-
 
     def tearDown(self):
         pass
@@ -34,14 +34,19 @@ class TestModel(unittest.TestCase):
     def testGetEntryByKeyword(self):
         exp = self.fruits
         act = self.model.getEntry("melon")
-        self.assertEqual(exp,act)
+        
+        self.assertEqual(exp.name, act.name)
+        self.assertEqual(exp.description, act.description)
+        self.assertSequenceEqual(exp.keywords, act.keywords, str)
 
     def testGetEntryByName(self):
         exp = self.legumes
         act = self.model.getEntry("legumes")
-        self.assertEqual(exp,act)
+        
+        self.assertEqual(exp.name, act.name)
+        self.assertEqual(exp.description, act.description)
+        self.assertSequenceEqual(exp.keywords, act.keywords, str)
 
     def testGetEntryIfNotExists(self):
-        exp = None
-        act = self.model.getEntry("planes")
-        self.assertEqual(exp,act)
+        act = self.model.getEntry("muha")
+        self.assertEqual(act, None)

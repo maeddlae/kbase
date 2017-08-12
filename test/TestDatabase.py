@@ -29,6 +29,7 @@ class TestDatabase(unittest.TestCase):
         c.execute("CREATE TABLE entries (name text, description text, keywords text)")
         c.execute("INSERT INTO entries VALUES ('buildings', 'This is a building', 'Louvre')")
         c.execute("INSERT INTO entries VALUES ('planes', 'These are planes', 'F16,F35')")
+        c.execute("INSERT INTO entries VALUES ('cars', 'These are cars', 'BMW,Volvo,Mercedes')")
         testdb.commit()
         testdb.close()
         
