@@ -10,12 +10,12 @@ class Model():
     classdocs
     '''
 
-    def __init__(self, log):
+    def __init__(self, log, path):
         '''
         Constructor
         '''
         self.log = log
-        self.db = Database(self.log,"D:\Mathias Bucher\Documents\others\Basteln\Python\kbase\data\data.db")
+        self.db = Database(self.log, path)
         self.log.add(self.log.Info, __file__, "init" )
         
         
@@ -39,3 +39,9 @@ class Model():
             self.log.add(self.log.Info, __file__, "entry not found" )
             
         return foundEntry
+    
+    def updateNameOfEntry(self, entry, newName):
+        self.db.updateNameOfEntry(entry, newName)
+    
+    def updateContentOfEntry(self, entry):
+        self.db.updateEntry(entry)

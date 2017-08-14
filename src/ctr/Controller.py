@@ -9,13 +9,14 @@ from view.View import View
 
 
 class Controller():
+    dbPath = "D:\Mathias Bucher\Documents\others\Basteln\Python\kbase\data\data.db"
 
     def __init__(self):
         '''Constructor'''
         self.actions = {"menuGoClicked" : self.buttonGoAction }
         self.log = Log("log.txt")
         self.view = View(self.log, self.actions)
-        self.model = Model(self.log)
+        self.model = Model(self.log, self.dbPath)
         
         self.log.add(self.log.Info, __file__, "init" )
         
