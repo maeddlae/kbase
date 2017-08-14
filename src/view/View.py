@@ -24,7 +24,7 @@ class View():
         self.root.geometry("400x500")
         
         self.app = Frame(self.root)
-        self.entryView = VEntry(self.root, self.log, None)
+        self.entryView = VEntry(self.root, self.log, self.actions)
         self.searchView = VSearch(self.root, self.log)
         self.app.grid()
         self.drawMenuBar()

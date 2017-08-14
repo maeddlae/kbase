@@ -13,7 +13,10 @@ class Controller():
 
     def __init__(self):
         '''Constructor'''
-        self.actions = {"menuGoClicked" : self.buttonGoAction }
+        self.actions = {"menuGoClicked" : self.buttonGoAction,
+                        "changeNameAction" : self.entryNameChangeAction,
+                        "changeDescriptionAction" : self.entryDescriptionChangeAction,
+                        "changeKeywordsAction" : self.entryKeywordChangeAction }
         self.log = Log("log.txt")
         self.view = View(self.log, self.actions)
         self.model = Model(self.log, self.dbPath)
@@ -26,23 +29,25 @@ class Controller():
     def buttonGoAction(self, keyword):
         self.log.add(self.log.Info, __file__, "search for : " + keyword)
         
-        entry = self.model.getEntry(keyword)
+        self.currentEntry = self.model.getEntry(keyword)
         
-        if entry != None:
-            self.view.drawEntry(entry)
+        if self.currentEntry != None:
+            self.view.drawEntry(self.currentEntry)
         else:
             self.view.drawSearch()
             
     def entryNameChangeAction(self, newName):
-        # todo
-        pass
+        '''Simply calls update name from model with current entry'''
+        self.model.updateNameOfEntry(self.currentEntry, newName)
+        self.currentEntry.name = newName
 
     def entryDescriptionChangeAction(self, newDescription):
-        pass
+        '''Updates current entry and calls update method from model'''
+        self.currentEntry.description = newDescription
+        self.model.updateContentOfEntry(self.currentEntry)
 
     def entryKeywordChangeAction(self, newKeywords):
-        pass
-        
-        
-app = Controller()
-app.run()
+        '''Updates current entry and calls update method from model'''
+        k = self.currentEntry.getKeywordsFromString(newKeywords)
+        self.currentEntry.keywords = k
+        self.model.updateContentOfEntry(self.currentEntry)        

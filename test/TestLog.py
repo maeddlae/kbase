@@ -19,14 +19,11 @@ class TestLog(unittest.TestCase):
         self.capturedOutput = StringIO.StringIO()
         sys.stdout = self.capturedOutput
         self.log = Log(self.logfile)
-        pass
-
 
     def tearDown(self):
         sys.stdout = sys.__stdout__
         if os.path.exists(self.logfile):
             os.remove(self.logfile)
-        pass
     
     def testIfWritesNotBeforeFirstAdd(self):
         '''Tests whether log is not printing to console and file before 

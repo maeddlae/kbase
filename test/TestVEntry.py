@@ -22,7 +22,15 @@ class TestVEntry(unittest.TestCase):
         self.root.title("kbase test")
         self.root.geometry("400x500")
         
-        self.ventry = VEntry(self.root, self.log, None)
+        self.actionlist = {"changeNameAction" : self.dummy1,
+                  "changeDescriptionAction" : self.dummy2,
+                  "changeKeywordsAction" : self.dummy3}
+        
+        self.dummy1 = MagicMock()
+        self.dummy2 = MagicMock()
+        self.dummy3 = MagicMock()
+        
+        self.ventry = VEntry(self.root, self.log, self.actionlist)
 
         self.entry = ModelEntry(self.log, "animals")
         self.entry.description = "these are animals"
@@ -31,7 +39,15 @@ class TestVEntry(unittest.TestCase):
 
     def tearDown(self):
         pass
-
+    
+    def dummy1(self, newName):
+        pass
+    
+    def dummy2(self):
+        pass
+    
+    def dummy3(self):
+        pass
 
     def testDrawEntry(self):
         '''Tests whether all elements of the entry are drawn'''
@@ -48,12 +64,26 @@ class TestVEntry(unittest.TestCase):
         
         exp = "deer bear"
         act = self.ventry.keywords.get("1.0", 'end-1c')
-        #self.assertEqual(exp, act)
         
-       # self.ventry.labelN
+    def testReturnPressedAtName(self):
+        self.ventry.drawEntry(self.entry)
+        self.ventry.update()
+        self.ventry.name.delete("1.0", END)
+        self.ventry.name.insert(END, "new name")
+        self.ventry.update()
+        self.ventry.name.event_generate("<Return>")
+        self.ventry.update()
+        # self.dummy1.assert_called_with("new name")
         
-       # self.assertEqual(self.entry.name, self.ventry.labelName, msg)
-
+        # todo test does not work
+    
+    def testReturnPressedAtDescription(self):
+        # todo
+        pass
+    
+    def testReturnPressedAtKeywords(self):
+        # todo
+        pass
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

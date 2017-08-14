@@ -34,7 +34,8 @@ class VEntry(Frame):
             self.description.bind( "<Return>", self.returnPressedAtDescription)
             
             self.keywords = Text(self, height=2, font=("Helvetica", 10))
-            self.keywords.insert(END, self.getKeywordString(entry.keywords))
+            s = entry.getStringFromKeywords(entry.keywords)
+            self.keywords.insert(END, s)
             self.keywords.grid(row=3, sticky=W)
             self.keywords.bind( "<Return>", self.returnPressedAtKeywords)
             
@@ -46,8 +47,8 @@ class VEntry(Frame):
         self.log.add(self.log.Info, __file__, "name change: " + t)
         
         if self.actions != None:
-            if "entryReturnPressedAtName" in self.actions:
-                self.actions["entryReturnPressedAtName"](t)
+            if "changeNameAction" in self.actions:
+                self.actions["changeNameAction"](t)
         
     def returnPressedAtDescription(self, event):
         '''Is called when user hits Return key while writing in description field'''
@@ -55,8 +56,8 @@ class VEntry(Frame):
         self.log.add(self.log.Info, __file__, "description change: " + t)
                 
         if self.actions != None:
-            if "entryReturnPressedAtDescription" in self.actions:
-                self.actions["entryReturnPressedAtDescription"](t)
+            if "changeDescriptionAction" in self.actions:
+                self.actions["changeDescriptionAction"](t)
     
     def returnPressedAtKeywords(self, event):
         '''Is called when user hits Return key while writing in keywords field'''
@@ -64,11 +65,5 @@ class VEntry(Frame):
         self.log.add(self.log.Info, __file__, "keywords change: " + t )
                 
         if self.actions != None:
-            if "entryReturnPressedAtKeywords" in self.actions:
-                self.actions["entryReturnPressedAtKeywords"](t)
-    
-    def getKeywordString(self, keywords):
-        s = ""
-        for k in keywords:
-            s += k + " "
-        return s
+            if "changeKeywordsAction" in self.actions:
+                self.actions["changeKeywordsAction"](t)
