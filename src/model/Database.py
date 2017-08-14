@@ -84,6 +84,28 @@ class Database(object):
         except sqlite3.Error, e:
             self.log.add(self.log.Warning, __file__, "db error: " + e.message)
     
+    def updateNameOfEntry(self, e, newName):
+        '''Changes the name of an existing entry'''
+        #check if entry does not exist
+        if not self.hasEntry(e):
+            self.log.add(self.log.Info, __file__, e.name + " does not exist")
+            return
+
+        # otherwise try to change the name
+        try:
+            db = sqlite3.connect(self.path)
+            db.row_factory = sqlite3.Row
+            c = db.cursor()
+            c.execute("DELETE FROM entries WHERE name=?", [e.name])
+            e.name = newName
+            s = e.getStringFromKeywords(e.keywords)
+            c.execute("INSERT INTO entries VALUES (?, ?, ?)", [e.name, e.description, s])
+            db.commit()
+            db.close()
+            
+        except sqlite3.Error, e:
+            self.log.add(self.log.Warning, __file__, "db error: " + e.message)
+
     def getEntryByName(self, name):
         '''Searches an entry by name. Returns found entry or None, if not found'''
         e = None

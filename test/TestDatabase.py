@@ -85,31 +85,6 @@ class TestDatabase(unittest.TestCase):
         
         rows = self.getAllRows(self.dbPath)
         self.assertFalse(self.containsEntry(rows, n),"Entry has been added")
-    
-            
-    def getAllRows(self, db):
-        '''Returns all entries of the database'''
-        con = sqlite3.connect(db)
-        con.row_factory = sqlite3.Row
-        cur = con.cursor()
-        cur.execute("SELECT * FROM entries")
-        rows = cur.fetchall()
-        con.close()
-        return rows
-    
-    def containsEntry(self, rows, entry):
-        '''Checks if an entry exists in the rows. Method checks name, description and keywords'''
-        hasRow = False
-        
-        keywords = entry.getStringFromKeywords(entry.keywords)
-        
-        for row in rows:
-            if (row["name"] == entry.name and 
-                row["description"] == entry.description and
-                row["keywords"] == keywords):
-                hasRow = True
-            
-        return hasRow   
 
     def testGetEntryByNamePositive(self):
         '''Tests if an existing entry will be found'''
@@ -192,7 +167,48 @@ class TestDatabase(unittest.TestCase):
         self.db.updateEntry(n)
         rows = self.getAllRows(self.dbPath)
         self.assertFalse(self.containsEntry(rows, n))
-
+        
+    def testUpdateNameIfExists(self):
+        '''Trys to update an entries name'''
+        e = ModelEntry(self.log, "planes")
+        newName = "bridges"
+        self.db.updateNameOfEntry(e, newName)
+        rows = self.getAllRows(self.dbPath)
+        e.name = newName
+        self.assertTrue(self.containsEntry(rows, e))
+        
+    def testUpdateNameIfNotExists(self):
+        '''Trys to update an entries name which does not exist'''
+        n = ModelEntry(self.log, "bikes")
+        self.db.updateNameOfEntry(n, "blabla")
+        rows = self.getAllRows(self.dbPath)
+        n.name = "blabla"
+        self.assertFalse(self.containsEntry(rows, n))
+            
+    def getAllRows(self, db):
+        '''Returns all entries of the database'''
+        con = sqlite3.connect(db)
+        con.row_factory = sqlite3.Row
+        cur = con.cursor()
+        cur.execute("SELECT * FROM entries")
+        rows = cur.fetchall()
+        con.close()
+        return rows
+    
+    def containsEntry(self, rows, entry):
+        '''Checks if an entry exists in the rows. Method checks name, description and keywords'''
+        hasRow = False
+        
+        keywords = entry.getStringFromKeywords(entry.keywords)
+        
+        for row in rows:
+            if (row["name"] == entry.name and 
+                row["description"] == entry.description and
+                row["keywords"] == keywords):
+                hasRow = True
+            
+        return hasRow   
+    
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
