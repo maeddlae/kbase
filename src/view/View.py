@@ -8,33 +8,43 @@ from Tkinter import *
 from VEntry import VEntry
 from VSearch import VSearch
 
-class View(object):
+class View():
     '''
     This class holds the entire GUI of the application
     '''
 
 
-    def __init__(self, log, buttonGoAction):
+    def __init__(self, log, actions):
         '''Constructor: Creates the window'''
         self.log = log
-        self.buttonGoAction = buttonGoAction
+        self.actions = actions
         
         self.root = Tk()
         self.root.title("kbase")
         self.root.geometry("400x500")
         
         self.app = Frame(self.root)
-        self.entryView = VEntry(self.root, self.log)
+        self.entryView = VEntry(self.root, self.log, None)
         self.searchView = VSearch(self.root, self.log)
         self.app.grid()
+        self.drawMenuBar()
         
         self.log.add(self.log.Info, __file__, "init" )
         
-    def draw(self,entry):
-        '''Draws the window with menu bar and entry'''
-        self.drawMenuBar()
+    def run(self):
+        '''Calls Tkinter mainloop, which never returns!'''
+        self.root.mainloop() # this is an infinite loop!
+        
+    def drawEntry(self, entry):
+        self.searchView.grid_forget()
         self.entryView.drawEntry(entry)#todo remove
-        self.root.mainloop()
+        self.entryView.grid(sticky=W)
+        pass
+    
+    def drawSearch(self):
+        # todo
+        self.entryView.grid_forget()
+        pass
         
     def drawMenuBar(self):
         '''Draws the menu bar at the top of the window'''
@@ -51,5 +61,7 @@ class View(object):
     
     def buttonGo_click(self):
         self.log.add(self.log.Info, __file__, "button go clicked" )
-        self.buttonGoAction(self.entrySearchText.get())
+        if self.actions != None:
+            if "menuGoClicked" in self.actions:
+                self.actions["menuGoClicked"](self.entrySearchText.get())
     

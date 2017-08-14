@@ -12,18 +12,36 @@ class Controller():
 
     def __init__(self):
         '''Constructor'''
+        self.actions = {"menuGoClicked" : self.buttonGoAction }
         self.log = Log("log.txt")
-        self.view = View(self.log, self.buttonGoAction)
+        self.view = View(self.log, self.actions)
         self.model = Model(self.log)
         
         self.log.add(self.log.Info, __file__, "init" )
         
     def run(self):        
-        self.view.draw(None)
+        self.view.run()
         
     def buttonGoAction(self, keyword):
         self.log.add(self.log.Info, __file__, "search for : " + keyword)
-        self.view.draw(entry=self.model.getEntry(keyword))
+        
+        entry = self.model.getEntry(keyword)
+        
+        if entry != None:
+            self.view.drawEntry(entry)
+        else:
+            self.view.drawSearch()
+            
+    def entryNameChangeAction(self, newName):
+        # todo
+        pass
 
+    def entryDescriptionChangeAction(self, newDescription):
+        pass
+
+    def entryKeywordChangeAction(self, newKeywords):
+        pass
+        
+        
 app = Controller()
 app.run()
