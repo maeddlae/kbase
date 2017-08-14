@@ -4,6 +4,7 @@ Created on 9 Aug 2017
 @author: Mathias Bucher
 '''
 import sqlite3
+import os
 from model.ModelEntry import ModelEntry
 
 class Database(object):
@@ -18,6 +19,14 @@ class Database(object):
         '''        
         self.log = log        
         self.path = path                
+        
+        # create empty database if not already exists
+        if not os.path.exists(self.path):
+            db = sqlite3.connect(self.path)
+            db.execute("CREATE TABLE entries(name TEXT, description TEXT, keywords TEXT)")
+            db.commit()
+            db.close()
+        
         self.log.add(self.log.Info, __file__, "init with: " + self.path )
         
     def hasEntry(self, entry):
@@ -48,7 +57,7 @@ class Database(object):
         try:
             db = sqlite3.connect(self.path)
             c = db.cursor()
-            s = self.getStringFromKeywords(entry.keywords)
+            s = entry.getStringFromKeywords(entry.keywords)
             c.execute("INSERT INTO entries VALUES (?, ?, ?)", (entry.name, entry.description, s))
             db.commit()
             db.close()
@@ -67,7 +76,7 @@ class Database(object):
         try:
             db = sqlite3.connect(self.path)
             c = db.cursor()
-            s = self.getStringFromKeywords(e.keywords)
+            s = e.getStringFromKeywords(e.keywords)
             c.execute('''UPDATE entries SET description=?, keywords=? WHERE name=?''', [e.description, s, e.name])
             db.commit()
             db.close()
@@ -143,23 +152,6 @@ class Database(object):
         
         return e
     
-    def getStringFromKeywords(self, keywords):
-        '''Puts all elements of keywords into a string, separated by comma'''
-        s = ""
-        first = True
-        for k in keywords:
-            if first:
-                first = False
-            else:
-                s += ","
-            s += k
-                    
-        return s
-    
-    def getKeywordsFromString(self, string):
-        '''Returns all comma separated keywords in a list'''
-        return string.split(",")
-    
     def getEntryFromRowObject(self, data):
         '''Makes an entry of a row object. Sql db extracts usually row objects'''
         if data == None:
@@ -170,7 +162,7 @@ class Database(object):
         s = data["description"].encode("ascii")
         e.description = s
         s = data["keywords"].encode("ascii")
-        e.keywords = self.getKeywordsFromString(s)   
+        e.keywords = e.getKeywordsFromString(s)   
         
         return e
         

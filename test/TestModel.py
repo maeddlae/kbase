@@ -4,7 +4,7 @@ Created on 27 Jul 2017
 @author: Mathias Bucher
 '''
 from model.Model import Model
-from model.Model import ModelEntry
+from model.ModelEntry import ModelEntry
 from ctr.Log import Log
 import unittest
 from mock import MagicMock

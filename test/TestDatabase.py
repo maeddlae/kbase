@@ -14,6 +14,7 @@ from model.ModelEntry import ModelEntry
 
 class TestDatabase(unittest.TestCase):
     dbPath = "testdb.db"
+    notExistingDbPath = "notexistingdb.dh"
 
     def setUp(self):
         self.log = Log("testlog.txt")
@@ -28,8 +29,8 @@ class TestDatabase(unittest.TestCase):
         c = testdb.cursor()
         c.execute("CREATE TABLE entries (name text, description text, keywords text)")
         c.execute("INSERT INTO entries VALUES ('buildings', 'This is a building', 'Louvre')")
-        c.execute("INSERT INTO entries VALUES ('planes', 'These are planes', 'F16,F35')")
-        c.execute("INSERT INTO entries VALUES ('cars', 'These are cars', 'BMW,Volvo,Mercedes')")
+        c.execute("INSERT INTO entries VALUES ('planes', 'These are planes', 'F16, F35')")
+        c.execute("INSERT INTO entries VALUES ('cars', 'These are cars', 'BMW, Volvo, Mercedes')")
         testdb.commit()
         testdb.close()
         
@@ -44,17 +45,15 @@ class TestDatabase(unittest.TestCase):
         if os.path.exists(self.dbPath):
             os.remove(self.dbPath)
             
-    def testGetKeywordsFromString(self):
-        exp = ["bla bla", "blu", " bleble", ""]
-        inp = "bla bla,blu, bleble,"
-        act = self.db.getKeywordsFromString(inp)
-        self.assertSequenceEqual(exp,act,str)
-            
-    def testGetStringFromKeywords(self):
-        exp = "asdf,sd swef ,a a, b b,"
-        inp = ["asdf", "sd swef ", "a a", " b b", ""]
-        act = self.db.getStringFromKeywords(inp)
-        self.assertEqual(exp, act)
+    def testIfNoDatabaseExists(self):
+        dbWithoutDatabase = Database(self.log, self.notExistingDbPath)
+        
+        n = ModelEntry(self.log, "planes")
+        dbWithoutDatabase.addEntry(n)
+        self.assertTrue(dbWithoutDatabase.hasEntry(n))
+        
+        if os.path.exists(self.notExistingDbPath):
+            os.remove(self.notExistingDbPath)
 
     def testHasEntryPositive(self):
         '''Questioned entry exists'''
@@ -102,7 +101,7 @@ class TestDatabase(unittest.TestCase):
         '''Checks if an entry exists in the rows. Method checks name, description and keywords'''
         hasRow = False
         
-        keywords = self.db.getStringFromKeywords(entry.keywords)
+        keywords = entry.getStringFromKeywords(entry.keywords)
         
         for row in rows:
             if (row["name"] == entry.name and 
