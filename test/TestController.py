@@ -18,8 +18,7 @@ class TestController(unittest.TestCase):
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
-        Log.add = MagicMock()        
-        self.ctr = Controller()
+        self.ctr = Controller( self.log )
         self.ctr.currentEntry = ModelEntry(self.log, "furniture")
         self.ctr.currentEntry.description = "This is the description of furniture"
         self.ctr.currentEntry.keywords.append("chair")

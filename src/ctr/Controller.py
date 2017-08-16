@@ -6,18 +6,22 @@ Created on 24 Jul 2017
 from ctr.Log import Log
 from model.Model import Model
 from view.View import View
+from cgi import log
 
 
 class Controller():
     dbPath = "D:\Mathias Bucher\Documents\others\Basteln\Python\kbase\data\data.db"
 
-    def __init__(self):
+    def __init__(self, log):
         '''Constructor'''
         self.actions = {"menuGoClicked" : self.buttonGoAction,
                         "changeNameAction" : self.entryNameChangeAction,
                         "changeDescriptionAction" : self.entryDescriptionChangeAction,
                         "changeKeywordsAction" : self.entryKeywordChangeAction }
-        self.log = Log("log.txt")
+        if log != None:
+            self.log = log
+        else:
+            self.log = Log("log.txt")
         self.view = View(self.log, self.actions)
         self.model = Model(self.log, self.dbPath)
         

@@ -16,7 +16,7 @@ class Main(object):
         '''
         Constructor
         '''
-        self.ctr = Controller()
+        self.ctr = Controller( None )
         
         
 app = Main()
