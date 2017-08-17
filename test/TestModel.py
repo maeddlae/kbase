@@ -66,3 +66,10 @@ class TestModel(unittest.TestCase):
         self.model.db.updateEntry = MagicMock()
         self.model.updateContentOfEntry(self.cars)
         self.model.db.updateEntry.assert_called_with(self.cars)
+    
+    def testAddEntry(self):
+        '''Checks only if the right method of db is called'''
+        entry = ModelEntry(self.log, "new entry")
+        self.model.db.addEntry = MagicMock()
+        self.model.addEntry(entry)
+        self.model.db.addEntry.assert_called_with(entry)

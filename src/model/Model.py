@@ -45,3 +45,9 @@ class Model():
     
     def updateContentOfEntry(self, entry):
         self.db.updateEntry(entry)
+        
+    def addEntry(self, entry):
+        self.db.addEntry(entry)
+        
+    def hasEntry(self, entry):
+        self.db.hasEntry(entry)

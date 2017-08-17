@@ -22,8 +22,10 @@ class TestVMenubar(unittest.TestCase):
         self.root.geometry("400x500")
         
         self.dummy = MagicMock()
+        self.dummy2 = MagicMock()
         
-        self.actionlist = {"searchAction" : self.dummy}
+        self.actionlist = {"searchAction" : self.dummy,
+                           "newAction" : self.dummy2}
         
         self.vmenubar = VMenubar(self.root, self.log, self.actionlist)
 
@@ -50,6 +52,16 @@ class TestVMenubar(unittest.TestCase):
         self.vmenubar.entrySearch.focus_force()
         self.vmenubar.entrySearch.event_generate("<Return>")
         self.dummy.assert_called_with("searchtext")
+
+    def testButtonAddClick(self):
+        '''Tests whether the right method is called when user clicks add button'''
+        self.vmenubar.draw()
+        self.vmenubar.grid()
+        self.root.update()
+        self.vmenubar.buttonNew.focus_force()
+        self.vmenubar.buttonNew.invoke()
+        self.dummy2.assert_called_once()
+
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

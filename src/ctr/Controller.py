@@ -5,6 +5,7 @@ Created on 24 Jul 2017
 '''
 from ctr.Log import Log
 from model.Model import Model
+from model.ModelEntry import ModelEntry
 from view.View import View
 from cgi import log
 
@@ -16,6 +17,7 @@ class Controller():
         '''Constructor'''
         self.actions = {"searchAction" : self.searchAction,
                         "changeNameAction" : self.entryNameChangeAction,
+                        "newAction" : self.newEntryAction,
                         "changeDescriptionAction" : self.entryDescriptionChangeAction,
                         "changeKeywordsAction" : self.entryKeywordChangeAction }
         if log != None:
@@ -44,14 +46,31 @@ class Controller():
         '''Simply calls update name from model with current entry'''
         self.model.updateNameOfEntry(self.currentEntry, newName)
         self.currentEntry.name = newName
+        self.view.drawEntry(self.currentEntry)
 
     def entryDescriptionChangeAction(self, newDescription):
         '''Updates current entry and calls update method from model'''
         self.currentEntry.description = newDescription
         self.model.updateContentOfEntry(self.currentEntry)
+        self.view.drawEntry(self.currentEntry)
 
     def entryKeywordChangeAction(self, newKeywords):
         '''Updates current entry and calls update method from model'''
         k = self.currentEntry.getKeywordsFromString(newKeywords)
         self.currentEntry.keywords = k
-        self.model.updateContentOfEntry(self.currentEntry)        
+        self.model.updateContentOfEntry(self.currentEntry)  
+        self.view.drawEntry(self.currentEntry) 
+        
+    def newEntryAction(self):
+        '''Adds a new entry'''
+        newNameText = "enter name"
+        self.currentEntry = ModelEntry(self.log, newNameText)
+        i = 0
+        
+        while self.model.hasEntry(self.currentEntry):
+            i += 1
+            newName = newNameText + str(i)
+            self.currentEntry.name = newName
+        
+        self.model.addEntry(self.currentEntry)
+        self.view.drawEntry(self.currentEntry)

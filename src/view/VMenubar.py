@@ -33,6 +33,11 @@ class VMenubar(Frame):
         self.buttonGo.grid(row=0, column=1, sticky=W)
         self.buttonGo["text"] = "go"
         self.buttonGo["command"] = self.buttonGoClicked
+        
+        self.buttonNew = Button(self)
+        self.buttonNew.grid(row=0, column=2, sticky=W)
+        self.buttonNew["text"] = "new"
+        self.buttonNew["command"] = self.buttonNewClicked
     
     def buttonGoClicked(self):
         t = self.entrySearchText.get()
@@ -49,4 +54,10 @@ class VMenubar(Frame):
         if self.actions != None:
             if "searchAction" in self.actions:
                 self.actions["searchAction"](t)
+    
+    def buttonNewClicked(self):
+        self.log.add(self.log.Info, __file__, "new clicked")
+        if self.actions != None:
+            if "newAction" in self.actions:
+                self.actions["newAction"]()
                 
