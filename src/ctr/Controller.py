@@ -14,7 +14,7 @@ class Controller():
 
     def __init__(self, log):
         '''Constructor'''
-        self.actions = {"menuGoClicked" : self.buttonGoAction,
+        self.actions = {"searchAction" : self.searchAction,
                         "changeNameAction" : self.entryNameChangeAction,
                         "changeDescriptionAction" : self.entryDescriptionChangeAction,
                         "changeKeywordsAction" : self.entryKeywordChangeAction }
@@ -30,7 +30,7 @@ class Controller():
     def run(self):        
         self.view.run()
         
-    def buttonGoAction(self, keyword):
+    def searchAction(self, keyword):
         self.log.add(self.log.Info, __file__, "search for : " + keyword)
         
         self.currentEntry = self.model.getEntry(keyword)

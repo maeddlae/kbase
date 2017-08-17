@@ -39,15 +39,6 @@ class TestVEntry(unittest.TestCase):
 
     def tearDown(self):
         pass
-    
-    def dummy1(self, newName):
-        pass
-    
-    def dummy2(self):
-        pass
-    
-    def dummy3(self):
-        pass
 
     def testDrawEntry(self):
         '''Tests whether all elements of the entry are drawn'''
