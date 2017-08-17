@@ -9,6 +9,8 @@ class VEntry(Frame):
     '''
     Shows an entry and allows changes on it.
     '''
+    width10=50
+    width15=32
 
     def __init__(self, root, log, actions):
         '''
@@ -23,21 +25,29 @@ class VEntry(Frame):
     def drawEntry(self, entry):
         '''Draws an entry. If the entry is None, it does nothing'''
         if entry != None:
-            self.name = Text(self, height=1, width=20, font=("Helvetica", 15, "bold"))
+            self.name = Text(self, height=1, width=self.width15, font=("Helvetica", 15, "bold"))
             self.name.insert(END, entry.name)
             self.name.grid(row=1, column=0, sticky=W)
             self.name.bind( "<Return>", self.returnPressedAtName)
             
-            self.description = Text(self, height=6, font=("Helvetica", 10))
+            self.description = Text(self, height=6, width=self.width10, font=("Helvetica", 10))
             self.description.insert(END, entry.description)
-            self.description.grid(row=2, sticky=W)
+            self.description.grid(row=2, column=0, sticky=W)
             self.description.bind( "<Return>", self.returnPressedAtDescription)
             
-            self.keywords = Text(self, height=2, font=("Helvetica", 10))
+            descScrollbar = Scrollbar(self, command=self.description.yview)
+            descScrollbar.grid(row=2, column=1, sticky=W)
+            self.description['yscrollcommand'] = descScrollbar.set
+            
+            self.keywords = Text(self, height=2, width=self.width10, font=("Helvetica", 10))
             s = entry.getStringFromKeywords(entry.keywords)
             self.keywords.insert(END, s)
             self.keywords.grid(row=3, sticky=W)
             self.keywords.bind( "<Return>", self.returnPressedAtKeywords)
+            
+            keyScrollbar = Scrollbar(self, command=self.keywords.yview)
+            keyScrollbar.grid(row=3, column=1, sticky=W)
+            self.keywords['yscrollcommand'] = keyScrollbar.set
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
 
