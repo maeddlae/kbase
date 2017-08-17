@@ -1,4 +1,4 @@
-# kbase
+# keepit
 This application allows to save knowledge (text, files, images) in a database
 
 # tools
