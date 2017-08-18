@@ -37,7 +37,7 @@ class TestModel(unittest.TestCase):
 
     def testGetEntryByKeyword(self):
         exp = self.fruits
-        act = self.model.getEntry("melon")
+        act = self.model.getEntries("melon")["keyword"][0]
         
         self.assertEqual(exp.name, act.name)
         self.assertEqual(exp.description, act.description)
@@ -45,15 +45,17 @@ class TestModel(unittest.TestCase):
 
     def testGetEntryByName(self):
         exp = self.legumes
-        act = self.model.getEntry("legumes")
+        act = self.model.getEntries("legumes")["name"][0]
         
         self.assertEqual(exp.name, act.name)
         self.assertEqual(exp.description, act.description)
         self.assertSequenceEqual(exp.keywords, act.keywords, str)
 
     def testGetEntryIfNotExists(self):
-        act = self.model.getEntry("muha")
-        self.assertEqual(act, None)
+        act = self.model.getEntries("muha")
+        self.assertEqual(act["name"].__len__(), 0)
+        self.assertEqual(act["keyword"].__len__(), 0)
+        self.assertEqual(act["description"].__len__(), 0)
         
     def testUpdateNameOfEntry(self):  
         '''Checks only if the right method of db is called'''

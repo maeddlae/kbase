@@ -42,7 +42,8 @@ class View():
         self.entryView.drawEntry(entry)#todo remove
         self.entryView.grid(sticky=W)
     
-    def drawSearch(self):
+    def drawSearch(self, results):
         # todo
         self.entryView.grid_forget()
-        pass
+        self.searchView.drawSearchResults(results)
+        self.searchView.grid(sticky=W)

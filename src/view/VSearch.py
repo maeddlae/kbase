@@ -19,3 +19,5 @@ class VSearch(Frame):
         self.log = log
         self.log.add(self.log.Info, __file__, "init" )
         
+    def drawSearchResults(self, results):
+        pass

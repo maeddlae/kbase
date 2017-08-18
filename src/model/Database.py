@@ -105,32 +105,58 @@ class Database(object):
             
         except sqlite3.Error, e:
             self.log.add(self.log.Warning, __file__, "db error: " + e.message)
-
-    def getEntryByName(self, name):
-        '''Searches an entry by name. Returns found entry or None, if not found'''
-        e = None
+    
+    def getEntriesByName(self, name):
+        '''Searches entries by name. Returns a list of found entries'''
+        found = []
         
         try:
             db = sqlite3.connect(self.path)
             db.row_factory = sqlite3.Row
             c = db.cursor()
-            c.execute("SELECT * FROM entries WHERE name = ?", (name,))
-            data=c.fetchone()
+            search = "%" + name + "%"
+            c.execute("SELECT * FROM entries WHERE name LIKE ?", (search,))
+            data=c.fetchall()
             db.close()
             
-            if data is None:
-                self.log.add(self.log.Warning, __file__, "entry with name = " + name + " not found" )
+            if data.__len__() == 0:
+                self.log.add(self.log.Warning, __file__, "no entry named " + name + " found" )
             else:
-                e = self.getEntryFromRowObject( data )
+                for e in data:
+                    found.append(self.getEntryFromRowObject(e))
                 
         except sqlite3.Error, e:
             self.log.add(self.log.Warning, __file__, "get by name fail: " + e.message)
         
-        return e
+        return found
+    
+    def getEntriesByDescription(self, description):
+        '''Searches entries by description. Returns a list of found entries'''
+        found = []
         
-    def getEntryByKeyword(self, keyword):
-        '''Searches an entry by keyword. Returns found entry or None, if not found'''
-        e = None
+        try:
+            db = sqlite3.connect(self.path)
+            db.row_factory = sqlite3.Row
+            c = db.cursor()
+            search = "%" + description + "%"
+            c.execute("SELECT * FROM entries WHERE description LIKE ?", (search,))
+            data=c.fetchall()
+            db.close()
+            
+            if data.__len__() == 0:
+                self.log.add(self.log.Warning, __file__, "no entry with " + description + " found" )
+            else:
+                for e in data:
+                    found.append(self.getEntryFromRowObject(e))
+                
+        except sqlite3.Error, e:
+            self.log.add(self.log.Warning, __file__, "get by description fail: " + e.message)
+        
+        return found
+    
+    def getEntriesByKeyword(self, keyword):
+        '''Searches entries by kayword. Returns a list of found entries'''
+        found = []
         
         try:
             db = sqlite3.connect(self.path)
@@ -138,41 +164,19 @@ class Database(object):
             c = db.cursor()
             search = "%" + keyword + "%"
             c.execute("SELECT * FROM entries WHERE keywords LIKE ?", (search,))
-            data=c.fetchone()
+            data=c.fetchall()
             db.close()
             
-            if data is None:
-                self.log.add(self.log.Warning, __file__, "entry with keyword = " + keyword + " not found" )
+            if data.__len__() == 0:
+                self.log.add(self.log.Warning, __file__, "no entry with keyword: " + keyword + " found" )
             else:
-                e = self.getEntryFromRowObject( data )
+                for e in data:
+                    found.append(self.getEntryFromRowObject(e))
                 
         except sqlite3.Error, e:
             self.log.add(self.log.Warning, __file__, "get by keyword fail: " + e.message)
         
-        return e
-        
-    def getEntryByDescription(self, word):
-        '''Searches an entry by description. Returns found entry or None, if not found'''
-        e = None
-        
-        try:
-            db = sqlite3.connect(self.path)
-            db.row_factory = sqlite3.Row
-            c = db.cursor()
-            search = "%" + word + "%"
-            c.execute("SELECT * FROM entries WHERE description LIKE ?", (search,))
-            data=c.fetchone()
-            db.close()
-            
-            if data is None:
-                self.log.add(self.log.Warning, __file__, "entry with word = " + word + " not found" )
-            else:
-                e = self.getEntryFromRowObject( data )
-                
-        except sqlite3.Error, e:
-            self.log.add(self.log.Warning, __file__, "get by word fail: " + e.message)
-        
-        return e
+        return found
     
     def getEntryFromRowObject(self, data):
         '''Makes an entry of a row object. Sql db extracts usually row objects'''

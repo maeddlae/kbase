@@ -19,26 +19,26 @@ class Model():
         self.log.add(self.log.Info, __file__, "init" )
         
         
-    def getEntry(self, word):        
-        '''Searches an entry in the db by name, keyword or description in sequence. 
-        Returns only the first match'''
-        # find by name
-        foundEntry = self.db.getEntryByName(word)
+    def getEntries(self, word):        
+        '''Searches entries in the db by name, keyword or description in sequence. 
+        Returns all matches in a dict, with keys = name, keyword and description. 
+        The key says according to which characteristic the entry has been found. 
+        The entries are then saved as a list: '''
+        # get all entries
+        byName = self.db.getEntriesByName(word)
+        byKeyword = self.db.getEntriesByKeyword(word)
+        byDescription = self.db.getEntriesByDescription(word)
         
-        # find by keyword
-        if foundEntry == None:
-            foundEntry = self.db.getEntryByKeyword(word)
         
-        # find by description
-        if foundEntry == None:
-            foundEntry = self.db.getEntryByDescription(word)
+        found = {"name" : list(byName),
+                 "keyword" : list(byKeyword),
+                 "description" : list(byDescription)}
+        
+        self.log.add(self.log.Info, __file__, "found " + str(found["name"].__len__()) + " by name" )
+        self.log.add(self.log.Info, __file__, "found " + str(found["keyword"].__len__()) + " by keyword" )
+        self.log.add(self.log.Info, __file__, "found " + str(found["description"].__len__()) + " by description" )
             
-        if foundEntry != None:
-            self.log.add(self.log.Info, __file__, "entry found" )
-        else:
-            self.log.add(self.log.Info, __file__, "entry not found" )
-            
-        return foundEntry
+        return found
     
     def updateNameOfEntry(self, entry, newName):
         self.db.updateNameOfEntry(entry, newName)

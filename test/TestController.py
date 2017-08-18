@@ -24,10 +24,12 @@ class TestController(unittest.TestCase):
         self.ctr.currentEntry.keywords.append("chair")
         self.ctr.currentEntry.keywords.append("table")
         self.ctr.view.drawEntry = MagicMock()
+        self.ctr.view.drawSearch = MagicMock()
         self.ctr.model.updateNameOfEntry = MagicMock()
         self.ctr.model.updateContentOfEntry= MagicMock()
         self.ctr.model.addEntry = MagicMock()
         self.ctr.model.hasEntry= MagicMock()
+        self.ctr.model.getEntries = MagicMock()
 
     def tearDown(self):
         pass
@@ -69,6 +71,36 @@ class TestController(unittest.TestCase):
         self.assertEqual("enter name2", self.ctr.currentEntry.name)
         self.ctr.model.addEntry.assert_called_with(self.ctr.currentEntry)
         self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
+        
+    def testSearchActionMultipleMatches(self):
+        '''Tests whether the search action calls the right methods'''
+        e1 = ModelEntry(self.log, "hit1")
+        e2 = ModelEntry(self.log, "hit2")
+        e3 = ModelEntry(self.log, "hit3")
+        e4 = ModelEntry(self.log, "hit4")
+        
+        found = {"name" : [e1, e2],
+                 "keyword" : [e3],
+                 "description" : [e4]}
+        
+        self.ctr.model.getEntries.return_value = found
+        self.ctr.searchAction("search")
+        self.ctr.model.getEntries.assert_called_with("search")
+        self.ctr.view.drawSearch.assert_called_with(found)
+        
+    def testSearchActionSingleMatch(self):
+        '''Tests whether the search action calls the right methods'''
+        e1 = ModelEntry(self.log, "hit1")
+        
+        found = {"name" : [],
+                 "keyword" : [e1],
+                 "description" : []}
+        
+        self.ctr.model.getEntries.return_value = found
+        self.ctr.searchAction("search")
+        self.ctr.model.getEntries.assert_called_with("search")
+        self.ctr.view.drawSearch.assert_called_with(found)
+        
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']

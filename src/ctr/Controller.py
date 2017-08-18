@@ -7,11 +7,10 @@ from ctr.Log import Log
 from model.Model import Model
 from model.ModelEntry import ModelEntry
 from view.View import View
-from cgi import log
 
 
 class Controller():
-    dbPath = "D:\Mathias Bucher\Documents\others\Basteln\Python\kbase\data\data.db"
+    dbPath = "D:\Mathias Bucher\Documents\others\Basteln\Python\keepit\data\data.db"
 
     def __init__(self, log):
         '''Constructor'''
@@ -35,12 +34,9 @@ class Controller():
     def searchAction(self, keyword):
         self.log.add(self.log.Info, __file__, "search for : " + keyword)
         
-        self.currentEntry = self.model.getEntry(keyword)
+        results = self.model.getEntries(keyword)
         
-        if self.currentEntry != None:
-            self.view.drawEntry(self.currentEntry)
-        else:
-            self.view.drawSearch()
+        self.view.drawSearch(results)
             
     def entryNameChangeAction(self, newName):
         '''Simply calls update name from model with current entry'''
