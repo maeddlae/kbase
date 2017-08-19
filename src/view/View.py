@@ -26,7 +26,7 @@ class View():
         
         self.menubar = VMenubar(self.root, self.log, self.actions)
         self.entryView = VEntry(self.root, self.log, self.actions)
-        self.searchView = VSearch(self.root, self.log)
+        self.searchView = VSearch(self.root, self.log, self.actions)
         
         self.menubar.draw()
         self.menubar.grid(sticky=W)

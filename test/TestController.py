@@ -101,6 +101,11 @@ class TestController(unittest.TestCase):
         self.ctr.model.getEntries.assert_called_with("search")
         self.ctr.view.drawSearch.assert_called_with(found)
         
+    def testEntryClickedInVSearch(self):
+        '''Tests whether the search action calls the right methods'''
+        e = ModelEntry(self.log, "entry")
+        self.ctr.entryClickedInVSearch(e)
+        self.ctr.view.drawEntry.assert_called_with(e)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']

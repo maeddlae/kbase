@@ -18,7 +18,8 @@ class Controller():
                         "changeNameAction" : self.entryNameChangeAction,
                         "newAction" : self.newEntryAction,
                         "changeDescriptionAction" : self.entryDescriptionChangeAction,
-                        "changeKeywordsAction" : self.entryKeywordChangeAction }
+                        "changeKeywordsAction" : self.entryKeywordChangeAction,
+                        "showEntryAction" : self.entryClickedInVSearch }
         if log != None:
             self.log = log
         else:
@@ -70,3 +71,7 @@ class Controller():
         
         self.model.addEntry(self.currentEntry)
         self.view.drawEntry(self.currentEntry)
+        
+    def entryClickedInVSearch(self, entry):
+        '''Shows the clicked entry'''
+        self.view.drawEntry(entry)
