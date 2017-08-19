@@ -39,6 +39,16 @@ class TestVSearch(unittest.TestCase):
 
     def tearDown(self):
         pass
+    
+    def testRemoveOldResults(self):
+        '''Tests whether the remove method removes entire content'''
+        self.vsearch.drawSearchResults(self.results)
+        n = self.vsearch.children.__len__()
+        self.assertGreater(n, 0)
+        
+        self.vsearch.removeOldResults()
+        n = self.vsearch.children.__len__()
+        self.assertEqual(0, n)
 
     def testDrawSearchResults(self):
         '''Tests whether all buttons are drawn'''
