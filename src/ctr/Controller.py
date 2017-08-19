@@ -41,6 +41,7 @@ class Controller():
             
     def entryNameChangeAction(self, newName):
         '''Simply calls update name from model with current entry'''
+        self.view.removeEntry(self.currentEntry)
         self.model.updateNameOfEntry(self.currentEntry, newName)
         self.currentEntry.name = newName
         self.view.drawEntry(self.currentEntry)

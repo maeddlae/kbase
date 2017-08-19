@@ -25,6 +25,7 @@ class TestController(unittest.TestCase):
         self.ctr.currentEntry.keywords.append("table")
         self.ctr.view.drawEntry = MagicMock()
         self.ctr.view.drawSearch = MagicMock()
+        self.ctr.view.removeEntry = MagicMock()
         self.ctr.model.updateNameOfEntry = MagicMock()
         self.ctr.model.updateContentOfEntry= MagicMock()
         self.ctr.model.addEntry = MagicMock()
@@ -39,6 +40,7 @@ class TestController(unittest.TestCase):
         self.ctr.entryNameChangeAction("roofs")
         self.ctr.model.updateNameOfEntry.assert_called_with(self.ctr.currentEntry, "roofs")
         self.assertEqual("roofs", self.ctr.currentEntry.name)
+        self.ctr.view.removeEntry.assert_called_with(self.ctr.currentEntry)
         self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
     
     def testEntryDescriptionChangeAction(self):

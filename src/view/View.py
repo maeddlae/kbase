@@ -42,3 +42,6 @@ class View():
     def drawSearch(self, results):
         self.tabs.setSearch(results)
         self.tabs.grid(sticky=W)
+        
+    def removeEntry(self, entry):
+        self.tabs.removeEntry(entry)
