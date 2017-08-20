@@ -106,5 +106,6 @@ class Controller():
             
     def deleteEntryAction(self):
         '''Deletes the currently active entry'''
-        pass
+        self.model.removeEntry(self.currentEntry)
+        self.view.removeEntry(self.currentEntry)
         

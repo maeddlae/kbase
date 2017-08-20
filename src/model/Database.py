@@ -191,4 +191,18 @@ class Database(object):
         e.keywords = e.getKeywordsFromString(s)   
         
         return e
+    
+    def removeEntry(self, entry):
+        '''Removes an entry (forever) of the database'''
+        try:
+            db = sqlite3.connect(self.path)
+            c = db.cursor()
+            search = "%" + entry.name + "%"
+            c.execute("DELETE FROM entries WHERE name LIKE ?", (search,))
+            db.commit()
+            db.close()
+            
+        except sqlite3.Error, e:
+            self.log.add(self.log.Warning, __file__, "get by keyword fail: " + e.message)
+        
         

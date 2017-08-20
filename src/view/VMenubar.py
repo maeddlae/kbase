@@ -68,13 +68,13 @@ class VMenubar(Frame):
     def enableButtonDelete(self):
         '''Makes delete button clickable'''
         self.buttonDelete["state"] = NORMAL
-        self.buttonDelete.grid(row=0, column=3, sticky=W)
+        self.buttonDelete.grid(row=0, column=4, sticky=W)
         self.log.add(self.log.Info, __file__, "delete button enabled")
         
     def disableButtonDelete(self):
         '''Makes delete button no more clickable'''
         self.buttonDelete["state"] = DISABLED
-        self.buttonDelete.grid(row=0, column=3, sticky=W)
+        self.buttonDelete.grid(row=0, column=4, sticky=W)
         self.log.add(self.log.Info, __file__, "delete button disabled")
     
     def buttonGoClicked(self):

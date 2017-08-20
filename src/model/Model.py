@@ -51,3 +51,6 @@ class Model():
         
     def hasEntry(self, entry):
         self.db.hasEntry(entry)
+        
+    def removeEntry(self, entry):
+        self.db.removeEntry(entry)

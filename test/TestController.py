@@ -28,11 +28,13 @@ class TestController(unittest.TestCase):
         self.ctr.view.removeEntry = MagicMock()
         self.ctr.view.removeSearch = MagicMock()
         self.ctr.view.setDeleteButton = MagicMock()
+        self.ctr.view.removeEntry = MagicMock()
         self.ctr.model.updateNameOfEntry = MagicMock()
         self.ctr.model.updateContentOfEntry= MagicMock()
         self.ctr.model.addEntry = MagicMock()
         self.ctr.model.hasEntry= MagicMock()
         self.ctr.model.getEntries = MagicMock()
+        self.ctr.model.removeEntry = MagicMock()
 
     def tearDown(self):
         pass
@@ -144,6 +146,12 @@ class TestController(unittest.TestCase):
         self.assertEqual(e2, self.ctr.currentEntry)
         self.assertTrue(self.ctr.isSearchActive)
         self.ctr.view.setDeleteButton.assert_called_with(False)
+        
+    def testDeleteEntryAction(self):
+        self.ctr.currentEntry = ModelEntry(self.log, "e1")
+        self.ctr.deleteEntryAction()
+        self.ctr.model.removeEntry.assert_called_once_with(self.ctr.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.currentEntry)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']

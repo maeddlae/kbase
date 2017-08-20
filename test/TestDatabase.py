@@ -260,6 +260,24 @@ class TestDatabase(unittest.TestCase):
             
         return hasRow   
     
+    def testRemoveEntry(self):
+        '''Checks if an entry is removed correctly'''
+        # remove existing
+        self.db.removeEntry(self.e[5])
+        rows = self.getAllRows(self.dbPath)
+        self.assertFalse(self.containsEntry(rows, self.e[5]))
+        
+        # remove not existing
+        n = ModelEntry(self.log, "lkjh")
+        self.db.removeEntry(n)
+        rows = self.getAllRows(self.dbPath)
+        self.assertTrue(self.containsEntry(rows, self.e[0]))
+        self.assertTrue(self.containsEntry(rows, self.e[1]))
+        self.assertTrue(self.containsEntry(rows, self.e[2]))
+        self.assertTrue(self.containsEntry(rows, self.e[3]))
+        self.assertTrue(self.containsEntry(rows, self.e[4]))
+        
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
