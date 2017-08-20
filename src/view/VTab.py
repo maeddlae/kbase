@@ -25,6 +25,7 @@ class VTab(Notebook):
         self.ventries = {}
         self.tabIds = {}
         self.vsearchDrawn = False
+        self.bind("<<NotebookTabChanged>>", self.tabChanged)
         self.log.add(self.log.Info, __file__, "init" )
         
     def setSearch(self, results):
@@ -73,4 +74,27 @@ class VTab(Notebook):
         '''Returns true if there is at least one active tab'''
         return self.tabs().__len__() != 0
     
+    def getEntryNameByTabId(self, tabId):
+        '''Returns the name of a displayed entry'''
+        name = None
+        
+        splitted = tabId.rsplit(".", 1)
+        if splitted.__len__() == 1:
+            tabId = splitted[0]
+        else:
+            tabId = splitted[1]
+        for e in self.ventries.values():
+            if tabId == e._name:
+                name = e.getName()
+        return name
+    
+    def tabChanged(self, event):
+        '''Is called every time the active tab changes'''
+        self.log.add(self.log.Info, __file__, "tab changed" )
+        
+        nameOfActiveEntry = self.getEntryNameByTabId(self.select())
+        
+        if self.actions != None:
+            if "tabChangeAction" in self.actions:
+                self.actions["tabChangeAction"](nameOfActiveEntry)
         

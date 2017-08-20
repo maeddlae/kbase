@@ -10,7 +10,6 @@ class VSearch(Frame):
     Shows search results
     '''
 
-
     def __init__(self, parent, log, actions):
         '''
         Constructor

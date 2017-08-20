@@ -39,6 +39,14 @@ class TestVEntry(unittest.TestCase):
 
     def tearDown(self):
         pass
+    
+    def testGetName(self):
+        '''Tests whether method returns right name'''
+        self.ventry.drawEntry(self.entry)
+        self.ventry.update()
+        exp = self.entry.name
+        act = self.ventry.getName()
+        self.assertEqual(exp, act)
 
     def testDrawEntry(self):
         '''Tests whether all elements of the entry are drawn'''
@@ -46,7 +54,7 @@ class TestVEntry(unittest.TestCase):
         self.ventry.update()
         
         exp = "animals"
-        act = self.ventry.name.get("1.0", 'end-1c')
+        act = self.ventry.nameText.get("1.0", 'end-1c')
         self.assertEqual(exp, act)
         
         exp = "these are animals"
@@ -61,10 +69,10 @@ class TestVEntry(unittest.TestCase):
         self.ventry.drawEntry(self.entry)
         self.ventry.grid()
         self.root.update()
-        self.ventry.name.delete("1.0", END)
-        self.ventry.name.insert(END, "new name")
-        self.ventry.name.focus_force()
-        self.ventry.name.event_generate("<Return>")
+        self.ventry.nameText.delete("1.0", END)
+        self.ventry.nameText.insert(END, "new name")
+        self.ventry.nameText.focus_force()
+        self.ventry.nameText.event_generate("<Return>")
         self.dummy1.assert_called_with("new name")
     
     def testReturnPressedAtDescription(self):

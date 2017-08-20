@@ -24,10 +24,10 @@ class VEntry(Frame):
     def drawEntry(self, entry):
         '''Draws an entry. If the entry is None, it does nothing'''
         if entry != None:
-            self.name = Text(self, height=1, width=self.width15, font=("Helvetica", 15, "bold"))
-            self.name.insert(END, entry.name)
-            self.name.grid(row=0, column=0, sticky=W)
-            self.name.bind( "<Return>", self.returnPressedAtName)
+            self.nameText = Text(self, height=1, width=self.width15, font=("Helvetica", 15, "bold"))
+            self.nameText.insert(END, entry.name)
+            self.nameText.grid(row=0, column=0, sticky=W)
+            self.nameText.bind( "<Return>", self.returnPressedAtName)
             
             self.description = Text(self, height=6, width=self.width10, font=("Helvetica", 10))
             self.description.insert(END, entry.description)
@@ -50,9 +50,13 @@ class VEntry(Frame):
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
 
+    def getName(self):
+        '''Returns the name of the displayed entry'''
+        return self.nameText.get("1.0", 'end-1c')
+
     def returnPressedAtName(self, event):
         '''Is called when user hits Return key while writing in name field'''
-        t = self.name.get("1.0", 'end-1c')
+        t = self.nameText.get("1.0", 'end-1c')
         self.log.add(self.log.Info, __file__, "name change: " + t)
         
         if self.actions != None:

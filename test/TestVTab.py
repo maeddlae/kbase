@@ -23,7 +23,11 @@ class TestVTab(unittest.TestCase):
         self.root.title("kbase test")
         self.root.geometry("400x500")
         
-        self.vtab = VTab(parent=self.root, log=self.log, actions=None)
+        self.dummy = MagicMock()
+        
+        self.actionlist = {"tabChangeAction" : self.dummy}
+                                   
+        self.vtab = VTab(parent=self.root, log=self.log, actions=self.actionlist)
 
         self.results = {"name" : None}
         
@@ -34,6 +38,38 @@ class TestVTab(unittest.TestCase):
 
     def tearDown(self):
         VEntry.drawEntry = self.entryDrawTemp
+        
+    def testGetEntryNameByTabId(self):
+        '''Tests if name is returned correctly'''      
+        self.vtab.setSearch(self.results)
+        exp = None
+        act = self.vtab.getEntryNameByTabId(self.vtab.select())
+        self.assertEqual(exp, act)
+        
+        e1 = ModelEntry(self.log, "e1")
+        self.vtab.addEntry(e1)
+        exp = e1.name
+        act = self.vtab.getEntryNameByTabId(self.vtab.select())
+        self.assertEqual(exp, act)
+        
+    def testTabChangedEvent(self):
+        '''Tests if right method is called at tab change event'''    
+        # test with search active
+        self.vtab.setSearch(self.results)
+        self.vtab.grid()
+        self.root.update()
+        self.vtab.focus_force()
+        self.vtab.event_generate("<<NotebookTabChanged>>")
+        self.dummy.assert_called_with(None)
+        
+        # test with entry active
+        e = ModelEntry(self.log, "entry")
+        self.vtab.addEntry(e)
+        self.vtab.grid()
+        self.root.update()
+        self.vtab.focus_force()
+        self.vtab.event_generate("<<NotebookTabChanged>>")
+        self.dummy.assert_called_with(e.name)
         
     def testHasTabs(self):
         '''Tests whether hasTabs works correctly'''

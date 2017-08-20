@@ -47,5 +47,5 @@ class View():
         
     def removeEntry(self, entry):
         self.tabs.removeEntry(entry)
-        if not self.vtab.hasTabs():
+        if not self.vtabs.hasTabs():
             self.menubar.disableButtonClose()        
