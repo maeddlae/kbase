@@ -20,7 +20,8 @@ class Controller():
                         "changeDescriptionAction" : self.entryDescriptionChangeAction,
                         "changeKeywordsAction" : self.entryKeywordChangeAction,
                         "showEntryAction" : self.entryClickedInVSearch,
-                        "closedAction" : self.closeTabAction }
+                        "closedAction" : self.closeTabAction,
+                        "tabChangeAction" : self.tabChangeAction}
         if log != None:
             self.log = log
         else:
@@ -35,9 +36,7 @@ class Controller():
         
     def searchAction(self, keyword):
         self.log.add(self.log.Info, __file__, "search for : " + keyword)
-        
         results = self.model.getEntries(keyword)
-        
         self.view.drawSearch(results)
             
     def entryNameChangeAction(self, newName):
@@ -71,15 +70,27 @@ class Controller():
             newName = newNameText + str(i)
             self.currentEntry.name = newName
         
+        self.model.activeEntries.append(self.currentEntry)
         self.model.addEntry(self.currentEntry)
         self.view.drawEntry(self.currentEntry)
         
     def entryClickedInVSearch(self, entry):
         '''Shows the clicked entry'''
         self.currentEntry = entry
+        self.model.activeEntries.append(entry)
         self.view.drawEntry(entry)
         
     def closeTabAction(self):
         '''Closes the currently active tab'''
+        self.model.activeEntries.remove(self.currentEntry)
         self.view.removeEntry(self.currentEntry)
+        
+    def tabChangeAction(self, activeTabName):
+        '''Is called when tab focus changes'''
+        
+        # only do something when has a valid name
+        if activeTabName != None:
+            for e in self.model.activeEntries:
+                if activeTabName == e.name:
+                    self.currentEntry = e
         

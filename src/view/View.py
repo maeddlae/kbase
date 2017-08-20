@@ -41,11 +41,10 @@ class View():
         self.tabs.grid(sticky=W)
     
     def drawSearch(self, results):
-        self.menubar.enableButtonClose()
         self.tabs.setSearch(results)
         self.tabs.grid(sticky=W)
         
     def removeEntry(self, entry):
         self.tabs.removeEntry(entry)
-        if not self.vtabs.hasTabs():
+        if not self.tabs.hasTabs():
             self.menubar.disableButtonClose()        

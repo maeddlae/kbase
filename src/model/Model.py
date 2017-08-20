@@ -17,7 +17,7 @@ class Model():
         self.log = log
         self.db = Database(self.log, path)
         self.log.add(self.log.Info, __file__, "init" )
-        
+        self.activeEntries = []
         
     def getEntries(self, word):        
         '''Searches entries in the db by name, keyword or description in sequence. 
