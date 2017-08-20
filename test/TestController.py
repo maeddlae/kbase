@@ -106,9 +106,32 @@ class TestController(unittest.TestCase):
     def testEntryClickedInVSearch(self):
         '''Tests whether the search action calls the right methods'''
         e = ModelEntry(self.log, "entry")
+        
         self.ctr.entryClickedInVSearch(e)
+        self.assertEqual(e, self.ctr.model.activeEntries[0])
         self.ctr.view.drawEntry.assert_called_with(e)
-
+        
+    def testCloseTabAction(self):
+        e = ModelEntry(self.log, "entry")
+        self.ctr.currentEntry = e
+        self.ctr.model.activeEntries.append(e)
+        self.ctr.closeTabAction()
+        self.assertEqual(0, self.ctr.model.activeEntries.__len__())
+        self.ctr.view.removeEntry.assert_called_with(e)    
+        
+    def testTabChangeAction(self):
+        e1 = ModelEntry(self.log, "e1")
+        e2 = ModelEntry(self.log, "e2")
+        
+        self.ctr.model.activeEntries.append(e1)
+        self.ctr.model.activeEntries.append(e2)
+        self.ctr.currentEntry = e1
+        self.ctr.tabChangeAction(e2.name)
+        self.assertEqual(e2, self.ctr.currentEntry)
+        
+        self.ctr.tabChangeAction(None)
+        self.assertEqual(e2, self.ctr.currentEntry)
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']
     unittest.main()
