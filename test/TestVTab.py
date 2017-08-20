@@ -7,6 +7,7 @@ import unittest
 from Tkinter import *
 from view.VTab import VTab
 from view.VEntry import VEntry
+from view.VSearch import VSearch
 from ctr.Log import Log
 from mock import MagicMock
 from model.ModelEntry import ModelEntry
@@ -29,15 +30,19 @@ class TestVTab(unittest.TestCase):
                                    
         self.vtab = VTab(parent=self.root, log=self.log, actions=self.actionlist)
 
-        self.results = {"name" : None}
+        self.results = None
         
-        self.vtab.vsearch.drawSearchResults = MagicMock()
-        self.vtab.vsearch.removeOldResults = MagicMock()
+        self.vsearchdrawtemp = VSearch.drawSearchResults
+        VSearch.drawSearchResults = MagicMock()
+        self.vsearchremovetemp = VSearch.removeOldResults
+        VSearch.removeOldResults = MagicMock()
         
         self.entryDrawTemp = VEntry.drawEntry
 
     def tearDown(self):
         VEntry.drawEntry = self.entryDrawTemp
+        VSearch.removeOldResults = self.vsearchremovetemp
+        VSearch.drawSearchResults = self.vsearchdrawtemp
         
     def testGetEntryNameByTabId(self):
         '''Tests if name is returned correctly'''      
@@ -60,7 +65,7 @@ class TestVTab(unittest.TestCase):
         self.root.update()
         self.vtab.focus_force()
         self.vtab.event_generate("<<NotebookTabChanged>>")
-        self.dummy.assert_called_with(None)
+        self.dummy.assert_called_with(None, True)
         
         # test with entry active
         e = ModelEntry(self.log, "entry")
@@ -69,7 +74,7 @@ class TestVTab(unittest.TestCase):
         self.root.update()
         self.vtab.focus_force()
         self.vtab.event_generate("<<NotebookTabChanged>>")
-        self.dummy.assert_called_with(e.name)
+        self.dummy.assert_called_with(e.name, False)
         
     def testHasTabs(self):
         '''Tests whether hasTabs works correctly'''
@@ -91,7 +96,7 @@ class TestVTab(unittest.TestCase):
     
     def testSetSearchASecondTime(self):
         '''Tests whether a second search overwrites the first one'''
-        secondResults = { "Keyword" : None}
+        secondResults = None
         self.vtab.setSearch(self.results)
         self.vtab.setSearch(secondResults)
         # get all tab names. The names also include vtab's name 
@@ -162,7 +167,14 @@ class TestVTab(unittest.TestCase):
         # first tab should be 
         self.assertEqual(ventryName, tabs[0])
 
-
+    def testRemoveSearch(self):       
+        self.vtab.setSearch(self.results)
+        self.assertTrue(self.vtab.vsearchDrawn)
+        self.assertEqual(1, self.vtab.children.values().__len__())
+        
+        self.vtab.removeSearch()
+        self.assertEqual(0, self.vtab.children.values().__len__())
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

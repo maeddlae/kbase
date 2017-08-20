@@ -41,6 +41,7 @@ class View():
         self.tabs.grid(sticky=W)
     
     def drawSearch(self, results):
+        self.menubar.enableButtonClose()
         self.tabs.setSearch(results)
         self.tabs.grid(sticky=W)
         
@@ -48,3 +49,8 @@ class View():
         self.tabs.removeEntry(entry)
         if not self.tabs.hasTabs():
             self.menubar.disableButtonClose()        
+
+    def removeSearch(self):
+        self.tabs.removeSearch()
+        if not self.tabs.hasTabs():
+            self.menubar.disableButtonClose()     

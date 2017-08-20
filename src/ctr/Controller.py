@@ -28,6 +28,7 @@ class Controller():
             self.log = Log("log.txt")
         self.view = View(self.log, self.actions)
         self.model = Model(self.log, self.dbPath)
+        self.isSearchActive = False
         
         self.log.add(self.log.Info, __file__, "init" )
         
@@ -82,10 +83,15 @@ class Controller():
         
     def closeTabAction(self):
         '''Closes the currently active tab'''
-        self.model.activeEntries.remove(self.currentEntry)
-        self.view.removeEntry(self.currentEntry)
+        if self.isSearchActive:
+            self.view.removeSearch()
+            self.currentEntry = None
+        else:
+            self.model.activeEntries.remove(self.currentEntry)
+            self.view.removeEntry(self.currentEntry)
+            
         
-    def tabChangeAction(self, activeTabName):
+    def tabChangeAction(self, activeTabName, isSearchActive):
         '''Is called when tab focus changes'''
         
         # only do something when has a valid name
@@ -93,4 +99,5 @@ class Controller():
             for e in self.model.activeEntries:
                 if activeTabName == e.name:
                     self.currentEntry = e
-        
+                    
+        self.isSearchActive = isSearchActive

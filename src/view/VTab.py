@@ -21,7 +21,7 @@ class VTab(Notebook):
         Notebook.__init__(self, parent)
         self.log = log
         self.actions = actions
-        self.vsearch=VSearch(log=self.log, parent=self, actions=self.actions)
+        self.vsearch=None
         self.ventries = {}
         self.tabIds = {}
         self.vsearchDrawn = False
@@ -31,8 +31,9 @@ class VTab(Notebook):
     def setSearch(self, results):
         '''Adds the search view or updates it, if it already exists'''
         # if it is the first time a search is startet..
-        if not self.vsearchDrawn:
+        if self.vsearch == None:
             # ..then make search object and add it
+            self.vsearch = VSearch(log=self.log, parent=self, actions=self.actions)
             self.add(self.vsearch, text="Search")
             self.vsearchDrawn = True
         else:
@@ -66,6 +67,18 @@ class VTab(Notebook):
         del self.ventries[entry.name]
         self.log.add(self.log.Info, __file__, "removed " + entry.name + " tab" )
         
+    def removeSearch(self):
+        '''Removes the opened search if there is one'''
+        if not self.vsearchDrawn:
+            return
+        
+        tabId = self.getTabId(self.vsearch)
+        self.forget(tabId)
+        self.vsearch.destroy()
+        self.vsearch = None
+        self.vsearchDrawn = False
+        self.log.add(self.log.Info, __file__, "search removed" )
+        
     def getTabId(self, frame):
         '''Returns the tab id of the frame'''
         return self.children[frame._name]
@@ -92,9 +105,14 @@ class VTab(Notebook):
         '''Is called every time the active tab changes'''
         self.log.add(self.log.Info, __file__, "tab changed" )
         
-        nameOfActiveEntry = self.getEntryNameByTabId(self.select())
+        nameOfActiveTab = self.getEntryNameByTabId(self.select())
+        
+        if nameOfActiveTab == None:
+            isSearchActive = True
+        else:
+            isSearchActive = False
         
         if self.actions != None:
             if "tabChangeAction" in self.actions:
-                self.actions["tabChangeAction"](nameOfActiveEntry)
+                self.actions["tabChangeAction"](nameOfActiveTab, isSearchActive)
         
