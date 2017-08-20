@@ -19,7 +19,8 @@ class Controller():
                         "newAction" : self.newEntryAction,
                         "changeDescriptionAction" : self.entryDescriptionChangeAction,
                         "changeKeywordsAction" : self.entryKeywordChangeAction,
-                        "showEntryAction" : self.entryClickedInVSearch }
+                        "showEntryAction" : self.entryClickedInVSearch,
+                        "closedAction" : self.closeTabAction }
         if log != None:
             self.log = log
         else:
@@ -75,4 +76,10 @@ class Controller():
         
     def entryClickedInVSearch(self, entry):
         '''Shows the clicked entry'''
+        self.currentEntry = entry
         self.view.drawEntry(entry)
+        
+    def closeTabAction(self):
+        '''Closes the currently active tab'''
+        self.view.removeEntry(self.currentEntry)
+        

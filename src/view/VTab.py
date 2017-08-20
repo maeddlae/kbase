@@ -20,12 +20,12 @@ class VTab(Notebook):
         '''
         Notebook.__init__(self, parent)
         self.log = log
-        self.log.add(self.log.Info, __file__, "init" )
         self.actions = actions
         self.vsearch=VSearch(log=self.log, parent=self, actions=self.actions)
         self.ventries = {}
         self.tabIds = {}
         self.vsearchDrawn = False
+        self.log.add(self.log.Info, __file__, "init" )
         
     def setSearch(self, results):
         '''Adds the search view or updates it, if it already exists'''
@@ -40,6 +40,7 @@ class VTab(Notebook):
             
         self.vsearch.drawSearchResults(results)
         self.select(self.getTabId(self.vsearch))
+        self.log.add(self.log.Info, __file__, "draw search tab" )
         
     def addEntry(self, entry):
         '''Adds an entry as a tab'''
@@ -51,6 +52,7 @@ class VTab(Notebook):
         
         # select this new entry. Must be done by tabid
         self.select(self.getTabId(self.ventries[entry.name]))
+        self.log.add(self.log.Info, __file__, "add " + entry.name + " tab" )
         
     def removeEntry(self, entry):
         '''Removes an existing entry'''
@@ -61,8 +63,14 @@ class VTab(Notebook):
         self.forget(tabId)
         self.ventries[entry.name].destroy()
         del self.ventries[entry.name]
+        self.log.add(self.log.Info, __file__, "removed " + entry.name + " tab" )
         
     def getTabId(self, frame):
         '''Returns the tab id of the frame'''
         return self.children[frame._name]
+    
+    def hasTabs(self):
+        '''Returns true if there is at least one active tab'''
+        return self.tabs().__len__() != 0
+    
         

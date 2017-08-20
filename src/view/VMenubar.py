@@ -17,8 +17,8 @@ class VMenubar(Frame):
         '''
         Frame.__init__(self, root)
         self.log = log
-        self.log.add(self.log.Info, __file__, "init" )
         self.actions = actions
+        self.log.add(self.log.Info, __file__, "init" )
         
     def draw(self):
         '''Draws the menu bar at the top of the window'''
@@ -38,6 +38,26 @@ class VMenubar(Frame):
         self.buttonNew.grid(row=0, column=2, sticky=W)
         self.buttonNew["text"] = "new"
         self.buttonNew["command"] = self.buttonNewClicked
+        
+        self.buttonClose = Button(self)
+        self.buttonClose["state"] = DISABLED
+        self.buttonClose.grid(row=0, column=3, sticky=W)
+        self.buttonClose["text"] = "close"
+        self.buttonClose["command"] = self.buttonCloseClicked
+        
+        self.log.add(self.log.Info, __file__, "menu bar drawn" )
+        
+    def enableButtonClose(self):
+        '''Makes close button clickable'''
+        self.buttonClose["state"] = NORMAL
+        self.buttonClose.grid(row=0, column=3, sticky=W)
+        self.log.add(self.log.Info, __file__, "close button enabled")
+        
+    def disableButtonClose(self):
+        '''Makes close button no more clickable'''
+        self.buttonClose["state"] = DISABLED
+        self.buttonClose.grid(row=0, column=3, sticky=W)
+        self.log.add(self.log.Info, __file__, "close button disabled")
     
     def buttonGoClicked(self):
         t = self.entrySearchText.get()
@@ -60,4 +80,10 @@ class VMenubar(Frame):
         if self.actions != None:
             if "newAction" in self.actions:
                 self.actions["newAction"]()
+    
+    def buttonCloseClicked(self):
+        self.log.add(self.log.Info, __file__, "close clicked")
+        if self.actions != None:
+            if "closedAction" in self.actions:
+                self.actions["closedAction"]()
                 

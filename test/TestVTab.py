@@ -34,6 +34,12 @@ class TestVTab(unittest.TestCase):
 
     def tearDown(self):
         VEntry.drawEntry = self.entryDrawTemp
+        
+    def testHasTabs(self):
+        '''Tests whether hasTabs works correctly'''
+        self.assertFalse(self.vtab.hasTabs())        
+        self.vtab.setSearch(self.results)
+        self.assertTrue(self.vtab.hasTabs())
 
     def testSetSearchInitial(self):
         '''Tests whether initial search works'''        
