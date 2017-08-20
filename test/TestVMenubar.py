@@ -24,9 +24,11 @@ class TestVMenubar(unittest.TestCase):
         self.dummy = MagicMock()
         self.dummy2 = MagicMock()
         self.dummy3 = MagicMock()
+        self.dummy4 = MagicMock()
         
         self.actionlist = {"searchAction" : self.dummy,
                            "newAction" : self.dummy2,
+                           "deleteAction" : self.dummy4,
                            "closedAction" : self.dummy3}
         
         self.vmenubar = VMenubar(self.root, self.log, self.actionlist)
@@ -88,7 +90,29 @@ class TestVMenubar(unittest.TestCase):
         self.vmenubar.buttonClose.invoke()
         self.dummy3.assert_not_called()
         
-
+    def testButtonDelete(self):
+        '''Tests functionality and visibility of delete button'''
+        self.vmenubar.draw()
+        self.vmenubar.grid()
+        self.root.update()
+        
+        # button is disabled by default, so it should not be clickable
+        self.vmenubar.buttonDelete.focus_force()
+        self.vmenubar.buttonDelete.invoke()
+        self.dummy4.assert_not_called()
+        
+        # enable button and test again
+        self.vmenubar.enableButtonDelete()
+        self.root.update()
+        self.vmenubar.buttonDelete.invoke()
+        self.dummy4.assert_called_once()
+        
+        # disable button and test again
+        self.dummy4.reset_mock() # reset mock, because call of last time is stored
+        self.vmenubar.disableButtonDelete()
+        self.root.update()
+        self.vmenubar.buttonDelete.invoke()
+        self.dummy4.assert_not_called()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

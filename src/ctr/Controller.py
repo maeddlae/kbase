@@ -21,7 +21,8 @@ class Controller():
                         "changeKeywordsAction" : self.entryKeywordChangeAction,
                         "showEntryAction" : self.entryClickedInVSearch,
                         "closedAction" : self.closeTabAction,
-                        "tabChangeAction" : self.tabChangeAction}
+                        "tabChangeAction" : self.tabChangeAction,
+                        "deleteAction" : self.deleteEntryAction}
         if log != None:
             self.log = log
         else:
@@ -89,15 +90,21 @@ class Controller():
         else:
             self.model.activeEntries.remove(self.currentEntry)
             self.view.removeEntry(self.currentEntry)
-            
         
     def tabChangeAction(self, activeTabName, isSearchActive):
         '''Is called when tab focus changes'''
-        
         # only do something when has a valid name
         if activeTabName != None:
             for e in self.model.activeEntries:
                 if activeTabName == e.name:
                     self.currentEntry = e
+                    self.view.setDeleteButton(True)
                     
         self.isSearchActive = isSearchActive
+        if isSearchActive == True:
+            self.view.setDeleteButton(False)
+            
+    def deleteEntryAction(self):
+        '''Deletes the currently active entry'''
+        pass
+        

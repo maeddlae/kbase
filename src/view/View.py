@@ -37,6 +37,7 @@ class View():
         
     def drawEntry(self, entry):
         self.menubar.enableButtonClose()
+        self.menubar.enableButtonDelete()
         self.tabs.addEntry(entry)
         self.tabs.grid(sticky=W)
     
@@ -48,9 +49,17 @@ class View():
     def removeEntry(self, entry):
         self.tabs.removeEntry(entry)
         if not self.tabs.hasTabs():
-            self.menubar.disableButtonClose()        
+            self.menubar.disableButtonClose()    
+            self.menubar.disableButtonDelete()    
 
     def removeSearch(self):
         self.tabs.removeSearch()
         if not self.tabs.hasTabs():
-            self.menubar.disableButtonClose()     
+            self.menubar.disableButtonClose()
+            
+    def setDeleteButton(self, on):
+        '''Sets the state of the delete button. On = True = clickable'''
+        if on == True:
+            self.menubar.enableButtonDelete()
+        else:
+            self.menubar.disableButtonDelete()

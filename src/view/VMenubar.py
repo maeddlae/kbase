@@ -45,6 +45,12 @@ class VMenubar(Frame):
         self.buttonClose["text"] = "close"
         self.buttonClose["command"] = self.buttonCloseClicked
         
+        self.buttonDelete = Button(self)
+        self.buttonDelete["state"] = DISABLED
+        self.buttonDelete.grid(row=0, column=4, sticky=W)
+        self.buttonDelete["text"] = "delete"
+        self.buttonDelete["command"] = self.buttonDeleteClicked
+        
         self.log.add(self.log.Info, __file__, "menu bar drawn" )
         
     def enableButtonClose(self):
@@ -58,6 +64,18 @@ class VMenubar(Frame):
         self.buttonClose["state"] = DISABLED
         self.buttonClose.grid(row=0, column=3, sticky=W)
         self.log.add(self.log.Info, __file__, "close button disabled")
+    
+    def enableButtonDelete(self):
+        '''Makes delete button clickable'''
+        self.buttonDelete["state"] = NORMAL
+        self.buttonDelete.grid(row=0, column=3, sticky=W)
+        self.log.add(self.log.Info, __file__, "delete button enabled")
+        
+    def disableButtonDelete(self):
+        '''Makes delete button no more clickable'''
+        self.buttonDelete["state"] = DISABLED
+        self.buttonDelete.grid(row=0, column=3, sticky=W)
+        self.log.add(self.log.Info, __file__, "delete button disabled")
     
     def buttonGoClicked(self):
         t = self.entrySearchText.get()
@@ -86,4 +104,10 @@ class VMenubar(Frame):
         if self.actions != None:
             if "closedAction" in self.actions:
                 self.actions["closedAction"]()
+    
+    def buttonDeleteClicked(self):
+        self.log.add(self.log.Info, __file__, "delete clicked")
+        if self.actions != None:
+            if "deleteAction" in self.actions:
+                self.actions["deleteAction"]()
                 

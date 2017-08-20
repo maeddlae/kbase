@@ -27,6 +27,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.drawSearch = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
         self.ctr.view.removeSearch = MagicMock()
+        self.ctr.view.setDeleteButton = MagicMock()
         self.ctr.model.updateNameOfEntry = MagicMock()
         self.ctr.model.updateContentOfEntry= MagicMock()
         self.ctr.model.addEntry = MagicMock()
@@ -137,10 +138,12 @@ class TestController(unittest.TestCase):
         self.ctr.tabChangeAction(e2.name, False)
         self.assertEqual(e2, self.ctr.currentEntry)
         self.assertFalse(self.ctr.isSearchActive)
+        self.ctr.view.setDeleteButton.assert_called_with(True)
         
         self.ctr.tabChangeAction(None, True)
         self.assertEqual(e2, self.ctr.currentEntry)
         self.assertTrue(self.ctr.isSearchActive)
+        self.ctr.view.setDeleteButton.assert_called_with(False)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']
