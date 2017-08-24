@@ -8,14 +8,17 @@ from model.ModelEntry import ModelEntry
 from ctr.Log import Log
 import unittest
 from mock import MagicMock
+import os
 
 
 class TestModel(unittest.TestCase):
+    dbPath = "ModelTestDatabase.db"
+    newDbPath = "newDatabase.db"
 
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
-        self.model = Model(self.log, "ModelTestDatabase.db")
+        self.model = Model(self.log, self.dbPath)
         
         self.fruits = ModelEntry(self.log, "fruits")
         self.fruits.keywords.append("apple")
@@ -30,10 +33,21 @@ class TestModel(unittest.TestCase):
         
         self.model.db.addEntry(self.fruits)
         self.model.db.addEntry(self.legumes)
-        pass
 
     def tearDown(self):
-        pass
+        if os.path.exists(self.dbPath):
+            os.remove(self.dbPath)
+        if os.path.exists(self.newDbPath):
+            os.remove(self.newDbPath)
+
+    def testSetDatabase(self):
+        '''Tests whether database can be changed'''
+        e1 = ModelEntry(self.log, "e1" )
+        self.model.setDatabase(self.newDbPath)
+        self.model.addEntry(e1)
+        
+        self.assertFalse(self.model.hasEntry(self.fruits))
+        self.assertTrue(self.model.hasEntry(e1))
 
     def testGetEntryByKeyword(self):
         exp = self.fruits

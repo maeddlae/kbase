@@ -19,6 +19,10 @@ class Model():
         self.log.add(self.log.Info, __file__, "init" )
         self.activeEntries = []
         
+    def setDatabase(self, path):
+        '''Changes the active database'''
+        self.db = Database(self.log, path)
+    
     def getEntries(self, word):        
         '''Searches entries in the db by name, keyword or description in sequence. 
         Returns all matches in a dict, with keys = name, keyword and description. 
@@ -50,7 +54,7 @@ class Model():
         self.db.addEntry(entry)
         
     def hasEntry(self, entry):
-        self.db.hasEntry(entry)
+        return self.db.hasEntry(entry)
         
     def removeEntry(self, entry):
         self.db.removeEntry(entry)

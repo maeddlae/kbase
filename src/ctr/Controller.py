@@ -10,9 +10,8 @@ from view.View import View
 
 
 class Controller():
-    dbPath = "D:\Mathias Bucher\Documents\others\Basteln\Python\keepit\data\data.db"
-
-    def __init__(self, log):
+    
+    def __init__(self, log, db):
         '''Constructor'''
         self.actions = {"searchAction" : self.searchAction,
                         "changeNameAction" : self.entryNameChangeAction,
@@ -27,8 +26,9 @@ class Controller():
             self.log = log
         else:
             self.log = Log("log.txt")
+        
         self.view = View(self.log, self.actions)
-        self.model = Model(self.log, self.dbPath)
+        self.model = Model(self.log, db)
         self.isSearchActive = False
         
         self.log.add(self.log.Info, __file__, "init" )

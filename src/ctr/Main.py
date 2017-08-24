@@ -4,20 +4,7 @@ Created on 14 Aug 2017
 @author: Mathias Bucher
 '''
 
-from ctr.Controller import Controller
-
-class Main(object):
-    '''
-    classdocs
-    '''
-
-
-    def __init__(self):
-        '''
-        Constructor
-        '''
-        self.ctr = Controller( None )
+from ctr.Controller import Controller        
         
-        
-app = Main()
-app.ctr.run()
+app = Controller(None, "../../data/data.db")
+app.run()

@@ -10,15 +10,16 @@ from ctr.Log import Log
 from model.Model import Model
 from view.View import View
 from model.ModelEntry import ModelEntry
+import os
 
 
 class TestController(unittest.TestCase):
-
+    dbPath = "testdb.db"
 
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
-        self.ctr = Controller( self.log )
+        self.ctr = Controller( self.log, self.dbPath )
         self.ctr.currentEntry = ModelEntry(self.log, "furniture")
         self.ctr.currentEntry.description = "This is the description of furniture"
         self.ctr.currentEntry.keywords.append("chair")
@@ -37,7 +38,8 @@ class TestController(unittest.TestCase):
         self.ctr.model.removeEntry = MagicMock()
 
     def tearDown(self):
-        pass
+        if os.path.exists(self.dbPath):
+            os.remove(self.dbPath)
 
     def testEntryNameChangeAction(self):
         '''Checks if the right method of model is called'''
