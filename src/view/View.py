@@ -68,3 +68,6 @@ class View():
             self.menubar.enableButtonDelete()
         else:
             self.menubar.disableButtonDelete()
+            
+    def changeDbPath(self, newPath):
+        self.dbPath.changePath(newPath)

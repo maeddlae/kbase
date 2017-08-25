@@ -36,18 +36,29 @@ class TestController(unittest.TestCase):
         self.ctr.view.removeSearch = MagicMock()
         self.ctr.view.setDeleteButton = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
+        self.ctr.view.changeDbPath = MagicMock()
         self.ctr.model.updateNameOfEntry = MagicMock()
         self.ctr.model.updateContentOfEntry= MagicMock()
         self.ctr.model.addEntry = MagicMock()
         self.ctr.model.hasEntry= MagicMock()
         self.ctr.model.getEntries = MagicMock()
         self.ctr.model.removeEntry = MagicMock()
+        self.ctr.config.setValue = MagicMock()
 
     def tearDown(self):
         if os.path.exists(self.dbPath):
             os.remove(self.dbPath)
         if os.path.exists(self.configPath):
             os.remove(self.configPath)
+            
+    def testChangePathAction(self):
+        '''Tests only if right method are called'''
+        exp = "asdfasd"
+        self.ctr.changePathAction(exp)
+        self.assertEqual(exp, self.ctr.dbPath)
+        self.ctr.config.setValue.assert_called_with(self.ctr.configDataBase, exp)
+        self.assertEqual(exp, self.ctr.model.db.path)
+        self.ctr.view.changeDbPath.assert_called_with(exp)
             
     def testIfGivesRightDbPAth(self):
         '''Tests whether controller gives right db path 

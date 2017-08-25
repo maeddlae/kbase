@@ -1,1 +1,5 @@
-databasepath = ../../data/data.db
+databasepath = ../../data/dsdfa.db
+../../data/second.db = ../../data/second.db
+../../data/sdfdb = ../../data/sdfdb
+../../data/sdf.db = ../../data/sdf.db
+../../data/dfdasdb.db = ../../data/dfdasdb.db

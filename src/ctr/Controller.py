@@ -11,6 +11,7 @@ from model.ConfigFile import ConfigFile
 
 
 class Controller():
+    configDataBase = "databasepath"
     
     def __init__(self, log, config):
         '''Constructor'''
@@ -22,14 +23,15 @@ class Controller():
                         "showEntryAction" : self.entryClickedInVSearch,
                         "closedAction" : self.closeTabAction,
                         "tabChangeAction" : self.tabChangeAction,
-                        "deleteAction" : self.deleteEntryAction}
+                        "deleteAction" : self.deleteEntryAction,
+                        "pathChangeAction" : self.changePathAction}
         if log != None:
             self.log = log
         else:
             self.log = Log("log.txt")
         
         self.config = ConfigFile( self.log, config )
-        self.dbPath = self.config.getValue("databasepath")
+        self.dbPath = self.config.getValue(self.configDataBase)
         self.view = View(self.log, self.dbPath, self.actions)
         self.model = Model(self.log, self.dbPath)
         self.isSearchActive = False
@@ -111,4 +113,11 @@ class Controller():
         '''Deletes the currently active entry'''
         self.model.removeEntry(self.currentEntry)
         self.view.removeEntry(self.currentEntry)
+        
+    def changePathAction(self, newPath):
+        '''Changes the database path'''
+        self.dbPath = newPath
+        self.config.setValue(self.configDataBase, self.dbPath)
+        self.model = Model(self.log, self.dbPath)
+        self.view.changeDbPath(self.dbPath)
         
