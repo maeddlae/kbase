@@ -11,11 +11,11 @@ class VMenubar(Frame):
     '''
 
 
-    def __init__(self, root, log, actions):
+    def __init__(self, parent, log, actions):
         '''
         Constructor
         '''
-        Frame.__init__(self, root)
+        Frame.__init__(self, parent)
         self.log = log
         self.actions = actions
         self.log.add(self.log.Info, __file__, "init" )
@@ -84,7 +84,7 @@ class VMenubar(Frame):
             if "searchAction" in self.actions:
                 self.actions["searchAction"](t)
     
-    def returnPressedAtSearch(self, event):
+    def returnPressedAtSearch(self, _event):
         '''Is called when user hits Return key while writing in search field'''
         t = self.entrySearchText.get()
         self.log.add(self.log.Info, __file__, "return search: " + t)

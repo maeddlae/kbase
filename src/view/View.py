@@ -7,6 +7,7 @@ Created on 24 Jul 2017
 from Tkinter import *
 from VMenubar import VMenubar
 from VTab import VTab
+from VDbPath import VDbPath
 
 class View():
     '''
@@ -14,7 +15,7 @@ class View():
     '''
 
 
-    def __init__(self, log, actions):
+    def __init__(self, log, dbPath, actions):
         '''Constructor: Creates the window'''
         self.log = log
         self.actions = actions
@@ -22,6 +23,10 @@ class View():
         self.root = Tk()
         self.root.title("kbase")
         self.root.geometry("400x500")
+        
+        self.dbPath = VDbPath(self.root, self.log, self.actions)
+        self.dbPath.draw(dbPath)
+        self.dbPath.grid(sticky=W)
         
         self.menubar = VMenubar(self.root, self.log, self.actions)
         self.menubar.draw()

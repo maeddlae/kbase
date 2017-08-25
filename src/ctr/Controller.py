@@ -28,10 +28,10 @@ class Controller():
         else:
             self.log = Log("log.txt")
         
-        self.view = View(self.log, self.actions)
         self.config = ConfigFile( self.log, config )
-        self.db = self.config.getValue("databasepath")
-        self.model = Model(self.log, self.db)
+        self.dbPath = self.config.getValue("databasepath")
+        self.view = View(self.log, self.dbPath, self.actions)
+        self.model = Model(self.log, self.dbPath)
         self.isSearchActive = False
         
         self.log.add(self.log.Info, __file__, "init" )
