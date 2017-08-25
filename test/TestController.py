@@ -16,6 +16,7 @@ import os
 class TestController(unittest.TestCase):
     dbPath = "testdb.db"
     configPath = "config.txt"
+    changePath = "adsfasd.txt"
 
     def setUp(self):
         self.log = Log("testlog.txt")
@@ -50,10 +51,12 @@ class TestController(unittest.TestCase):
             os.remove(self.dbPath)
         if os.path.exists(self.configPath):
             os.remove(self.configPath)
+        if os.path.exists(self.changePath):
+            os.remove(self.changePath)
             
     def testChangePathAction(self):
         '''Tests only if right method are called'''
-        exp = "asdfasd"
+        exp = self.changePath
         self.ctr.changePathAction(exp)
         self.assertEqual(exp, self.ctr.dbPath)
         self.ctr.config.setValue.assert_called_with(self.ctr.configDataBase, exp)
