@@ -15,11 +15,17 @@ import os
 
 class TestController(unittest.TestCase):
     dbPath = "testdb.db"
+    configPath = "config.txt"
 
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
-        self.ctr = Controller( self.log, self.dbPath )
+        
+        f = open(self.configPath, "w+")
+        f.write("databasepath = " + self.dbPath + "\n")
+        f.close()
+        
+        self.ctr = Controller( self.log, self.configPath )
         self.ctr.currentEntry = ModelEntry(self.log, "furniture")
         self.ctr.currentEntry.description = "This is the description of furniture"
         self.ctr.currentEntry.keywords.append("chair")
@@ -40,6 +46,13 @@ class TestController(unittest.TestCase):
     def tearDown(self):
         if os.path.exists(self.dbPath):
             os.remove(self.dbPath)
+        if os.path.exists(self.configPath):
+            os.remove(self.configPath)
+            
+    def testIfGivesRightDbPAth(self):
+        '''Tests whether controller gives right db path 
+        to model'''
+        self.assertEqual(self.dbPath, self.ctr.model.db.path)
 
     def testEntryNameChangeAction(self):
         '''Checks if the right method of model is called'''

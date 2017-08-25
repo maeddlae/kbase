@@ -7,11 +7,12 @@ from ctr.Log import Log
 from model.Model import Model
 from model.ModelEntry import ModelEntry
 from view.View import View
+from model.ConfigFile import ConfigFile
 
 
 class Controller():
     
-    def __init__(self, log, db):
+    def __init__(self, log, config):
         '''Constructor'''
         self.actions = {"searchAction" : self.searchAction,
                         "changeNameAction" : self.entryNameChangeAction,
@@ -28,7 +29,9 @@ class Controller():
             self.log = Log("log.txt")
         
         self.view = View(self.log, self.actions)
-        self.model = Model(self.log, db)
+        self.config = ConfigFile( self.log, config )
+        self.db = self.config.getValue("databasepath")
+        self.model = Model(self.log, self.db)
         self.isSearchActive = False
         
         self.log.add(self.log.Info, __file__, "init" )

@@ -6,5 +6,5 @@ Created on 14 Aug 2017
 
 from ctr.Controller import Controller        
         
-app = Controller(None, "../../data/data.db")
+app = Controller(None, "../../data/config.txt")
 app.run()
