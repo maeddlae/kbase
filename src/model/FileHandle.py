@@ -25,12 +25,12 @@ class FileHandle(object):
         '''Converts the files list into a bytestream, 
         which can be stored in a database. The stream 
         separates the files by sync word'''
-        pass
+        return self.insertSyncWords(files)
     
     def getFilesFromStrean(self, stream):
         '''Converts the stream into files. The files 
         must be separated by sync words'''
-        pass
+        return self.removeSyncWords(stream)
         
     def insertSyncWords(self, bytestreams):
         '''Returns a single bytestream which contains 

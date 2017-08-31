@@ -10,7 +10,8 @@ from model.FileHandle import FileHandle
 
 
 class TestFileHandle(unittest.TestCase):
-
+    testImagePath = "testimage.jpg"
+    testWordPath = "testword.docx"
 
     def setUp(self):
         self.log = Log("testlog.txt")
@@ -31,6 +32,14 @@ class TestFileHandle(unittest.TestCase):
                          0xAA, 0xBB, 0xAA,
                          0x34, 0xAA, 0xBB, 0xBB, 0x56,
                          0xAA, 0xBB, 0xAA])
+        
+        f = open(self.testImagePath, "r")
+        self.testImageStream = f.read()
+        f.close()
+        
+        f = open(self.testWordPath, "r")
+        self.testWordStream = f.read()
+        f.close()
 
 
     def tearDown(self):
@@ -45,6 +54,24 @@ class TestFileHandle(unittest.TestCase):
     def testRemoveSyncWords(self):
         exp = self.x
         act = self.filehandle.removeSyncWords(self.y)
+        self.assertEqual(exp.__len__(), act.__len__())
+        for e, a in zip(exp,act):
+            self.assertEqual(e.__len__(), a.__len__())
+            self.assertSequenceEqual(e, a)
+            
+    def testSingleFile(self):
+        exp = self.testImageStream
+        
+        stream = self.filehandle.getStreamFromFiles(exp)
+        act = self.filehandle.getFilesFromStrean(stream)
+        self.assertEqual(exp.__len__(), act.__len__())
+        self.assertSequenceEqual(exp, act)
+            
+    def testMultipleFiles(self):
+        exp = [self.testImageStream, self.testWordStream]
+        
+        stream = self.filehandle.getStreamFromFiles(exp)
+        act = self.filehandle.getFilesFromStrean(stream)
         self.assertEqual(exp.__len__(), act.__len__())
         for e, a in zip(exp,act):
             self.assertEqual(e.__len__(), a.__len__())
