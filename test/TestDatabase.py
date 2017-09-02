@@ -10,11 +10,14 @@ import sqlite3
 import os
 from model.Database import Database
 from model.ModelEntry import ModelEntry
+from model.FileHandle import FileHandle
 
 
 class TestDatabase(unittest.TestCase):
     dbPath = "testdb.db"
-    notExistingDbPath = "notexistingdb.dh"
+    notExistingDbPath = "notexistingdb.db"
+    testImagePath = "testimage.jpg"
+    testWordPath = "testword.docx"
 
     def setUp(self):
         self.log = Log("testlog.txt")
@@ -25,10 +28,26 @@ class TestDatabase(unittest.TestCase):
             os.remove(self.dbPath)
             
         # create test entries
+        
+        if not os.path.exists(self.testImagePath):
+            self.testImagePath = "../../test/" + self.testImagePath
+            self.testWordPath = "../../test/" + self.testWordPath
+            
+        self.filehandle = FileHandle(self.log)
+        f = open(self.testImagePath, "rb")
+        self.testImageStream = f.read()
+        f.close()
+        
+        f = open(self.testWordPath, "rb")
+        self.testWordStream = f.read()
+        f.close()
+        
         self.e = []
         self.e.append(ModelEntry(self.log,"buildings"))
         self.e[0].description = "This is a building"
         self.e[0].keywords = ["Louvre"]
+        self.e[0].images.append(self.testImageStream)
+        self.e[0].files.append(self.testWordStream)
         self.e.append(ModelEntry(self.log,"planes"))
         self.e[1].description = "These are planes"
         self.e[1].keywords = ["F16", "F35"]
@@ -48,16 +67,21 @@ class TestDatabase(unittest.TestCase):
         # create test database
         testdb = sqlite3.connect(self.dbPath)
         c = testdb.cursor()
-        c.execute("CREATE TABLE entries (name text, description text, keywords text)")
+        c.execute("CREATE TABLE entries (name text, description text, keywords text, images blob, files blob)")
         for entry in self.e:
             s = entry.getStringFromKeywords(entry.keywords)
-            c.execute("INSERT INTO entries VALUES (?, ?, ?)", (entry.name, entry.description, s))
+            
+            ima = self.filehandle.getStreamFromFiles(entry.images)
+            img = buffer(ima)
+            fil = buffer(self.filehandle.getStreamFromFiles(entry.files))
+            c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, img, fil))
         
         testdb.commit()
         testdb.close()
         
         # create db object to be tested
         self.db = Database(self.log, self.dbPath)
+        
 
     def tearDown(self):
         # kill Database object. This must be done to close the connection to the db
@@ -92,6 +116,8 @@ class TestDatabase(unittest.TestCase):
         n.description = "These are bikes"
         n.keywords.append("Yamaha")
         n.keywords.append("Kawasaki")
+        n.images.append(self.filehandle.getStreamFromFiles(self.testImageStream))
+        n.files.append(self.filehandle.getStreamFromFiles(self.testWordStream))
         
         self.db.addEntry(n)
         
@@ -116,6 +142,13 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
             self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.images)
+            ai = self.filehandle.getStreamFromFiles(a.images)
+            self.assertSequenceEqual(ei, ai)
+            ei = self.filehandle.getStreamFromFiles(e.files)
+            ai = self.filehandle.getStreamFromFiles(a.files)
+            self.assertSequenceEqual(ei, ai)
+            
 
     def testGetEntriesByNameNegative(self):
         '''Tests if entry does not exist'''        
@@ -133,6 +166,12 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
             self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.images)
+            ai = self.filehandle.getStreamFromFiles(a.images)
+            self.assertSequenceEqual(ei, ai)
+            ei = self.filehandle.getStreamFromFiles(e.files)
+            ai = self.filehandle.getStreamFromFiles(a.files)
+            self.assertSequenceEqual(ei, ai)
 
     def testGetEntriesByKeywordNegative(self):
         '''Tests if an not existing entry will not be found'''        
@@ -150,6 +189,12 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
             self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.images)
+            ai = self.filehandle.getStreamFromFiles(a.images)
+            self.assertSequenceEqual(ei, ai)
+            ei = self.filehandle.getStreamFromFiles(e.files)
+            ai = self.filehandle.getStreamFromFiles(a.files)
+            self.assertSequenceEqual(ei, ai)
 
     def testGetEntriesByDescriptionNegative(self):
         '''Tests if an not existing entry will not be found'''        
@@ -209,6 +254,12 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
             self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.images)
+            ai = self.filehandle.getStreamFromFiles(a.images)
+            self.assertSequenceEqual(ei, ai)
+            ei = self.filehandle.getStreamFromFiles(e.files)
+            ai = self.filehandle.getStreamFromFiles(a.files)
+            self.assertSequenceEqual(ei, ai)
             
     def testGetEntriesByDescriptionMulti(self):
         '''Tests if multiple entries can be found by description'''
@@ -222,6 +273,12 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
             self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.images)
+            ai = self.filehandle.getStreamFromFiles(a.images)
+            self.assertSequenceEqual(ei, ai)
+            ei = self.filehandle.getStreamFromFiles(e.files)
+            ai = self.filehandle.getStreamFromFiles(a.files)
+            self.assertSequenceEqual(ei, ai)
     
     def testGetEntriesByKeywordMulti(self):
         '''Tests if multiple entries can be found by keyword'''
@@ -235,6 +292,12 @@ class TestDatabase(unittest.TestCase):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
             self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.images)
+            ai = self.filehandle.getStreamFromFiles(a.images)
+            self.assertSequenceEqual(ei, ai)
+            ei = self.filehandle.getStreamFromFiles(e.files)
+            ai = self.filehandle.getStreamFromFiles(a.files)
+            self.assertSequenceEqual(ei, ai)
     
     def getAllRows(self, db):
         '''Returns all entries of the database'''
@@ -251,11 +314,29 @@ class TestDatabase(unittest.TestCase):
         hasRow = False
         
         keywords = entry.getStringFromKeywords(entry.keywords)
+        images = self.filehandle.getStreamFromFiles(entry.images)
+        files = self.filehandle.getStreamFromFiles(entry.files)
         
         for row in rows:
+            nameDescKeywordOk = False
+            imagesOk = False
+            filesOk = False
             if (row["name"] == entry.name and 
                 row["description"] == entry.description and
                 row["keywords"] == keywords):
+                nameDescKeywordOk = True
+            br = bytearray(row["images"])
+            
+            if images == br:
+                imagesOk = True
+            
+            br = bytearray(row["files"])
+            if files == br:
+                filesOk = True
+                
+            if (nameDescKeywordOk == True and
+                imagesOk == True and
+                filesOk == True):
                 hasRow = True
             
         return hasRow   

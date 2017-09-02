@@ -6,6 +6,7 @@ Created on 9 Aug 2017
 import sqlite3
 import os
 from model.ModelEntry import ModelEntry
+from model.FileHandle import FileHandle
 
 class Database(object):
     '''
@@ -23,10 +24,11 @@ class Database(object):
         # create empty database if not already exists
         if not os.path.exists(self.path):
             db = sqlite3.connect(self.path)
-            db.execute("CREATE TABLE entries(name TEXT, description TEXT, keywords TEXT)")
+            db.execute("CREATE TABLE entries(name TEXT, description TEXT, keywords TEXT, images BLOB, files BLOB)")
             db.commit()
             db.close()
         
+        self.fileHandle = FileHandle(self.log)
         self.log.add(self.log.Info, __file__, "init with: " + self.path )
         
     def hasEntry(self, entry):
@@ -58,7 +60,9 @@ class Database(object):
             db = sqlite3.connect(self.path)
             c = db.cursor()
             s = entry.getStringFromKeywords(entry.keywords)
-            c.execute("INSERT INTO entries VALUES (?, ?, ?)", (entry.name, entry.description, s))
+            p = buffer(self.fileHandle.getStreamFromFiles(entry.images))
+            f = buffer(self.fileHandle.getStreamFromFiles(entry.files))
+            c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, p, f))
             db.commit()
             db.close()
             
@@ -77,7 +81,9 @@ class Database(object):
             db = sqlite3.connect(self.path)
             c = db.cursor()
             s = e.getStringFromKeywords(e.keywords)
-            c.execute('''UPDATE entries SET description=?, keywords=? WHERE name=?''', [e.description, s, e.name])
+            img = buffer(self.fileHandle.getStreamFromFiles(e.images))
+            fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
+            c.execute('''UPDATE entries SET description=?, keywords=?, images=?, files=? WHERE name=?''', [e.description, s, img, fil, e.name])
             db.commit()
             db.close()
             
@@ -99,7 +105,9 @@ class Database(object):
             c.execute("DELETE FROM entries WHERE name=?", [e.name])
             e.name = newName
             s = e.getStringFromKeywords(e.keywords)
-            c.execute("INSERT INTO entries VALUES (?, ?, ?)", [e.name, e.description, s])
+            img = buffer(self.fileHandle.getStreamFromFiles(e.images))
+            fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
+            c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", [e.name, e.description, s, img, fil])
             db.commit()
             db.close()
             
@@ -189,7 +197,8 @@ class Database(object):
         e.description = s
         s = data["keywords"].encode("ascii")
         e.keywords = e.getKeywordsFromString(s)   
-        
+        e.images = self.fileHandle.getFilesFromStrean(bytearray(data["images"]))
+        e.files = self.fileHandle.getFilesFromStrean(bytearray(data["files"]))
         return e
     
     def removeEntry(self, entry):

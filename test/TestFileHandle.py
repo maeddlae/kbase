@@ -7,6 +7,7 @@ import unittest
 from mock import MagicMock
 from ctr.Log import Log
 from model.FileHandle import FileHandle
+import os
 
 
 class TestFileHandle(unittest.TestCase):
@@ -32,6 +33,10 @@ class TestFileHandle(unittest.TestCase):
                          0xAA, 0xBB, 0xAA,
                          0x34, 0xAA, 0xBB, 0xBB, 0x56,
                          0xAA, 0xBB, 0xAA])
+        
+        if not os.path.exists(self.testImagePath):
+            self.testImagePath = "../../test/" + self.testImagePath
+            self.testWordPath = "../../test/" + self.testWordPath
         
         f = open(self.testImagePath, "r")
         self.testImageStream = f.read()
