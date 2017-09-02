@@ -4,6 +4,9 @@ Created on 12 Aug 2017
 @author: Mathias Bucher
 '''
 from Tkinter import *
+from PIL import Image, ImageTk
+import base64
+import io
 
 class VEntry(Frame):
     '''
@@ -47,6 +50,22 @@ class VEntry(Frame):
             keyScrollbar = Scrollbar(self, command=self.keywords.yview)
             keyScrollbar.grid(row=2, column=1, sticky=W)
             self.keywords['yscrollcommand'] = keyScrollbar.set
+            
+            self.images = Frame(self)
+            for i, img in enumerate(entry.images):
+                tmp = io.BytesIO(img)
+                tmp = Image.open(tmp)
+                tmp = ImageTk.PhotoImage(tmp)
+                imgLabel = Label(self.images, image=tmp)
+                imgLabel.grid(row=3, column=i, sticky=W)
+            self.images.grid(sticky=W)
+            
+            self.files = Frame(self)
+            for i, fil in enumerate(entry.files):
+                lbl = Label(self.files)
+                lbl["text"] = "file"
+                lbl.grid(row=4, column=i, sticky=W)
+            self.files.grid(sticky=W)
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
 

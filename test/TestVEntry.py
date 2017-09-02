@@ -9,9 +9,12 @@ from view.VEntry import VEntry
 from ctr.Log import Log
 from mock import MagicMock
 from model.ModelEntry import ModelEntry
+import os
 
 
 class TestVEntry(unittest.TestCase):
+    testImagePath = "testimage.jpg"
+    testWordPath = "testword.docx"
 
 
     def setUp(self):
@@ -32,11 +35,26 @@ class TestVEntry(unittest.TestCase):
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
+        
+        if not os.path.exists(self.testImagePath):
+            self.testImagePath = "../../test/" + self.testImagePath
+            self.testWordPath = "../../test/" + self.testWordPath
+        
+        f = open(self.testImagePath, "rb")
+        self.testImageStream = f.read()
+        f.close()
+        
+        f = open(self.testWordPath, "rb")
+        self.testWordStream = f.read()
+        f.close()
         self.entry = ModelEntry(self.log, "animals")
         self.entry.description = "these are animals"
         self.entry.keywords.append("deer")
         self.entry.keywords.append("bear")
-
+        self.entry.images.append(self.testImageStream)
+        self.entry.files.append(self.testWordStream)
+        self.entry.files.append(self.testImageStream)
+        
     def tearDown(self):
         pass
     
@@ -63,6 +81,9 @@ class TestVEntry(unittest.TestCase):
         
         exp = "deer bear"
         act = self.ventry.keywords.get("1.0", 'end-1c')
+        
+        self.assertEqual(1, self.ventry.images.children.__len__())
+        self.assertEqual(2, self.ventry.files.children.__len__())
         
     def testReturnPressedAtName(self):
         '''Tests whether the right method is called at Return keypress on name'''
