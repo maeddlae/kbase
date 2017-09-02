@@ -38,11 +38,11 @@ class TestFileHandle(unittest.TestCase):
             self.testImagePath = "../../test/" + self.testImagePath
             self.testWordPath = "../../test/" + self.testWordPath
         
-        f = open(self.testImagePath, "r")
+        f = open(self.testImagePath, "rb")
         self.testImageStream = f.read()
         f.close()
         
-        f = open(self.testWordPath, "r")
+        f = open(self.testWordPath, "rb")
         self.testWordStream = f.read()
         f.close()
 
