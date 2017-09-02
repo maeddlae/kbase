@@ -52,12 +52,15 @@ class VEntry(Frame):
             self.keywords['yscrollcommand'] = keyScrollbar.set
             
             self.images = Frame(self)
+            self.newImageButton = Button(self.images, command=self.buttonNewImageClicked)
+            self.newImageButton["text"] = "new"
+            self.newImageButton.grid(row=3, column=1, sticky=W)
             for i, img in enumerate(entry.images):
                 tmp = io.BytesIO(img)
                 tmp = Image.open(tmp)
                 tmp = ImageTk.PhotoImage(tmp)
                 imgLabel = Label(self.images, image=tmp)
-                imgLabel.grid(row=3, column=i, sticky=W)
+                imgLabel.grid(row=3, column=i+1, sticky=W)
             self.images.grid(sticky=W)
             
             self.files = Frame(self)
@@ -99,3 +102,11 @@ class VEntry(Frame):
         if self.actions != None:
             if "changeKeywordsAction" in self.actions:
                 self.actions["changeKeywordsAction"](t)
+
+    def buttonNewImageClicked(self):
+        '''Is called when user clicks new beside images'''
+        self.log.add(self.log.Info, __file__, "new image clicked" )
+                
+        if self.actions != None:
+            if "newImageAction" in self.actions:
+                self.actions["newImageAction"]()

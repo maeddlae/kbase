@@ -28,10 +28,12 @@ class TestVEntry(unittest.TestCase):
         self.dummy1 = MagicMock()
         self.dummy2 = MagicMock()
         self.dummy3 = MagicMock()
+        self.dummy4 = MagicMock()
         
         self.actionlist = {"changeNameAction" : self.dummy1,
                   "changeDescriptionAction" : self.dummy2,
-                  "changeKeywordsAction" : self.dummy3}
+                  "changeKeywordsAction" : self.dummy3,
+                  "newImageAction" : self.dummy4}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
@@ -81,10 +83,15 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.description.get("1.0", 'end-1c')
         self.assertEqual(exp, act)
         
-        exp = "deer bear"
+        exp = "deer, bear"
         act = self.ventry.keywords.get("1.0", 'end-1c')
+        self.assertEqual(exp, act)
         
-        self.assertEqual(1, self.ventry.images.children.__len__())
+        exp = "new"
+        act = self.ventry.newImageButton["text"]
+        self.assertEqual(exp, act)
+        self.assertEqual(2, self.ventry.images.children.__len__())
+        
         self.assertEqual(2, self.ventry.files.children.__len__())
         
     def testReturnPressedAtName(self):
@@ -119,6 +126,14 @@ class TestVEntry(unittest.TestCase):
         self.ventry.keywords.focus_force()
         self.ventry.keywords.event_generate("<Return>")
         self.dummy3.assert_called_with("keyword")
+        
+    def testButtonNewImageClicked(self):
+        '''Tests whether the right method is called'''
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.newImageButton.invoke()
+        self.dummy4.assert_called_once()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
