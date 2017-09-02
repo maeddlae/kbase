@@ -43,6 +43,9 @@ class TestVTab(unittest.TestCase):
         VEntry.drawEntry = self.entryDrawTemp
         VSearch.removeOldResults = self.vsearchremovetemp
         VSearch.drawSearchResults = self.vsearchdrawtemp
+        self.vtab.grid()
+        self.root.update()
+        self.root.destroy()
         
     def testGetEntryNameByTabId(self):
         '''Tests if name is returned correctly'''      

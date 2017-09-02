@@ -20,7 +20,7 @@ class TestVEntry(unittest.TestCase):
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
-        
+            
         self.root = Tk()
         self.root.title("kbase test")
         self.root.geometry("400x500")
@@ -56,7 +56,9 @@ class TestVEntry(unittest.TestCase):
         self.entry.files.append(self.testImageStream)
         
     def tearDown(self):
-        pass
+        self.ventry.grid()
+        self.root.update()
+        self.root.destroy()
     
     def testGetName(self):
         '''Tests whether method returns right name'''

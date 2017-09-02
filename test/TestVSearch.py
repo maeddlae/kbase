@@ -38,7 +38,9 @@ class TestVSearch(unittest.TestCase):
                         "description" : [self.e3, self.e4]}
 
     def tearDown(self):
-        pass
+        self.vsearch.grid()
+        self.root.update()
+        self.root.destroy()
     
     def testRemoveOldResults(self):
         '''Tests whether the remove method removes entire content'''

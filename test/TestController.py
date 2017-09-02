@@ -53,6 +53,11 @@ class TestController(unittest.TestCase):
             os.remove(self.configPath)
         if os.path.exists(self.changePath):
             os.remove(self.changePath)
+        self.ctr.view.tabs.grid()
+        self.ctr.view.menubar.grid()
+        self.ctr.view.dbPath.grid()
+        self.ctr.view.root.update()
+        self.ctr.view.root.destroy()
             
     def testChangePathAction(self):
         '''Tests only if right method are called'''

@@ -28,7 +28,9 @@ class TestVDbPath(unittest.TestCase):
         self.vdbpath = VDbPath(self.root, self.log, self.actionlist)
 
     def tearDown(self):
-        pass
+        self.vdbpath.grid()
+        self.root.update()
+        self.root.destroy()
 
     def testDrawPathField(self):
         '''Tests whether database field is drawn correctly'''

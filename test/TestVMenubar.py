@@ -34,7 +34,9 @@ class TestVMenubar(unittest.TestCase):
         self.vmenubar = VMenubar(self.root, self.log, self.actionlist)
 
     def tearDown(self):
-        pass
+        self.vmenubar.grid()
+        self.root.update()
+        self.root.destroy()
 
     def testButtonGoClick(self):
         '''Tests whether the right method is called when user clicks go button'''
