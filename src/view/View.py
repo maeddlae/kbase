@@ -5,6 +5,7 @@ Created on 24 Jul 2017
 '''
 
 from Tkinter import *
+import Tkinter, tkFileDialog
 from VMenubar import VMenubar
 from VTab import VTab
 from VDbPath import VDbPath
@@ -71,3 +72,13 @@ class View():
             
     def changeDbPath(self, newPath):
         self.dbPath.changePath(newPath)
+        
+    def showFileDialog(self):
+        '''Shows a file dialog where user can select the 
+        file to load'''
+        filename = tkFileDialog.askopenfilename()
+        
+        if self.actions != None:
+            if "fileSelectedAction" in self.actions:
+                self.actions["fileSelectedAction"](filename)
+        

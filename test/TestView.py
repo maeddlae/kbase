@@ -9,6 +9,7 @@ from ctr.Log import Log
 from mock import MagicMock
 from view.VMenubar import VMenubar
 from view.VTab import VTab
+import Tkinter, tkFileDialog
 
 
 class TestView(unittest.TestCase):
@@ -18,7 +19,8 @@ class TestView(unittest.TestCase):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
 
-        self.actions = "blabla"
+        self.dummy1 = MagicMock()
+        self.actions = {"fileSelectedAction" : self.dummy1}
         self.dbPath = "arxads"
         
         self.view = View(log=self.log, dbPath=self.dbPath, actions=self.actions)
@@ -33,9 +35,12 @@ class TestView(unittest.TestCase):
         self.view.menubar.disableButtonDelete = MagicMock()
         self.view.tabs.removeSearch = MagicMock()
         self.view.dbPath.changePath = MagicMock()
+        
+        self.askopenfilenameBackup = tkFileDialog.askopenfilename
+        tkFileDialog.askopenfilename = MagicMock()
 
     def tearDown(self):
-        pass
+        tkFileDialog.askopenfilename = self.askopenfilenameBackup
 
     def testDrawEntry(self):
         e = "test"
@@ -87,7 +92,13 @@ class TestView(unittest.TestCase):
         newPath = "dsaf"
         self.view.changeDbPath(newPath)
         self.view.dbPath.changePath.assert_called_once_with(newPath)
-
+        
+    def testShowFileDialog(self):
+        filename = "filenameblabla"
+        tkFileDialog.askopenfilename.return_value = filename
+        self.view.showFileDialog()
+        tkFileDialog.askopenfilename.assert_called_once()
+        self.dummy1.assert_called_once_with(filename)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

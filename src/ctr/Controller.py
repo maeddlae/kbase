@@ -24,7 +24,9 @@ class Controller():
                         "closedAction" : self.closeTabAction,
                         "tabChangeAction" : self.tabChangeAction,
                         "deleteAction" : self.deleteEntryAction,
-                        "pathChangeAction" : self.changePathAction}
+                        "pathChangeAction" : self.changePathAction,
+                        "newImageAction" : self.newImageAction,
+                        "fileSelectedAction" : self.imageSelectedAction}
         if log != None:
             self.log = log
         else:
@@ -120,4 +122,21 @@ class Controller():
         self.config.setValue(self.configDataBase, self.dbPath)
         self.model = Model(self.log, self.dbPath)
         self.view.changeDbPath(self.dbPath)
+        
+    def newImageAction(self):
+        '''Is called when user wants to add a new image 
+        by button click'''
+        self.view.showFileDialog()
+        
+    def imageSelectedAction(self, filename):
+        '''Is called when user has selected a new image. Method 
+        adds the image to the model and shows it in view'''
+        if filename != None:
+            f = open(filename, "rb")
+            content = f.read()
+            f.close()
+            self.currentEntry.images.append(content)
+            self.model.updateContentOfEntry(self.currentEntry)
+            self.view.removeEntry(self.currentEntry)
+            self.view.drawEntry(self.currentEntry)
         

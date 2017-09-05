@@ -3,9 +3,13 @@ Created on 12 Aug 2017
 
 @author: Mathias Bucher
 '''
-from Tkinter import *
+from Tkinter import Frame
+from Tkinter import Label
+from Tkinter import Button
+from Tkinter import Text
+from Tkinter import END, W
+from Tkinter import Scrollbar
 from PIL import Image, ImageTk
-import base64
 import io
 
 class VEntry(Frame):
@@ -14,6 +18,7 @@ class VEntry(Frame):
     '''
     width10=50
     width15=32
+    imageSize=100,100
 
     def __init__(self, parent, log, actions):
         '''
@@ -54,12 +59,14 @@ class VEntry(Frame):
             self.images = Frame(self)
             self.newImageButton = Button(self.images, command=self.buttonNewImageClicked)
             self.newImageButton["text"] = "new"
-            self.newImageButton.grid(row=3, column=1, sticky=W)
+            self.newImageButton.grid(row=3, column=0, sticky=W)
             for i, img in enumerate(entry.images):
-                tmp = io.BytesIO(img)
-                tmp = Image.open(tmp)
-                tmp = ImageTk.PhotoImage(tmp)
-                imgLabel = Label(self.images, image=tmp)
+                iobytes = io.BytesIO(img)
+                img = Image.open(iobytes)
+                img.thumbnail(self.imageSize, Image.ANTIALIAS )
+                photoimg = ImageTk.PhotoImage(img)
+                imgLabel = Label(self.images, image=photoimg)
+                imgLabel.image = photoimg
                 imgLabel.grid(row=3, column=i+1, sticky=W)
             self.images.grid(sticky=W)
             

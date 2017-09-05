@@ -73,7 +73,8 @@ class TestVEntry(unittest.TestCase):
     def testDrawEntry(self):
         '''Tests whether all elements of the entry are drawn'''
         self.ventry.drawEntry(self.entry)
-        self.ventry.update()
+        self.ventry.grid(sticky=W)
+        self.root.update()
         
         exp = "animals"
         act = self.ventry.nameText.get("1.0", 'end-1c')
