@@ -8,6 +8,7 @@ from model.Model import Model
 from model.ModelEntry import ModelEntry
 from view.View import View
 from model.ConfigFile import ConfigFile
+import os
 
 
 class Controller():
@@ -131,7 +132,8 @@ class Controller():
     def imageSelectedAction(self, filename):
         '''Is called when user has selected a new image. Method 
         adds the image to the model and shows it in view'''
-        if filename != None:
+        self.log.add(self.log.Info, __file__, "image " + filename + " selected")
+        if os.path.exists(filename):
             f = open(filename, "rb")
             content = f.read()
             f.close()

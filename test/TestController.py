@@ -194,7 +194,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.showFileDialog.assert_called_once()
         
     def testImageSelectedActionWithFilename(self):
-        filename = "dsfadsf"
+        filename = self.configPath
         data = "some data"
         
         mopen = MagicMock()
@@ -209,7 +209,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.currentEntry)
         
     def testImageSelectedActionWithoutFilename(self):
-        filename = None
+        filename = "blublu"
         data = "some data"
         
         mopen = MagicMock()

@@ -4,6 +4,7 @@ Created on 12 Aug 2017
 @author: Mathias Bucher
 '''
 from Tkinter import Frame
+from Tkinter import Menu
 from Tkinter import Label
 from Tkinter import Button
 from Tkinter import Text
@@ -11,6 +12,7 @@ from Tkinter import END, W
 from Tkinter import Scrollbar
 from PIL import Image, ImageTk
 import io
+from mock.mock import right
 
 class VEntry(Frame):
     '''
@@ -56,10 +58,13 @@ class VEntry(Frame):
             keyScrollbar.grid(row=2, column=1, sticky=W)
             self.keywords['yscrollcommand'] = keyScrollbar.set
             
+            self.rightClickMenu = Menu(self, tearoff=0)
+            self.rightClickMenu.add_command(label="new", 
+                                       command=self.newImageClicked)
+            self.rightClickMenu.add_command(label="delete", 
+                                       command=self.deleteImageClicked)
+            
             self.images = Frame(self)
-            self.newImageButton = Button(self.images, command=self.buttonNewImageClicked)
-            self.newImageButton["text"] = "new"
-            self.newImageButton.grid(row=3, column=0, sticky=W)
             for i, img in enumerate(entry.images):
                 iobytes = io.BytesIO(img)
                 img = Image.open(iobytes)
@@ -67,7 +72,8 @@ class VEntry(Frame):
                 photoimg = ImageTk.PhotoImage(img)
                 imgLabel = Label(self.images, image=photoimg)
                 imgLabel.image = photoimg
-                imgLabel.grid(row=3, column=i+1, sticky=W)
+                imgLabel.grid(row=3, column=i, sticky=W)
+                imgLabel.bind("<Button-3>", self.showRightClickMenu)
             self.images.grid(sticky=W)
             
             self.files = Frame(self)
@@ -78,6 +84,13 @@ class VEntry(Frame):
             self.files.grid(sticky=W)
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
+
+    def showRightClickMenu(self, event):
+        '''Tries to show the right click menu'''
+        try:
+            self.rightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+        finally:
+            self.rightClickMenu.grab_release()
 
     def getName(self):
         '''Returns the name of the displayed entry'''
@@ -110,8 +123,16 @@ class VEntry(Frame):
             if "changeKeywordsAction" in self.actions:
                 self.actions["changeKeywordsAction"](t)
 
-    def buttonNewImageClicked(self):
-        '''Is called when user clicks new beside images'''
+    def deleteImageClicked(self):
+        '''Is called when user right clicks on an image and selects delete'''
+        self.log.add(self.log.Info, __file__, "delete image clicked" )
+                
+        if self.actions != None:
+            if "deleteImageAction" in self.actions:
+                self.actions["deleteImageAction"]()
+
+    def newImageClicked(self):
+        '''Is called when user right clicks on an image and selects new'''
         self.log.add(self.log.Info, __file__, "new image clicked" )
                 
         if self.actions != None:
