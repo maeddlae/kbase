@@ -26,13 +26,9 @@ class TestVEntry(unittest.TestCase):
         self.root.geometry("400x500")
         
         self.dummy1 = MagicMock()
-        self.dummy2 = MagicMock()
-        self.dummy3 = MagicMock()
         self.dummy4 = MagicMock()
         
-        self.actionlist = {"changeNameAction" : self.dummy1,
-                  "changeDescriptionAction" : self.dummy2,
-                  "changeKeywordsAction" : self.dummy3,
+        self.actionlist = {"entryChangeAction" : self.dummy1,
                   "newImageAction" : self.dummy4}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
@@ -92,38 +88,42 @@ class TestVEntry(unittest.TestCase):
         
         self.assertEqual(2, self.ventry.files.children.__len__())
         
-    def testReturnPressedAtName(self):
-        '''Tests whether the right method is called at Return keypress on name'''
+    def testReturnPressedAtFields(self):
+        '''Tests whether the right method is called at Return keypress'''
         self.ventry.drawEntry(self.entry)
         self.ventry.grid()
         self.root.update()
         self.ventry.nameText.delete("1.0", END)
         self.ventry.nameText.insert(END, "new name")
-        self.ventry.nameText.focus_force()
-        self.ventry.nameText.event_generate("<Return>")
-        self.dummy1.assert_called_with("new name")
-    
-    def testReturnPressedAtDescription(self):
-        '''Tests whether the right method is called at Return keypress on description'''
-        self.ventry.drawEntry(self.entry)
-        self.ventry.grid()
-        self.root.update()
         self.ventry.description.delete("1.0", END)
         self.ventry.description.insert(END, "new description")
-        self.ventry.description.focus_force()
-        self.ventry.description.event_generate("<Return>")
-        self.dummy2.assert_called_with("new description")
-    
-    def testReturnPressedAtKeywords(self):
-        '''Tests whether the right method is called at Return keypress on keywords'''
-        self.ventry.drawEntry(self.entry)
-        self.ventry.grid()
-        self.root.update()
         self.ventry.keywords.delete("1.0", END)
         self.ventry.keywords.insert(END, "keyword")
+        self.ventry.nameText.focus_force()
+        self.ventry.nameText.event_generate("<Return>")
+        self.dummy1.assert_called_once_with("new name", "new description", "keyword")
+        
+        self.ventry.nameText.delete("1.0", END)
+        self.ventry.nameText.insert(END, "new name")
+        self.ventry.description.delete("1.0", END)
+        self.ventry.description.insert(END, "new description")
+        self.ventry.keywords.delete("1.0", END)
+        self.ventry.keywords.insert(END, "keyword")
+        self.dummy1.reset_mock()
+        self.ventry.description.focus_force()
+        self.ventry.description.event_generate("<Return>")
+        self.dummy1.assert_called_once_with("new name", "new description", "keyword")
+        
+        self.ventry.nameText.delete("1.0", END)
+        self.ventry.nameText.insert(END, "new name")
+        self.ventry.description.delete("1.0", END)
+        self.ventry.description.insert(END, "new description")
+        self.ventry.keywords.delete("1.0", END)
+        self.ventry.keywords.insert(END, "keyword")
+        self.dummy1.reset_mock()
         self.ventry.keywords.focus_force()
         self.ventry.keywords.event_generate("<Return>")
-        self.dummy3.assert_called_with("keyword")
+        self.dummy1.assert_called_once_with("new name", "new description", "keyword")
         
     def testRightClickOnImage(self):
         '''Tests if right click menu would be drawn at right click'''

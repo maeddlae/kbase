@@ -28,10 +28,10 @@ class TestController(unittest.TestCase):
         f.close()
         
         self.ctr = Controller( self.log, self.configPath )
-        self.ctr.currentEntry = ModelEntry(self.log, "furniture")
-        self.ctr.currentEntry.description = "This is the description of furniture"
-        self.ctr.currentEntry.keywords.append("chair")
-        self.ctr.currentEntry.keywords.append("table")
+        self.ctr.model.currentEntry = ModelEntry(self.log, "furniture")
+        self.ctr.model.currentEntry.description = "This is the description of furniture"
+        self.ctr.model.currentEntry.keywords.append("chair")
+        self.ctr.model.currentEntry.keywords.append("table")
         self.ctr.view.drawEntry = MagicMock()
         self.ctr.view.drawSearch = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
@@ -75,44 +75,33 @@ class TestController(unittest.TestCase):
         to model'''
         self.assertEqual(self.dbPath, self.ctr.model.db.path)
 
-    def testEntryNameChangeAction(self):
+    def testEntryChangeAction(self):
         '''Checks if the right method of model is called'''
-        self.ctr.entryNameChangeAction("roofs")
-        self.ctr.model.updateNameOfEntry.assert_called_with(self.ctr.currentEntry, "roofs")
-        self.assertEqual("roofs", self.ctr.currentEntry.name)
-        self.ctr.view.removeEntry.assert_called_with(self.ctr.currentEntry)
-        self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
-    
-    def testEntryDescriptionChangeAction(self):
-        '''Checks if the right method of model is called'''
-        self.ctr.entryDescriptionChangeAction("new description")
-        self.ctr.model.updateContentOfEntry.assert_called_with(self.ctr.currentEntry)
-        self.assertEqual("new description", self.ctr.currentEntry.description)
-        self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
-
-    def testEntryKeywordChangeAction(self):
-        '''Checks if the right method of model is called'''
-        self.ctr.entryKeywordChangeAction("window")
-        self.ctr.model.updateContentOfEntry.assert_called_with(self.ctr.currentEntry)
-        s = self.ctr.currentEntry.getStringFromKeywords(self.ctr.currentEntry.keywords)
+        self.ctr.entryChangeAction("roofs", "new description", "window")
+        self.ctr.model.updateNameOfEntry.assert_called_with(self.ctr.model.currentEntry, "roofs")
+        self.ctr.model.updateContentOfEntry.assert_called_with(self.ctr.model.currentEntry)
+        self.assertEqual("roofs", self.ctr.model.currentEntry.name)
+        self.assertEqual("new description", self.ctr.model.currentEntry.description)
+        s = self.ctr.model.currentEntry.getStringFromKeywords(self.ctr.model.currentEntry.keywords)
         self.assertEqual("window", s)
-        self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
-        
+        self.ctr.view.removeEntry.assert_called_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_with(self.ctr.model.currentEntry)
+
     def testNewEntryAction(self):
         '''Checks if an entry is added correctly'''
         self.ctr.model.hasEntry.return_value = False
         self.ctr.newEntryAction()
-        self.assertEqual("enter name", self.ctr.currentEntry.name)
-        self.ctr.model.addEntry.assert_called_with(self.ctr.currentEntry)
-        self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
+        self.assertEqual("enter name", self.ctr.model.currentEntry.name)
+        self.ctr.model.addEntry.assert_called_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_with(self.ctr.model.currentEntry)
         
     def testNewEntryActionIfEnterNameExists(self):
         '''In this test, the default enter name entry already existst'''
         self.ctr.model.hasEntry.side_effect = [True, True, False]
         self.ctr.newEntryAction()
-        self.assertEqual("enter name2", self.ctr.currentEntry.name)
-        self.ctr.model.addEntry.assert_called_with(self.ctr.currentEntry)
-        self.ctr.view.drawEntry.assert_called_with(self.ctr.currentEntry)
+        self.assertEqual("enter name2", self.ctr.model.currentEntry.name)
+        self.ctr.model.addEntry.assert_called_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_with(self.ctr.model.currentEntry)
         
     def testSearchActionMultipleMatches(self):
         '''Tests whether the search action calls the right methods'''
@@ -146,18 +135,19 @@ class TestController(unittest.TestCase):
     def testEntryClickedInVSearch(self):
         '''Tests whether the search action calls the right methods'''
         e = ModelEntry(self.log, "entry")
+        self.ctr.model.foundEntries["name"].append(e)
         
-        self.ctr.entryClickedInVSearch(e)
-        self.assertEqual(e, self.ctr.model.activeEntries[0])
+        self.ctr.entryClickedInVSearch("entry")
+        self.assertEqual(e, self.ctr.model.foundEntries["name"][0])
         self.ctr.view.drawEntry.assert_called_with(e)
         
     def testCloseTabAction(self):
         # close entry
         e = ModelEntry(self.log, "entry")
-        self.ctr.currentEntry = e
-        self.ctr.model.activeEntries.append(e)
+        self.ctr.model.currentEntry = e
+        self.ctr.model.openedEntries.append(e)
         self.ctr.closeTabAction()
-        self.assertEqual(0, self.ctr.model.activeEntries.__len__())
+        self.assertEqual(0, self.ctr.model.openedEntries.__len__())
         self.ctr.view.removeEntry.assert_called_with(e)    
         
         # close search
@@ -170,24 +160,24 @@ class TestController(unittest.TestCase):
         e1 = ModelEntry(self.log, "e1")
         e2 = ModelEntry(self.log, "e2")
         
-        self.ctr.model.activeEntries.append(e1)
-        self.ctr.model.activeEntries.append(e2)
-        self.ctr.currentEntry = e1
+        self.ctr.model.openedEntries.append(e1)
+        self.ctr.model.openedEntries.append(e2)
+        self.ctr.model.currentEntry = e1
         self.ctr.tabChangeAction(e2.name, False)
-        self.assertEqual(e2, self.ctr.currentEntry)
+        self.assertEqual(e2, self.ctr.model.currentEntry)
         self.assertFalse(self.ctr.isSearchActive)
         self.ctr.view.setDeleteButton.assert_called_with(True)
         
         self.ctr.tabChangeAction(None, True)
-        self.assertEqual(e2, self.ctr.currentEntry)
+        self.assertEqual(e2, self.ctr.model.currentEntry)
         self.assertTrue(self.ctr.isSearchActive)
         self.ctr.view.setDeleteButton.assert_called_with(False)
         
     def testDeleteEntryAction(self):
-        self.ctr.currentEntry = ModelEntry(self.log, "e1")
+        self.ctr.model.currentEntry = ModelEntry(self.log, "e1")
         self.ctr.deleteEntryAction()
-        self.ctr.model.removeEntry.assert_called_once_with(self.ctr.currentEntry)
-        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.currentEntry)
+        self.ctr.model.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
     def testNewImageAction(self):
         self.ctr.newImageAction()
@@ -204,9 +194,9 @@ class TestController(unittest.TestCase):
             self.ctr.imageSelectedAction(filename)
             
         mopen.assert_called_once_with(filename, "rb")
-        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.currentEntry)
-        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.currentEntry)
-        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.currentEntry)
+        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
     def testImageSelectedActionWithoutFilename(self):
         filename = "blublu"

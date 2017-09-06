@@ -17,10 +17,8 @@ class Controller():
     def __init__(self, log, config):
         '''Constructor'''
         self.actions = {"searchAction" : self.searchAction,
-                        "changeNameAction" : self.entryNameChangeAction,
+                        "entryChangeAction" : self.entryChangeAction,
                         "newAction" : self.newEntryAction,
-                        "changeDescriptionAction" : self.entryDescriptionChangeAction,
-                        "changeKeywordsAction" : self.entryKeywordChangeAction,
                         "showEntryAction" : self.entryClickedInVSearch,
                         "closedAction" : self.closeTabAction,
                         "tabChangeAction" : self.tabChangeAction,
@@ -49,63 +47,58 @@ class Controller():
         results = self.model.getEntries(keyword)
         self.view.drawSearch(results)
             
-    def entryNameChangeAction(self, newName):
+    def entryChangeAction(self, newName, newDescription, newKeywords):
         '''Simply calls update name from model with current entry'''
-        self.view.removeEntry(self.currentEntry)
-        self.model.updateNameOfEntry(self.currentEntry, newName)
-        self.currentEntry.name = newName
-        self.view.drawEntry(self.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.model.updateNameOfEntry(self.model.currentEntry, newName)
+        k = self.model.currentEntry.getKeywordsFromString(newKeywords)
+        self.model.currentEntry.keywords = k
+        self.model.currentEntry.description = newDescription
+        self.model.updateContentOfEntry(self.model.currentEntry)  
+        self.model.currentEntry.name = newName
+        self.view.drawEntry(self.model.currentEntry)
 
-    def entryDescriptionChangeAction(self, newDescription):
-        '''Updates current entry and calls update method from model'''
-        self.currentEntry.description = newDescription
-        self.model.updateContentOfEntry(self.currentEntry)
-        self.view.drawEntry(self.currentEntry)
-
-    def entryKeywordChangeAction(self, newKeywords):
-        '''Updates current entry and calls update method from model'''
-        k = self.currentEntry.getKeywordsFromString(newKeywords)
-        self.currentEntry.keywords = k
-        self.model.updateContentOfEntry(self.currentEntry)  
-        self.view.drawEntry(self.currentEntry) 
         
     def newEntryAction(self):
         '''Adds a new entry'''
         newNameText = "enter name"
-        self.currentEntry = ModelEntry(self.log, newNameText)
+        self.model.currentEntry = ModelEntry(self.log, newNameText)
         i = 0
         
-        while self.model.hasEntry(self.currentEntry):
+        while self.model.hasEntry(self.model.currentEntry):
             i += 1
             newName = newNameText + str(i)
-            self.currentEntry.name = newName
+            self.model.currentEntry.name = newName
         
-        self.model.activeEntries.append(self.currentEntry)
-        self.model.addEntry(self.currentEntry)
-        self.view.drawEntry(self.currentEntry)
+        self.model.openedEntries.append(self.model.currentEntry)
+        self.model.addEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
         
-    def entryClickedInVSearch(self, entry):
-        '''Shows the clicked entry'''
-        self.currentEntry = entry
-        self.model.activeEntries.append(entry)
-        self.view.drawEntry(entry)
+    def entryClickedInVSearch(self, entryName):
+        '''Shows the clicked entry'''     
+        foundEntry = self.model.getFoundEntry(entryName)
+        if foundEntry != None:
+            self.model.currentEntry = foundEntry
+            self.model.openedEntries.append(foundEntry)
+            self.view.drawEntry(foundEntry)
+            
         
     def closeTabAction(self):
         '''Closes the currently active tab'''
         if self.isSearchActive:
             self.view.removeSearch()
-            self.currentEntry = None
+            self.model.currentEntry = None
         else:
-            self.model.activeEntries.remove(self.currentEntry)
-            self.view.removeEntry(self.currentEntry)
+            self.model.openedEntries.remove(self.model.currentEntry)
+            self.view.removeEntry(self.model.currentEntry)
         
     def tabChangeAction(self, activeTabName, isSearchActive):
         '''Is called when tab focus changes'''
         # only do something when has a valid name
         if activeTabName != None:
-            for e in self.model.activeEntries:
+            for e in self.model.openedEntries:
                 if activeTabName == e.name:
-                    self.currentEntry = e
+                    self.model.currentEntry = e
                     self.view.setDeleteButton(True)
                     
         self.isSearchActive = isSearchActive
@@ -114,8 +107,8 @@ class Controller():
             
     def deleteEntryAction(self):
         '''Deletes the currently active entry'''
-        self.model.removeEntry(self.currentEntry)
-        self.view.removeEntry(self.currentEntry)
+        self.model.removeEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
         
     def changePathAction(self, newPath):
         '''Changes the database path'''
@@ -137,8 +130,8 @@ class Controller():
             f = open(filename, "rb")
             content = f.read()
             f.close()
-            self.currentEntry.images.append(content)
-            self.model.updateContentOfEntry(self.currentEntry)
-            self.view.removeEntry(self.currentEntry)
-            self.view.drawEntry(self.currentEntry)
+            self.model.currentEntry.images.append(content)
+            self.model.updateContentOfEntry(self.model.currentEntry)
+            self.view.removeEntry(self.model.currentEntry)
+            self.view.drawEntry(self.model.currentEntry)
         

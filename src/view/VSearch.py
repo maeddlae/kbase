@@ -44,7 +44,7 @@ class VSearch(Frame):
         
         self.frameName = Frame(self)
         for i, e in enumerate(results["name"]):
-            but = Button(self.frameName, command=lambda n=e: self.buttonEntryClicked(n))
+            but = Button(self.frameName, command=lambda n=e.name: self.buttonEntryClicked(n))
             self.buttonName.append(but)
             self.buttonName[i].grid(row=1, column=i, sticky=W)
             self.buttonName[i]["text"] = e.name
@@ -56,7 +56,7 @@ class VSearch(Frame):
         
         self.frameKeyword = Frame(self)
         for i, e in enumerate(results["keyword"]):
-            but = Button(self.frameKeyword, command=lambda n=e: self.buttonEntryClicked(n))
+            but = Button(self.frameKeyword, command=lambda n=e.name: self.buttonEntryClicked(n))
             self.buttonKeyword.append(but)
             self.buttonKeyword[i].grid(row=3, column=i, sticky=W)
             self.buttonKeyword[i]["text"] = e.name
@@ -68,16 +68,16 @@ class VSearch(Frame):
         
         self.frameDescription = Frame(self)
         for i, e in enumerate(results["description"]):
-            but = Button(self.frameDescription, command=lambda n=e: self.buttonEntryClicked(n))
+            but = Button(self.frameDescription, command=lambda n=e.name: self.buttonEntryClicked(n))
             self.buttonDescription.append(but)            
             self.buttonDescription[i].grid(row=5, column=i, sticky=W)
             self.buttonDescription[i]["text"] = e.name
         self.frameDescription.grid(sticky=W)
             
-    def buttonEntryClicked(self, entry):
+    def buttonEntryClicked(self, entryName):
         '''This method is called when any showed entry is clicked'''
-        self.log.add(self.log.Info, __file__, entry.name + " clicked")
+        self.log.add(self.log.Info, __file__, entryName + " clicked")
         
         if self.actions != None:
             if "showEntryAction" in self.actions:
-                self.actions["showEntryAction"](entry)
+                self.actions["showEntryAction"](entryName)

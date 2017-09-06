@@ -69,17 +69,17 @@ class TestVSearch(unittest.TestCase):
         # by name
         self.vsearch.buttonName[0].focus_force()
         self.vsearch.buttonName[0].invoke()
-        self.dummy.assert_called_with(self.e1)      
+        self.dummy.assert_called_with(self.e1.name)      
         
         # by keyword
         self.vsearch.buttonKeyword[0].focus_force()
         self.vsearch.buttonKeyword[0].invoke()
-        self.dummy.assert_called_with(self.e2)    
+        self.dummy.assert_called_with(self.e2.name)    
         
         # by description
         self.vsearch.buttonDescription[1].focus_force()
         self.vsearch.buttonDescription[1].invoke()
-        self.dummy.assert_called_with(self.e4)      
+        self.dummy.assert_called_with(self.e4.name)      
         
         
         

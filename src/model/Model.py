@@ -17,7 +17,11 @@ class Model():
         self.log = log
         self.db = Database(self.log, path)
         self.log.add(self.log.Info, __file__, "init" )
-        self.activeEntries = []
+        self.openedEntries = []
+        self.foundEntries = {"name" : [],
+                            "keyword" : [],
+                            "description" : []}
+        self.currentEntry = None
         
     def setDatabase(self, path):
         '''Changes the active database'''
@@ -37,6 +41,7 @@ class Model():
         found = {"name" : list(byName),
                  "keyword" : list(byKeyword),
                  "description" : list(byDescription)}
+        self.foundEntries = found
         
         self.log.add(self.log.Info, __file__, "found " + str(found["name"].__len__()) + " by name" )
         self.log.add(self.log.Info, __file__, "found " + str(found["keyword"].__len__()) + " by keyword" )
@@ -58,3 +63,24 @@ class Model():
         
     def removeEntry(self, entry):
         self.db.removeEntry(entry)
+        
+    def getOpenedEntry(self, entryName):
+        '''Return entry with entryName, that has been openend'''
+        for e in self.openedEntries:
+            if e.name == entryName:
+                return e
+        return None
+    
+    def getFoundEntry(self, entryName):
+        '''Returns the entry with entryName, that has been found 
+        previously'''
+        for e in self.foundEntries["name"]:
+            if e.name == entryName:
+                return e
+        for e in self.foundEntries["description"]:
+            if e.name == entryName:
+                return e
+        for e in self.foundEntries["keyword"]:
+            if e.name == entryName:
+                return e
+        return None

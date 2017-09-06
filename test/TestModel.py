@@ -26,13 +26,18 @@ class TestModel(unittest.TestCase):
         self.fruits.text = "This entry is about fruit"
         self.legumes = ModelEntry(self.log, "legumes")
         self.legumes.keywords.append("tomato")
-        self.cars = ModelEntry(self.log, "fruits")
-        self.cars.keywords.append("apple")
-        self.cars.keywords.append("melon")
-        self.cars.text = "This entry is about fruit"
+        self.cars = ModelEntry(self.log, "cars")
+        self.cars.keywords.append("mustang")
+        self.cars.keywords.append("volvo")
+        self.cars.text = "This entry is about cars"
         
         self.model.db.addEntry(self.fruits)
         self.model.db.addEntry(self.legumes)
+        self.model.foundEntries["name"].append(self.cars)
+        self.model.foundEntries["description"].append(self.fruits)
+        self.model.foundEntries["keyword"].append(self.legumes)
+        self.model.openedEntries.append(self.fruits)
+        self.model.openedEntries.append(self.legumes)
 
     def tearDown(self):
         if os.path.exists(self.dbPath):
@@ -97,4 +102,23 @@ class TestModel(unittest.TestCase):
         self.model.removeEntry(entry)
         self.model.db.removeEntry.assert_called_with(entry)
         
+    def testGetOpenedEntry(self):
+        '''Tests if right entry is returned'''
+        exp = self.fruits
+        act = self.model.getOpenedEntry(exp.name)
+        self.assertEqual(exp, act)
         
+    def testGetFoundEntry(self):
+        '''Tests if right entry is returned'''
+        exp = self.fruits
+        act = self.model.getFoundEntry(exp.name)
+        self.assertEqual(exp, act)
+        exp = self.legumes
+        act = self.model.getFoundEntry(exp.name)
+        self.assertEqual(exp, act)
+        exp = self.cars
+        act = self.model.getFoundEntry(exp.name)
+        self.assertEqual(exp, act)
+        exp = None
+        act = self.model.getFoundEntry("muhaa")
+        self.assertEqual(exp, act)

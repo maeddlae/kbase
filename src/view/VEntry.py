@@ -37,12 +37,12 @@ class VEntry(Frame):
             self.nameText = Text(self, height=1, width=self.width15, font=("Helvetica", 15, "bold"))
             self.nameText.insert(END, entry.name)
             self.nameText.grid(row=0, column=0, sticky=W)
-            self.nameText.bind( "<Return>", self.returnPressedAtName)
+            self.nameText.bind( "<Return>", self.returnPressedInTextFields)
             
             self.description = Text(self, height=6, width=self.width10, font=("Helvetica", 10))
             self.description.insert(END, entry.description)
             self.description.grid(row=1, column=0, sticky=W)
-            self.description.bind( "<Return>", self.returnPressedAtDescription)
+            self.description.bind( "<Return>", self.returnPressedInTextFields)
             
             descScrollbar = Scrollbar(self, command=self.description.yview)
             descScrollbar.grid(row=1, column=1, sticky=W)
@@ -52,7 +52,7 @@ class VEntry(Frame):
             s = entry.getStringFromKeywords(entry.keywords)
             self.keywords.insert(END, s)
             self.keywords.grid(row=2, sticky=W)
-            self.keywords.bind( "<Return>", self.returnPressedAtKeywords)
+            self.keywords.bind( "<Return>", self.returnPressedInTextFields)
             
             keyScrollbar = Scrollbar(self, command=self.keywords.yview)
             keyScrollbar.grid(row=2, column=1, sticky=W)
@@ -96,32 +96,16 @@ class VEntry(Frame):
         '''Returns the name of the displayed entry'''
         return self.nameText.get("1.0", 'end-1c')
 
-    def returnPressedAtName(self, event):
+    def returnPressedInTextFields(self, event):
         '''Is called when user hits Return key while writing in name field'''
-        t = self.nameText.get("1.0", 'end-1c')
-        self.log.add(self.log.Info, __file__, "name change: " + t)
+        name = self.nameText.get("1.0", 'end-1c')
+        description = self.description.get("1.0", 'end-1c')
+        keywords = self.keywords.get("1.0", 'end-1c')
+        self.log.add(self.log.Info, __file__, "name change: " + name)
         
         if self.actions != None:
-            if "changeNameAction" in self.actions:
-                self.actions["changeNameAction"](t)
-        
-    def returnPressedAtDescription(self, event):
-        '''Is called when user hits Return key while writing in description field'''
-        t = self.description.get("1.0", 'end-1c')
-        self.log.add(self.log.Info, __file__, "description change: " + t)
-                
-        if self.actions != None:
-            if "changeDescriptionAction" in self.actions:
-                self.actions["changeDescriptionAction"](t)
-    
-    def returnPressedAtKeywords(self, event):
-        '''Is called when user hits Return key while writing in keywords field'''
-        t = self.keywords.get("1.0", 'end-1c')
-        self.log.add(self.log.Info, __file__, "keywords change: " + t )
-                
-        if self.actions != None:
-            if "changeKeywordsAction" in self.actions:
-                self.actions["changeKeywordsAction"](t)
+            if "entryChangeAction" in self.actions:
+                self.actions["entryChangeAction"](name, description, keywords)
 
     def deleteImageClicked(self):
         '''Is called when user right clicks on an image and selects delete'''
