@@ -11,6 +11,7 @@ from model.Model import Model
 from view.View import View
 from model.ModelEntry import ModelEntry
 import os
+from mock import mock_open, patch
 
 
 class TestController(unittest.TestCase):
@@ -38,6 +39,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.setDeleteButton = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
         self.ctr.view.changeDbPath = MagicMock()
+        self.ctr.view.showFileDialog = MagicMock()
         self.ctr.model.updateNameOfEntry = MagicMock()
         self.ctr.model.updateContentOfEntry= MagicMock()
         self.ctr.model.addEntry = MagicMock()
@@ -187,6 +189,41 @@ class TestController(unittest.TestCase):
         self.ctr.model.removeEntry.assert_called_once_with(self.ctr.currentEntry)
         self.ctr.view.removeEntry.assert_called_once_with(self.ctr.currentEntry)
         
+    def testNewImageAction(self):
+        self.ctr.newImageAction()
+        self.ctr.view.showFileDialog.assert_called_once()
+        
+    def testImageSelectedActionWithFilename(self):
+        filename = "dsfadsf"
+        data = "some data"
+        
+        mopen = MagicMock()
+        with patch('__builtin__.open', mopen):
+            manager = mopen.return_value.__enter__.return_value
+            manager.read.return_value = data
+            self.ctr.imageSelectedAction(filename)
+            
+        mopen.assert_called_once_with(filename, "rb")
+        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.currentEntry)
+        
+    def testImageSelectedActionWithoutFilename(self):
+        filename = None
+        data = "some data"
+        
+        mopen = MagicMock()
+        with patch('__builtin__.open', mopen):
+            manager = mopen.return_value.__enter__.return_value
+            manager.read.return_value = data
+            self.ctr.imageSelectedAction(filename)
+            
+        mopen.assert_not_called()
+        self.ctr.model.updateContentOfEntry.assert_not_called()
+        self.ctr.view.removeEntry.assert_not_called()
+        self.ctr.view.drawEntry.assert_not_called()
+        
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']
     unittest.main()

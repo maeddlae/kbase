@@ -35,12 +35,8 @@ class TestView(unittest.TestCase):
         self.view.menubar.disableButtonDelete = MagicMock()
         self.view.tabs.removeSearch = MagicMock()
         self.view.dbPath.changePath = MagicMock()
-        
-        self.askopenfilenameBackup = tkFileDialog.askopenfilename
-        tkFileDialog.askopenfilename = MagicMock()
 
     def tearDown(self):
-        tkFileDialog.askopenfilename = self.askopenfilenameBackup
 
     def testDrawEntry(self):
         e = "test"
@@ -95,9 +91,7 @@ class TestView(unittest.TestCase):
         
     def testShowFileDialog(self):
         filename = "filenameblabla"
-        tkFileDialog.askopenfilename.return_value = filename
         self.view.showFileDialog()
-        tkFileDialog.askopenfilename.assert_called_once()
         self.dummy1.assert_called_once_with(filename)
 
 if __name__ == "__main__":
