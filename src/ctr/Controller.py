@@ -26,7 +26,8 @@ class Controller():
                         "pathChangeAction" : self.changePathAction,
                         "newImageAction" : self.newImageAction,
                         "fileSelectedAction" : self.imageSelectedAction,
-                        "addKeywordAction" : self.newKeywordAction}
+                        "addKeywordAction" : self.newKeywordAction,
+                        "deleteKeywordAction" : self.deleteKeywordAction}
         if log != None:
             self.log = log
         else:
@@ -141,3 +142,9 @@ class Controller():
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)
         
+    def deleteKeywordAction(self, keywordToDelete):
+        '''Is called when user deletes a keyword'''
+        self.model.currentEntry.keywords.remove(keywordToDelete)
+        self.model.updateContentOfEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)

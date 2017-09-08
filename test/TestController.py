@@ -224,6 +224,20 @@ class TestController(unittest.TestCase):
         self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        
+    def testDeleteKeywordAction(self):
+        keywordToDelete = self.ctr.model.currentEntry.keywords[0]
+        exp = self.ctr.model.currentEntry.keywords
+        exp.remove(keywordToDelete)
+        
+        self.ctr.newKeywordAction(keywordToDelete)
+        
+        act = self.ctr.model.currentEntry.keywords
+        self.assertEqual(exp.__len__(), act.__len__())
+        self.assertSequenceEqual(exp, act)
+        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']

@@ -97,6 +97,7 @@ class VEntry(Frame):
     def showKeywordRightClickMenu(self, event):
         '''This menu appears if user right clicks on a keyword'''
         try:
+            self.clickedKeyword = event.widget
             self.keywordRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
         finally:
             self.keywordRightClickMenu.grab_release()
@@ -156,10 +157,12 @@ class VEntry(Frame):
     def deleteKeywordClicked(self):
         '''Is called when user right clicks on a keyword and selects new'''
         self.log.add(self.log.Info, __file__, "delete keyword clicked" )
+        
+        keywordToDelete = self.clickedKeyword["text"]
                 
         if self.actions != None:
             if "deleteKeywordAction" in self.actions:
-                self.actions["deleteKeywordAction"]()
+                self.actions["deleteKeywordAction"](keywordToDelete)
                 
     def returnPressedAtNewKeyword(self, _event):
         '''Is called when user hits Return key while adding a new keyword'''
