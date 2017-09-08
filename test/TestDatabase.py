@@ -67,9 +67,9 @@ class TestDatabase(unittest.TestCase):
         # create test database
         testdb = sqlite3.connect(self.dbPath)
         c = testdb.cursor()
-        c.execute("CREATE TABLE entries (name text, description text, keywords text, images blob, files blob)")
+        c.execute("CREATE TABLE entries (name text, description text, keywords BLOB, images blob, files blob)")
         for entry in self.e:
-            s = entry.getStringFromKeywords(entry.keywords)
+            s = buffer(self.filehandle.getStreamFromFiles(entry.keywords))
             
             ima = self.filehandle.getStreamFromFiles(entry.images)
             img = buffer(ima)
@@ -253,7 +253,9 @@ class TestDatabase(unittest.TestCase):
         for e, a in zip(exp, act):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
-            self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.keywords)
+            ai = self.filehandle.getStreamFromFiles(a.keywords)
+            self.assertSequenceEqual(ei, ai)
             ei = self.filehandle.getStreamFromFiles(e.images)
             ai = self.filehandle.getStreamFromFiles(a.images)
             self.assertSequenceEqual(ei, ai)
@@ -272,7 +274,9 @@ class TestDatabase(unittest.TestCase):
         for e, a in zip(exp, act):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
-            self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.keywords)
+            ai = self.filehandle.getStreamFromFiles(a.keywords)
+            self.assertSequenceEqual(ei, ai)
             ei = self.filehandle.getStreamFromFiles(e.images)
             ai = self.filehandle.getStreamFromFiles(a.images)
             self.assertSequenceEqual(ei, ai)
@@ -291,7 +295,9 @@ class TestDatabase(unittest.TestCase):
         for e, a in zip(exp, act):
             self.assertEqual(e.name, a.name)
             self.assertEqual(e.description, a.description)
-            self.assertSequenceEqual(e.keywords, a.keywords, str)
+            ei = self.filehandle.getStreamFromFiles(e.keywords)
+            ai = self.filehandle.getStreamFromFiles(a.keywords)
+            self.assertSequenceEqual(ei, ai)
             ei = self.filehandle.getStreamFromFiles(e.images)
             ai = self.filehandle.getStreamFromFiles(a.images)
             self.assertSequenceEqual(ei, ai)
@@ -313,7 +319,7 @@ class TestDatabase(unittest.TestCase):
         '''Checks if an entry exists in the rows. Method checks name, description and keywords'''
         hasRow = False
         
-        keywords = entry.getStringFromKeywords(entry.keywords)
+        keywords = self.filehandle.getStreamFromFiles(entry.keywords)
         images = self.filehandle.getStreamFromFiles(entry.images)
         files = self.filehandle.getStreamFromFiles(entry.files)
         

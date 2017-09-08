@@ -51,8 +51,7 @@ class Controller():
         '''Simply calls update name from model with current entry'''
         self.view.removeEntry(self.model.currentEntry)
         self.model.updateNameOfEntry(self.model.currentEntry, newName)
-        k = self.model.currentEntry.getKeywordsFromString(newKeywords)
-        self.model.currentEntry.keywords = k
+        self.model.currentEntry.keywords = newKeywords
         self.model.currentEntry.description = newDescription
         self.model.updateContentOfEntry(self.model.currentEntry)  
         self.model.currentEntry.name = newName

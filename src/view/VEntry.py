@@ -46,17 +46,14 @@ class VEntry(Frame):
             
             descScrollbar = Scrollbar(self, command=self.description.yview)
             descScrollbar.grid(row=1, column=1, sticky=W)
-            self.description['yscrollcommand'] = descScrollbar.set
+            self.description['yscrollcommand'] = descScrollbar.set            
             
-            self.keywords = Text(self, height=2, width=self.width10, font=("Helvetica", 10))
-            s = entry.getStringFromKeywords(entry.keywords)
-            self.keywords.insert(END, s)
-            self.keywords.grid(row=2, sticky=W)
-            self.keywords.bind( "<Return>", self.returnPressedInTextFields)
-            
-            keyScrollbar = Scrollbar(self, command=self.keywords.yview)
-            keyScrollbar.grid(row=2, column=1, sticky=W)
-            self.keywords['yscrollcommand'] = keyScrollbar.set
+            self.keywords = Frame(self)
+            for i, key in enumerate(entry.keywords):
+                keyLabel = Label(self.keywords, text=key)
+                keyLabel.grid(row=2, column=i, sticky=W)
+                keyLabel.bind("<Button-3>", self.showRightClickMenu)
+            self.keywords.grid(sticky=W)
             
             self.rightClickMenu = Menu(self, tearoff=0)
             self.rightClickMenu.add_command(label="new", 
@@ -100,12 +97,11 @@ class VEntry(Frame):
         '''Is called when user hits Return key while writing in name field'''
         name = self.nameText.get("1.0", 'end-1c')
         description = self.description.get("1.0", 'end-1c')
-        keywords = self.keywords.get("1.0", 'end-1c')
         self.log.add(self.log.Info, __file__, "name change: " + name)
         
         if self.actions != None:
             if "entryChangeAction" in self.actions:
-                self.actions["entryChangeAction"](name, description, keywords)
+                self.actions["entryChangeAction"](name, description)
 
     def deleteImageClicked(self):
         '''Is called when user right clicks on an image and selects delete'''

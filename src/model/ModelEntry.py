@@ -21,18 +21,3 @@ class ModelEntry():
         self.files = []
         
         self.log.add(self.log.Info, __file__, "init: " + name)
-        
-    def getStringFromKeywords(self, keywords):
-        '''Puts all elements of keywords into a string, separated by comma and space'''
-        s = ""
-        last = keywords.__len__() - 1
-        for i, k in enumerate(keywords):
-            s += k
-            if i < last:
-                s += ", "
-                    
-        return s
-    
-    def getKeywordsFromString(self, string):
-        '''Returns all ', ' separated keywords in a list'''
-        return string.split(", ")

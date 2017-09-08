@@ -22,19 +22,6 @@ class TestModelEntry(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def testGetStringFromKeywords(self):
-        exp = "asdf, sd swef , a a,  b b, "
-        inp = ["asdf", "sd swef ", "a a", " b b", ""]
-        act = self.entry.getStringFromKeywords(inp)
-        self.assertEqual(exp, act)
-
-
-    def testGetKeywordsFromString(self):
-        exp = ["bla bla", "blu", " bleble", ""]
-        inp = "bla bla, blu,  bleble, "
-        act = self.entry.getKeywordsFromString(inp)
-        self.assertSequenceEqual(exp,act,str)
-
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

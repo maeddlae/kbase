@@ -77,13 +77,14 @@ class TestController(unittest.TestCase):
 
     def testEntryChangeAction(self):
         '''Checks if the right method of model is called'''
-        self.ctr.entryChangeAction("roofs", "new description", "window")
+        self.ctr.entryChangeAction("roofs", "new description", ["window"])
         self.ctr.model.updateNameOfEntry.assert_called_with(self.ctr.model.currentEntry, "roofs")
         self.ctr.model.updateContentOfEntry.assert_called_with(self.ctr.model.currentEntry)
         self.assertEqual("roofs", self.ctr.model.currentEntry.name)
         self.assertEqual("new description", self.ctr.model.currentEntry.description)
-        s = self.ctr.model.currentEntry.getStringFromKeywords(self.ctr.model.currentEntry.keywords)
-        self.assertEqual("window", s)
+        act = self.ctr.model.currentEntry.keywords
+        exp = ["window"]
+        self.assertSequenceEqual(exp, act)
         self.ctr.view.removeEntry.assert_called_with(self.ctr.model.currentEntry)
         self.ctr.view.drawEntry.assert_called_with(self.ctr.model.currentEntry)
 

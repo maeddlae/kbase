@@ -80,9 +80,9 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.description.get("1.0", 'end-1c')
         self.assertEqual(exp, act)
         
-        exp = "deer, bear"
-        act = self.ventry.keywords.get("1.0", 'end-1c')
-        self.assertEqual(exp, act)
+        self.assertEqual(2, self.ventry.keywords.children.__len__())
+        for exp, act in zip(self.entry.keywords, self.ventry.keywords.winfo_children()):
+            self.assertEqual(exp, act["text"])
         
         self.assertEqual(1, self.ventry.images.children.__len__())
         
@@ -97,33 +97,18 @@ class TestVEntry(unittest.TestCase):
         self.ventry.nameText.insert(END, "new name")
         self.ventry.description.delete("1.0", END)
         self.ventry.description.insert(END, "new description")
-        self.ventry.keywords.delete("1.0", END)
-        self.ventry.keywords.insert(END, "keyword")
         self.ventry.nameText.focus_force()
         self.ventry.nameText.event_generate("<Return>")
-        self.dummy1.assert_called_once_with("new name", "new description", "keyword")
+        self.dummy1.assert_called_once_with("new name", "new description")
         
         self.ventry.nameText.delete("1.0", END)
         self.ventry.nameText.insert(END, "new name")
         self.ventry.description.delete("1.0", END)
         self.ventry.description.insert(END, "new description")
-        self.ventry.keywords.delete("1.0", END)
-        self.ventry.keywords.insert(END, "keyword")
         self.dummy1.reset_mock()
         self.ventry.description.focus_force()
         self.ventry.description.event_generate("<Return>")
-        self.dummy1.assert_called_once_with("new name", "new description", "keyword")
-        
-        self.ventry.nameText.delete("1.0", END)
-        self.ventry.nameText.insert(END, "new name")
-        self.ventry.description.delete("1.0", END)
-        self.ventry.description.insert(END, "new description")
-        self.ventry.keywords.delete("1.0", END)
-        self.ventry.keywords.insert(END, "keyword")
-        self.dummy1.reset_mock()
-        self.ventry.keywords.focus_force()
-        self.ventry.keywords.event_generate("<Return>")
-        self.dummy1.assert_called_once_with("new name", "new description", "keyword")
+        self.dummy1.assert_called_once_with("new name", "new description")
         
     def testRightClickOnImage(self):
         '''Tests if right click menu would be drawn at right click'''
@@ -135,6 +120,18 @@ class TestVEntry(unittest.TestCase):
         xpos = images[0].winfo_x()
         ypos = images[0].winfo_y()
         images[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
+        self.ventry.showRightClickMenu.assert_called_once()
+        
+    def testRightClickOnKeyword(self):
+        '''Tests if right click menu would be drawn at right click'''
+        self.ventry.showRightClickMenu = MagicMock()
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        keywords = self.ventry.keywords.winfo_children()
+        xpos = keywords[0].winfo_x()
+        ypos = keywords[0].winfo_y()
+        keywords[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
         self.ventry.showRightClickMenu.assert_called_once()
         
     def testNewImageClick(self):

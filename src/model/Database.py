@@ -24,7 +24,7 @@ class Database(object):
         # create empty database if not already exists
         if not os.path.exists(self.path):
             db = sqlite3.connect(self.path)
-            db.execute("CREATE TABLE entries(name TEXT, description TEXT, keywords TEXT, images BLOB, files BLOB)")
+            db.execute("CREATE TABLE entries(name TEXT, description TEXT, keywords BLOB, images BLOB, files BLOB)")
             db.commit()
             db.close()
         
@@ -59,7 +59,7 @@ class Database(object):
         try:
             db = sqlite3.connect(self.path)
             c = db.cursor()
-            s = entry.getStringFromKeywords(entry.keywords)
+            s = buffer(self.fileHandle.getStreamFromFiles(entry.keywords))
             p = buffer(self.fileHandle.getStreamFromFiles(entry.images))
             f = buffer(self.fileHandle.getStreamFromFiles(entry.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, p, f))
@@ -80,7 +80,7 @@ class Database(object):
         try:
             db = sqlite3.connect(self.path)
             c = db.cursor()
-            s = e.getStringFromKeywords(e.keywords)
+            s = buffer(self.fileHandle.getStreamFromFiles(e.keywords))
             img = buffer(self.fileHandle.getStreamFromFiles(e.images))
             fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
             c.execute('''UPDATE entries SET description=?, keywords=?, images=?, files=? WHERE name=?''', [e.description, s, img, fil, e.name])
@@ -104,7 +104,7 @@ class Database(object):
             c = db.cursor()
             c.execute("DELETE FROM entries WHERE name=?", [e.name])
             e.name = newName
-            s = e.getStringFromKeywords(e.keywords)
+            s = buffer(self.fileHandle.getStreamFromFiles(e.keywords))
             img = buffer(self.fileHandle.getStreamFromFiles(e.images))
             fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", [e.name, e.description, s, img, fil])
@@ -163,7 +163,7 @@ class Database(object):
         return found
     
     def getEntriesByKeyword(self, keyword):
-        '''Searches entries by kayword. Returns a list of found entries'''
+        '''Searches entries by keyword. Returns a list of found entries'''
         found = []
         
         try:
@@ -195,8 +195,7 @@ class Database(object):
         e = ModelEntry(self.log, s)
         s = data["description"].encode("ascii")
         e.description = s
-        s = data["keywords"].encode("ascii")
-        e.keywords = e.getKeywordsFromString(s)   
+        e.keywords = self.fileHandle.getFilesFromStrean(bytearray(data["keywords"]))
         e.images = self.fileHandle.getFilesFromStrean(bytearray(data["images"]))
         e.files = self.fileHandle.getFilesFromStrean(bytearray(data["files"]))
         return e
