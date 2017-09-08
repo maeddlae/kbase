@@ -27,9 +27,11 @@ class TestVEntry(unittest.TestCase):
         
         self.dummy1 = MagicMock()
         self.dummy4 = MagicMock()
+        self.dummy5 = MagicMock()
         
         self.actionlist = {"entryChangeAction" : self.dummy1,
-                  "newImageAction" : self.dummy4}
+                  "newImageAction" : self.dummy4,
+                  "addKeywordAction" : self.dummy5}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
@@ -158,6 +160,41 @@ class TestVEntry(unittest.TestCase):
         ypos = keywords[0].winfo_y()
         keywords[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
         self.ventry.showKeywordRightClickMenu.assert_called_once()
+        
+    def testNewKeywordClicked(self):
+        '''Checks what happens if new keyword is called. This test does 
+        not include the calling mechanism of newKeywordClicked method 
+        itself. It tests the return pressed action instead'''
+        self.entry.keywords = []
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        
+        # check if keyword prompt is shown
+        self.assertEqual(1, self.ventry.keywords.children.__len__())
+        exp = self.ventry.keywordPrompt
+        act = self.ventry.keywords.winfo_children()[0]["text"]
+        self.assertEqual(exp, act)
+        self.root.update()
+        
+        self.ventry.newKeywordClicked()
+        self.root.update()
+        
+        # test if enter keyword prompt appears
+        self.assertEqual(1, self.ventry.keywords.children.__len__())
+        exp = self.ventry.keywordEnterPrompt
+        act = self.ventry.keywords.winfo_children()[0].get("1.0", 'end-1c')
+        self.assertEqual(exp, act)
+        
+        # user enters now keyword
+        newKeyword = "adsfae"
+        self.ventry.newKeywordText.delete("1.0", END)
+        self.ventry.newKeywordText.insert(END, newKeyword)
+        self.dummy5.reset_mock()
+        self.ventry.newKeywordText.focus_force()
+        self.ventry.newKeywordText.event_generate("<Return>")
+        self.dummy5.assert_called_once_with(newKeyword)
+        
         
     def testNewImageClick(self):
         '''Tests if new image is clicked correctly'''

@@ -25,7 +25,8 @@ class Controller():
                         "deleteAction" : self.deleteEntryAction,
                         "pathChangeAction" : self.changePathAction,
                         "newImageAction" : self.newImageAction,
-                        "fileSelectedAction" : self.imageSelectedAction}
+                        "fileSelectedAction" : self.imageSelectedAction,
+                        "addKeywordAction" : self.newKeywordAction}
         if log != None:
             self.log = log
         else:
@@ -47,11 +48,10 @@ class Controller():
         results = self.model.getEntries(keyword)
         self.view.drawSearch(results)
             
-    def entryChangeAction(self, newName, newDescription, newKeywords):
+    def entryChangeAction(self, newName, newDescription):
         '''Simply calls update name from model with current entry'''
         self.view.removeEntry(self.model.currentEntry)
         self.model.updateNameOfEntry(self.model.currentEntry, newName)
-        self.model.currentEntry.keywords = newKeywords
         self.model.currentEntry.description = newDescription
         self.model.updateContentOfEntry(self.model.currentEntry)  
         self.model.currentEntry.name = newName
@@ -133,4 +133,11 @@ class Controller():
             self.model.updateContentOfEntry(self.model.currentEntry)
             self.view.removeEntry(self.model.currentEntry)
             self.view.drawEntry(self.model.currentEntry)
+            
+    def newKeywordAction(self, newKeyword):
+        '''This action is called when user entered a new keyword'''
+        self.model.currentEntry.keywords.append(newKeyword)
+        self.model.updateContentOfEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
         

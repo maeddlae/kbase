@@ -6,13 +6,11 @@ Created on 12 Aug 2017
 from Tkinter import Frame
 from Tkinter import Menu
 from Tkinter import Label
-from Tkinter import Button
 from Tkinter import Text
 from Tkinter import END, W
 from Tkinter import Scrollbar
 from PIL import Image, ImageTk
 import io
-from mock.mock import right
 
 class VEntry(Frame):
     '''
@@ -22,6 +20,7 @@ class VEntry(Frame):
     width15=32
     imageSize=100,100
     keywordPrompt = "right click here and add keywords"
+    keywordEnterPrompt = "enter keyword"
 
     def __init__(self, parent, log, actions):
         '''
@@ -113,7 +112,7 @@ class VEntry(Frame):
         '''Returns the name of the displayed entry'''
         return self.nameText.get("1.0", 'end-1c')
 
-    def returnPressedInTextFields(self, event):
+    def returnPressedInTextFields(self, _event):
         '''Is called when user hits Return key while writing in name field'''
         name = self.nameText.get("1.0", 'end-1c')
         description = self.description.get("1.0", 'end-1c')
@@ -142,10 +141,17 @@ class VEntry(Frame):
     def newKeywordClicked(self):
         '''Is called when user right clicks on a keyword and selects new'''
         self.log.add(self.log.Info, __file__, "new keyword clicked" )
+        
+        # remove keyword enter prompt
+        if self.keywords.winfo_children()[0]["text"] == self.keywordPrompt:
+            self.keywords.winfo_children()[0].destroy()
                 
-        if self.actions != None:
-            if "newKeywordAction" in self.actions:
-                self.actions["newKeywordAction"]()
+        # add text widget for entering new keyword
+        self.newKeywordText = Text(self.keywords, height=1, width=self.width15)
+        self.newKeywordText.insert(END, self.keywordEnterPrompt)
+        self.newKeywordText.grid(row=3, column=0, sticky=W)
+        self.newKeywordText.bind( "<Return>", self.returnPressedAtNewKeyword)
+        self.keywords.grid(sticky=W)
                 
     def deleteKeywordClicked(self):
         '''Is called when user right clicks on a keyword and selects new'''
@@ -154,3 +160,12 @@ class VEntry(Frame):
         if self.actions != None:
             if "deleteKeywordAction" in self.actions:
                 self.actions["deleteKeywordAction"]()
+                
+    def returnPressedAtNewKeyword(self, _event):
+        '''Is called when user hits Return key while adding a new keyword'''
+        newKeyword = self.newKeywordText.get("1.0", 'end-1c')
+        self.log.add(self.log.Info, __file__, "new keyword: " + newKeyword)
+        
+        if self.actions != None:
+            if "addKeywordAction" in self.actions:
+                self.actions["addKeywordAction"](newKeyword)

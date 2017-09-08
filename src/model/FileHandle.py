@@ -38,6 +38,9 @@ class FileHandle(object):
         are separated by sync word'''
         stream = bytearray()
         for s in bytestreams:
+            if isinstance(s, unicode):
+                s = s.encode("utf-8")
+            s = bytearray(s)
             s = s.replace(self.syncwordshort, self.replaceword)
             stream.extend(s)
             stream.extend(self.syncword)

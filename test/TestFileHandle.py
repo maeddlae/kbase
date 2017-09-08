@@ -50,6 +50,14 @@ class TestFileHandle(unittest.TestCase):
     def tearDown(self):
         pass
     
+    def testInsertSyncWordWithUnicode(self):
+        inp = unicode("key")
+        i = inp.encode("utf-8")
+        exp = bytearray(i)
+        exp.extend([0xAA, 0xBB, 0xAA])
+        act = self.filehandle.insertSyncWords([inp])
+        self.assertSequenceEqual(exp, act)
+    
     def testInsertSyncWords(self):
         exp = self.y
         act = self.filehandle.insertSyncWords(self.x)
