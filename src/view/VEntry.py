@@ -21,6 +21,7 @@ class VEntry(Frame):
     width10=50
     width15=32
     imageSize=100,100
+    keywordPrompt = "right click here and add keywords"
 
     def __init__(self, parent, log, actions):
         '''
@@ -46,13 +47,25 @@ class VEntry(Frame):
             
             descScrollbar = Scrollbar(self, command=self.description.yview)
             descScrollbar.grid(row=1, column=1, sticky=W)
-            self.description['yscrollcommand'] = descScrollbar.set            
+            self.description['yscrollcommand'] = descScrollbar.set    
+            
+            self.keywordRightClickMenu = Menu(self, tearoff=0)
+            self.keywordRightClickMenu.add_command(label="new", 
+                                       command=self.newKeywordClicked)
+            self.keywordRightClickMenu.add_command(label="delete", 
+                                       command=self.deleteKeywordClicked)     
             
             self.keywords = Frame(self)
-            for i, key in enumerate(entry.keywords):
-                keyLabel = Label(self.keywords, text=key)
-                keyLabel.grid(row=2, column=i, sticky=W)
-                keyLabel.bind("<Button-3>", self.showRightClickMenu)
+            # if there are no keywords, place label which prompts user to enter some
+            if entry.keywords.__len__() == 0:
+                prompt = Label(self.keywords, text=self.keywordPrompt)
+                prompt.grid(row=2, column=0, sticky=W)
+                prompt.bind("<Button-3>", self.showKeywordRightClickMenu)
+            else:
+                for i, key in enumerate(entry.keywords):
+                    keyLabel = Label(self.keywords, text=key)
+                    keyLabel.grid(row=2, column=i, sticky=W)
+                    keyLabel.bind("<Button-3>", self.showKeywordRightClickMenu)
             self.keywords.grid(sticky=W)
             
             self.rightClickMenu = Menu(self, tearoff=0)
@@ -81,6 +94,13 @@ class VEntry(Frame):
             self.files.grid(sticky=W)
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
+            
+    def showKeywordRightClickMenu(self, event):
+        '''This menu appears if user right clicks on a keyword'''
+        try:
+            self.keywordRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+        finally:
+            self.keywordRightClickMenu.grab_release()
 
     def showRightClickMenu(self, event):
         '''Tries to show the right click menu'''
@@ -118,3 +138,19 @@ class VEntry(Frame):
         if self.actions != None:
             if "newImageAction" in self.actions:
                 self.actions["newImageAction"]()
+                
+    def newKeywordClicked(self):
+        '''Is called when user right clicks on a keyword and selects new'''
+        self.log.add(self.log.Info, __file__, "new keyword clicked" )
+                
+        if self.actions != None:
+            if "newKeywordAction" in self.actions:
+                self.actions["newKeywordAction"]()
+                
+    def deleteKeywordClicked(self):
+        '''Is called when user right clicks on a keyword and selects new'''
+        self.log.add(self.log.Info, __file__, "delete keyword clicked" )
+                
+        if self.actions != None:
+            if "deleteKeywordAction" in self.actions:
+                self.actions["deleteKeywordAction"]()

@@ -66,7 +66,32 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.getName()
         self.assertEqual(exp, act)
 
-    def testDrawEntry(self):
+    def testDrawEntryIfHasNoKeywords(self):
+        '''Tests whether all elements of the entry are drawn'''
+        self.entry.keywords = []
+        
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid(sticky=W)
+        self.root.update()
+        
+        exp = "animals"
+        act = self.ventry.nameText.get("1.0", 'end-1c')
+        self.assertEqual(exp, act)
+        
+        exp = "these are animals"
+        act = self.ventry.description.get("1.0", 'end-1c')
+        self.assertEqual(exp, act)
+        
+        self.assertEqual(1, self.ventry.keywords.children.__len__())
+        exp = self.ventry.keywordPrompt
+        act = self.ventry.keywords.winfo_children()[0]["text"]
+        self.assertEqual(exp, act)
+        
+        self.assertEqual(1, self.ventry.images.children.__len__())
+        
+        self.assertEqual(2, self.ventry.files.children.__len__())
+
+    def testDrawEntryIfHasKeywords(self):
         '''Tests whether all elements of the entry are drawn'''
         self.ventry.drawEntry(self.entry)
         self.ventry.grid(sticky=W)
@@ -124,7 +149,7 @@ class TestVEntry(unittest.TestCase):
         
     def testRightClickOnKeyword(self):
         '''Tests if right click menu would be drawn at right click'''
-        self.ventry.showRightClickMenu = MagicMock()
+        self.ventry.showKeywordRightClickMenu = MagicMock()
         self.ventry.drawEntry(self.entry)
         self.ventry.grid()
         self.root.update()
@@ -132,7 +157,7 @@ class TestVEntry(unittest.TestCase):
         xpos = keywords[0].winfo_x()
         ypos = keywords[0].winfo_y()
         keywords[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
-        self.ventry.showRightClickMenu.assert_called_once()
+        self.ventry.showKeywordRightClickMenu.assert_called_once()
         
     def testNewImageClick(self):
         '''Tests if new image is clicked correctly'''
@@ -141,6 +166,16 @@ class TestVEntry(unittest.TestCase):
         
     def testDeleteImageClick(self):
         '''Tests if delete image is clicked correctly'''
+        #todo
+        pass
+        
+    def testNewKeywordClick(self):
+        '''Tests if new keyword is clicked correctly'''
+        #todo
+        pass
+        
+    def testDeleteKeywordClick(self):
+        '''Tests if delete keyword is clicked correctly'''
         #todo
         pass
         
