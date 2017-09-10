@@ -30,8 +30,8 @@ class TestController(unittest.TestCase):
         self.ctr = Controller( self.log, self.configPath )
         self.ctr.model.currentEntry = ModelEntry(self.log, "furniture")
         self.ctr.model.currentEntry.description = "This is the description of furniture"
-        self.ctr.model.currentEntry.keywords.append("chair")
-        self.ctr.model.currentEntry.keywords.append("table")
+        self.ctr.model.currentEntry.tags.append("chair")
+        self.ctr.model.currentEntry.tags.append("table")
         self.ctr.view.drawEntry = MagicMock()
         self.ctr.view.drawSearch = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
@@ -109,7 +109,7 @@ class TestController(unittest.TestCase):
         e4 = ModelEntry(self.log, "hit4")
         
         found = {"name" : [e1, e2],
-                 "keyword" : [e3],
+                 "tag" : [e3],
                  "description" : [e4]}
         
         self.ctr.model.getEntries.return_value = found
@@ -122,7 +122,7 @@ class TestController(unittest.TestCase):
         e1 = ModelEntry(self.log, "hit1")
         
         found = {"name" : [],
-                 "keyword" : [e1],
+                 "tag" : [e1],
                  "description" : []}
         
         self.ctr.model.getEntries.return_value = found
@@ -211,28 +211,28 @@ class TestController(unittest.TestCase):
         self.ctr.view.removeEntry.assert_not_called()
         self.ctr.view.drawEntry.assert_not_called()
         
-    def testNewKeywordAction(self):
-        newKeyword = "asdfa"
-        exp = self.ctr.model.currentEntry.keywords
-        exp.append(newKeyword)
+    def testNewTagAction(self):
+        newTag = "asdfa"
+        exp = self.ctr.model.currentEntry.tags
+        exp.append(newTag)
         
-        self.ctr.newKeywordAction(newKeyword)
+        self.ctr.newTagAction(newTag)
         
-        act = self.ctr.model.currentEntry.keywords
+        act = self.ctr.model.currentEntry.tags
         self.assertEqual(exp.__len__(), act.__len__())
         self.assertSequenceEqual(exp, act)
         self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
-    def testDeleteKeywordAction(self):
-        keywordToDelete = self.ctr.model.currentEntry.keywords[0]
-        exp = self.ctr.model.currentEntry.keywords
-        exp.remove(keywordToDelete)
+    def testDeleteTagAction(self):
+        tagToDelete = self.ctr.model.currentEntry.tags[0]
+        exp = self.ctr.model.currentEntry.tags
+        exp.remove(tagToDelete)
         
-        self.ctr.newKeywordAction(keywordToDelete)
+        self.ctr.newTagAction(tagToDelete)
         
-        act = self.ctr.model.currentEntry.keywords
+        act = self.ctr.model.currentEntry.tags
         self.assertEqual(exp.__len__(), act.__len__())
         self.assertSequenceEqual(exp, act)
         self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)

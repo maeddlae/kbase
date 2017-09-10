@@ -31,7 +31,7 @@ class TestVEntry(unittest.TestCase):
         
         self.actionlist = {"entryChangeAction" : self.dummy1,
                   "newImageAction" : self.dummy4,
-                  "addKeywordAction" : self.dummy5}
+                  "addTagAction" : self.dummy5}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
@@ -49,8 +49,8 @@ class TestVEntry(unittest.TestCase):
         f.close()
         self.entry = ModelEntry(self.log, "animals")
         self.entry.description = "these are animals"
-        self.entry.keywords.append("deer")
-        self.entry.keywords.append("bear")
+        self.entry.tags.append("deer")
+        self.entry.tags.append("bear")
         self.entry.images.append(self.testImageStream)
         self.entry.files.append(self.testWordStream)
         self.entry.files.append(self.testImageStream)
@@ -68,9 +68,9 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.getName()
         self.assertEqual(exp, act)
 
-    def testDrawEntryIfHasNoKeywords(self):
+    def testDrawEntryIfHasNoTags(self):
         '''Tests whether all elements of the entry are drawn'''
-        self.entry.keywords = []
+        self.entry.tags = []
         
         self.ventry.drawEntry(self.entry)
         self.ventry.grid(sticky=W)
@@ -84,16 +84,16 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.description.get("1.0", 'end-1c')
         self.assertEqual(exp, act)
         
-        self.assertEqual(1, self.ventry.keywords.children.__len__())
-        exp = self.ventry.keywordPrompt
-        act = self.ventry.keywords.winfo_children()[0]["text"]
+        self.assertEqual(1, self.ventry.tags.children.__len__())
+        exp = self.ventry.tagPrompt
+        act = self.ventry.tags.winfo_children()[0]["text"]
         self.assertEqual(exp, act)
         
         self.assertEqual(1, self.ventry.images.children.__len__())
         
         self.assertEqual(2, self.ventry.files.children.__len__())
 
-    def testDrawEntryIfHasKeywords(self):
+    def testDrawEntryIfHasTags(self):
         '''Tests whether all elements of the entry are drawn'''
         self.ventry.drawEntry(self.entry)
         self.ventry.grid(sticky=W)
@@ -107,8 +107,8 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.description.get("1.0", 'end-1c')
         self.assertEqual(exp, act)
         
-        self.assertEqual(2, self.ventry.keywords.children.__len__())
-        for exp, act in zip(self.entry.keywords, self.ventry.keywords.winfo_children()):
+        self.assertEqual(2, self.ventry.tags.children.__len__())
+        for exp, act in zip(self.entry.tags, self.ventry.tags.winfo_children()):
             self.assertEqual(exp, act["text"])
         
         self.assertEqual(1, self.ventry.images.children.__len__())
@@ -149,51 +149,51 @@ class TestVEntry(unittest.TestCase):
         images[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
         self.ventry.showRightClickMenu.assert_called_once()
         
-    def testRightClickOnKeyword(self):
+    def testRightClickOnTag(self):
         '''Tests if right click menu would be drawn at right click'''
-        self.ventry.showKeywordRightClickMenu = MagicMock()
+        self.ventry.showTagRightClickMenu = MagicMock()
         self.ventry.drawEntry(self.entry)
         self.ventry.grid()
         self.root.update()
-        keywords = self.ventry.keywords.winfo_children()
-        xpos = keywords[0].winfo_x()
-        ypos = keywords[0].winfo_y()
-        keywords[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
-        self.ventry.showKeywordRightClickMenu.assert_called_once()
+        tags = self.ventry.tags.winfo_children()
+        xpos = tags[0].winfo_x()
+        ypos = tags[0].winfo_y()
+        tags[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
+        self.ventry.showTagRightClickMenu.assert_called_once()
         
-    def testNewKeywordClicked(self):
-        '''Checks what happens if new keyword is called. This test does 
-        not include the calling mechanism of newKeywordClicked method 
+    def testNewTagClicked(self):
+        '''Checks what happens if new tag is called. This test does 
+        not include the calling mechanism of newTagClicked method 
         itself. It tests the return pressed action instead'''
-        self.entry.keywords = []
+        self.entry.tags = []
         self.ventry.drawEntry(self.entry)
         self.ventry.grid()
         self.root.update()
         
-        # check if keyword prompt is shown
-        self.assertEqual(1, self.ventry.keywords.children.__len__())
-        exp = self.ventry.keywordPrompt
-        act = self.ventry.keywords.winfo_children()[0]["text"]
+        # check if tag prompt is shown
+        self.assertEqual(1, self.ventry.tags.children.__len__())
+        exp = self.ventry.tagPrompt
+        act = self.ventry.tags.winfo_children()[0]["text"]
         self.assertEqual(exp, act)
         self.root.update()
         
-        self.ventry.newKeywordClicked()
+        self.ventry.newTagClicked()
         self.root.update()
         
-        # test if enter keyword prompt appears
-        self.assertEqual(1, self.ventry.keywords.children.__len__())
-        exp = self.ventry.keywordEnterPrompt
-        act = self.ventry.keywords.winfo_children()[0].get("1.0", 'end-1c')
+        # test if enter tag prompt appears
+        self.assertEqual(1, self.ventry.tags.children.__len__())
+        exp = self.ventry.tagEnterPrompt
+        act = self.ventry.tags.winfo_children()[0].get("1.0", 'end-1c')
         self.assertEqual(exp, act)
         
-        # user enters now keyword
-        newKeyword = "adsfae"
-        self.ventry.newKeywordText.delete("1.0", END)
-        self.ventry.newKeywordText.insert(END, newKeyword)
+        # user enters now tag
+        newTag = "adsfae"
+        self.ventry.newTagText.delete("1.0", END)
+        self.ventry.newTagText.insert(END, newTag)
         self.dummy5.reset_mock()
-        self.ventry.newKeywordText.focus_force()
-        self.ventry.newKeywordText.event_generate("<Return>")
-        self.dummy5.assert_called_once_with(newKeyword)
+        self.ventry.newTagText.focus_force()
+        self.ventry.newTagText.event_generate("<Return>")
+        self.dummy5.assert_called_once_with(newTag)
         
         
     def testNewImageClick(self):
@@ -206,13 +206,13 @@ class TestVEntry(unittest.TestCase):
         #todo
         pass
         
-    def testNewKeywordClick(self):
-        '''Tests if new keyword is clicked correctly'''
+    def testNewTagClick(self):
+        '''Tests if new tag is clicked correctly'''
         #todo
         pass
         
-    def testDeleteKeywordClick(self):
-        '''Tests if delete keyword is clicked correctly'''
+    def testDeleteTagClick(self):
+        '''Tests if delete tag is clicked correctly'''
         #todo
         pass
         

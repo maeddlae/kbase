@@ -1,1 +1,1 @@
-databasepath = ../../data/data.db
+databasepath = ../../data/d.db

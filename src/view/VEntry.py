@@ -19,8 +19,8 @@ class VEntry(Frame):
     width10=50
     width15=32
     imageSize=100,100
-    keywordPrompt = "right click here and add keywords"
-    keywordEnterPrompt = "enter keyword"
+    tagPrompt = "right click here and add tags"
+    tagEnterPrompt = "enter tag"
 
     def __init__(self, parent, log, actions):
         '''
@@ -48,24 +48,24 @@ class VEntry(Frame):
             descScrollbar.grid(row=1, column=1, sticky=W)
             self.description['yscrollcommand'] = descScrollbar.set    
             
-            self.keywordRightClickMenu = Menu(self, tearoff=0)
-            self.keywordRightClickMenu.add_command(label="new", 
-                                       command=self.newKeywordClicked)
-            self.keywordRightClickMenu.add_command(label="delete", 
-                                       command=self.deleteKeywordClicked)     
+            self.tagRightClickMenu = Menu(self, tearoff=0)
+            self.tagRightClickMenu.add_command(label="new", 
+                                       command=self.newTagClicked)
+            self.tagRightClickMenu.add_command(label="delete", 
+                                       command=self.deleteTagClicked)     
             
-            self.keywords = Frame(self)
-            # if there are no keywords, place label which prompts user to enter some
-            if entry.keywords.__len__() == 0:
-                prompt = Label(self.keywords, text=self.keywordPrompt)
+            self.tags = Frame(self)
+            # if there are no tags, place label which prompts user to enter some
+            if entry.tags.__len__() == 0:
+                prompt = Label(self.tags, text=self.tagPrompt)
                 prompt.grid(row=2, column=0, sticky=W)
-                prompt.bind("<Button-3>", self.showKeywordRightClickMenu)
+                prompt.bind("<Button-3>", self.showTagRightClickMenu)
             else:
-                for i, key in enumerate(entry.keywords):
-                    keyLabel = Label(self.keywords, text=key)
+                for i, key in enumerate(entry.tags):
+                    keyLabel = Label(self.tags, text=key)
                     keyLabel.grid(row=2, column=i, sticky=W)
-                    keyLabel.bind("<Button-3>", self.showKeywordRightClickMenu)
-            self.keywords.grid(sticky=W)
+                    keyLabel.bind("<Button-3>", self.showTagRightClickMenu)
+            self.tags.grid(sticky=W)
             
             self.rightClickMenu = Menu(self, tearoff=0)
             self.rightClickMenu.add_command(label="new", 
@@ -94,13 +94,13 @@ class VEntry(Frame):
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
             
-    def showKeywordRightClickMenu(self, event):
-        '''This menu appears if user right clicks on a keyword'''
+    def showTagRightClickMenu(self, event):
+        '''This menu appears if user right clicks on a tag'''
         try:
-            self.clickedKeyword = event.widget
-            self.keywordRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+            self.clickedTag = event.widget
+            self.tagRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
         finally:
-            self.keywordRightClickMenu.grab_release()
+            self.tagRightClickMenu.grab_release()
 
     def showRightClickMenu(self, event):
         '''Tries to show the right click menu'''
@@ -139,36 +139,36 @@ class VEntry(Frame):
             if "newImageAction" in self.actions:
                 self.actions["newImageAction"]()
                 
-    def newKeywordClicked(self):
-        '''Is called when user right clicks on a keyword and selects new'''
-        self.log.add(self.log.Info, __file__, "new keyword clicked" )
+    def newTagClicked(self):
+        '''Is called when user right clicks on a tag and selects new'''
+        self.log.add(self.log.Info, __file__, "new tag clicked" )
         
-        # remove keyword enter prompt
-        if self.keywords.winfo_children()[0]["text"] == self.keywordPrompt:
-            self.keywords.winfo_children()[0].destroy()
+        # remove tag enter prompt
+        if self.tags.winfo_children()[0]["text"] == self.tagPrompt:
+            self.tags.winfo_children()[0].destroy()
                 
-        # add text widget for entering new keyword
-        self.newKeywordText = Text(self.keywords, height=1, width=self.width15)
-        self.newKeywordText.insert(END, self.keywordEnterPrompt)
-        self.newKeywordText.grid(row=3, column=0, sticky=W)
-        self.newKeywordText.bind( "<Return>", self.returnPressedAtNewKeyword)
-        self.keywords.grid(sticky=W)
+        # add text widget for entering new tag
+        self.newTagText = Text(self.tags, height=1, width=self.width15)
+        self.newTagText.insert(END, self.tagEnterPrompt)
+        self.newTagText.grid(row=3, column=0, sticky=W)
+        self.newTagText.bind( "<Return>", self.returnPressedAtNewTag)
+        self.tags.grid(sticky=W)
                 
-    def deleteKeywordClicked(self):
-        '''Is called when user right clicks on a keyword and selects new'''
-        self.log.add(self.log.Info, __file__, "delete keyword clicked" )
+    def deleteTagClicked(self):
+        '''Is called when user right clicks on a tag and selects new'''
+        self.log.add(self.log.Info, __file__, "delete tag clicked" )
         
-        keywordToDelete = self.clickedKeyword["text"]
+        tagToDelete = self.clickedTag["text"]
                 
         if self.actions != None:
-            if "deleteKeywordAction" in self.actions:
-                self.actions["deleteKeywordAction"](keywordToDelete)
+            if "deleteTagAction" in self.actions:
+                self.actions["deleteTagAction"](tagToDelete)
                 
-    def returnPressedAtNewKeyword(self, _event):
-        '''Is called when user hits Return key while adding a new keyword'''
-        newKeyword = self.newKeywordText.get("1.0", 'end-1c')
-        self.log.add(self.log.Info, __file__, "new keyword: " + newKeyword)
+    def returnPressedAtNewTag(self, _event):
+        '''Is called when user hits Return key while adding a new tag'''
+        newTag = self.newTagText.get("1.0", 'end-1c')
+        self.log.add(self.log.Info, __file__, "new tag: " + newTag)
         
         if self.actions != None:
-            if "addKeywordAction" in self.actions:
-                self.actions["addKeywordAction"](newKeyword)
+            if "addTagAction" in self.actions:
+                self.actions["addTagAction"](newTag)

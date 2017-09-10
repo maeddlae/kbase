@@ -34,7 +34,7 @@ class TestVSearch(unittest.TestCase):
         self.e4 = ModelEntry(self.log, "e4")
         
         self.results = {"name" : [self.e1],
-                        "keyword" : [self.e2],
+                        "tag" : [self.e2],
                         "description" : [self.e3, self.e4]}
 
     def tearDown(self):
@@ -56,7 +56,7 @@ class TestVSearch(unittest.TestCase):
         '''Tests whether all buttons are drawn'''
         self.vsearch.drawSearchResults(self.results)
         self.assertEqual(self.e1.name, self.vsearch.buttonName[0]["text"])
-        self.assertEqual(self.e2.name, self.vsearch.buttonKeyword[0]["text"])
+        self.assertEqual(self.e2.name, self.vsearch.buttonTag[0]["text"])
         self.assertEqual(self.e3.name, self.vsearch.buttonDescription[0]["text"])
         self.assertEqual(self.e4.name, self.vsearch.buttonDescription[1]["text"])
 
@@ -71,9 +71,9 @@ class TestVSearch(unittest.TestCase):
         self.vsearch.buttonName[0].invoke()
         self.dummy.assert_called_with(self.e1.name)      
         
-        # by keyword
-        self.vsearch.buttonKeyword[0].focus_force()
-        self.vsearch.buttonKeyword[0].invoke()
+        # by tag
+        self.vsearch.buttonTag[0].focus_force()
+        self.vsearch.buttonTag[0].invoke()
         self.dummy.assert_called_with(self.e2.name)    
         
         # by description

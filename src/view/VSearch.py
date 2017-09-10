@@ -18,7 +18,7 @@ class VSearch(Frame):
         self.log = log
         self.actions = actions
         self.buttonName = []
-        self.buttonKeyword = []
+        self.buttonTag = []
         self.buttonDescription = []
         self.log.add(self.log.Info, __file__, "init" )
         
@@ -26,17 +26,17 @@ class VSearch(Frame):
         '''Removes the old results'''
         self.labelName.destroy()
         self.frameName.destroy()
-        self.labelKeyword.destroy()
-        self.frameKeyword.destroy()
+        self.labelTag.destroy()
+        self.frameTag.destroy()
         self.labelDescription.destroy()
         self.frameDescription.destroy()
         
         self.buttonName = []
-        self.buttonKeyword = []
+        self.buttonTag = []
         self.buttonDescription = []
         
     def drawSearchResults(self, results):
-        '''Draws the found search results sorted by name, keyword and 
+        '''Draws the found search results sorted by name, tag and 
         description match'''
         self.labelName = Label(self)
         self.labelName["text"] = "found by name:"
@@ -50,17 +50,17 @@ class VSearch(Frame):
             self.buttonName[i]["text"] = e.name
         self.frameName.grid(sticky=W)
         
-        self.labelKeyword = Label(self)
-        self.labelKeyword["text"] = "found by keyword:"
-        self.labelKeyword.grid(row=2, sticky=W)
+        self.labelTag = Label(self)
+        self.labelTag["text"] = "found by tag:"
+        self.labelTag.grid(row=2, sticky=W)
         
-        self.frameKeyword = Frame(self)
-        for i, e in enumerate(results["keyword"]):
-            but = Button(self.frameKeyword, command=lambda n=e.name: self.buttonEntryClicked(n))
-            self.buttonKeyword.append(but)
-            self.buttonKeyword[i].grid(row=3, column=i, sticky=W)
-            self.buttonKeyword[i]["text"] = e.name
-        self.frameKeyword.grid(sticky=W)
+        self.frameTag = Frame(self)
+        for i, e in enumerate(results["tag"]):
+            but = Button(self.frameTag, command=lambda n=e.name: self.buttonEntryClicked(n))
+            self.buttonTag.append(but)
+            self.buttonTag[i].grid(row=3, column=i, sticky=W)
+            self.buttonTag[i]["text"] = e.name
+        self.frameTag.grid(sticky=W)
         
         self.labelDescription = Label(self)
         self.labelDescription["text"] = "found by description:"

@@ -16,7 +16,7 @@ class ModelEntry():
         self.log = log
         self.name = name
         self.description = "This is the description"
-        self.keywords = []
+        self.tags = []
         self.images = []
         self.files = []
         

@@ -21,21 +21,21 @@ class TestModel(unittest.TestCase):
         self.model = Model(self.log, self.dbPath)
         
         self.fruits = ModelEntry(self.log, "fruits")
-        self.fruits.keywords.append("apple")
-        self.fruits.keywords.append("melon")
+        self.fruits.tags.append("apple")
+        self.fruits.tags.append("melon")
         self.fruits.text = "This entry is about fruit"
         self.legumes = ModelEntry(self.log, "legumes")
-        self.legumes.keywords.append("tomato")
+        self.legumes.tags.append("tomato")
         self.cars = ModelEntry(self.log, "cars")
-        self.cars.keywords.append("mustang")
-        self.cars.keywords.append("volvo")
+        self.cars.tags.append("mustang")
+        self.cars.tags.append("volvo")
         self.cars.text = "This entry is about cars"
         
         self.model.db.addEntry(self.fruits)
         self.model.db.addEntry(self.legumes)
         self.model.foundEntries["name"].append(self.cars)
         self.model.foundEntries["description"].append(self.fruits)
-        self.model.foundEntries["keyword"].append(self.legumes)
+        self.model.foundEntries["tag"].append(self.legumes)
         self.model.openedEntries.append(self.fruits)
         self.model.openedEntries.append(self.legumes)
 
@@ -54,13 +54,13 @@ class TestModel(unittest.TestCase):
         self.assertFalse(self.model.hasEntry(self.fruits))
         self.assertTrue(self.model.hasEntry(e1))
 
-    def testGetEntryByKeyword(self):
+    def testGetEntryByTag(self):
         exp = self.fruits
-        act = self.model.getEntries("melon")["keyword"][0]
+        act = self.model.getEntries("melon")["tag"][0]
         
         self.assertEqual(exp.name, act.name)
         self.assertEqual(exp.description, act.description)
-        self.assertSequenceEqual(exp.keywords, act.keywords, str)
+        self.assertSequenceEqual(exp.tags, act.tags, str)
 
     def testGetEntryByName(self):
         exp = self.legumes
@@ -68,12 +68,12 @@ class TestModel(unittest.TestCase):
         
         self.assertEqual(exp.name, act.name)
         self.assertEqual(exp.description, act.description)
-        self.assertSequenceEqual(exp.keywords, act.keywords, str)
+        self.assertSequenceEqual(exp.tags, act.tags, str)
 
     def testGetEntryIfNotExists(self):
         act = self.model.getEntries("muha")
         self.assertEqual(act["name"].__len__(), 0)
-        self.assertEqual(act["keyword"].__len__(), 0)
+        self.assertEqual(act["tag"].__len__(), 0)
         self.assertEqual(act["description"].__len__(), 0)
         
     def testUpdateNameOfEntry(self):  

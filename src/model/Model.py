@@ -19,7 +19,7 @@ class Model():
         self.log.add(self.log.Info, __file__, "init" )
         self.openedEntries = []
         self.foundEntries = {"name" : [],
-                            "keyword" : [],
+                            "tag" : [],
                             "description" : []}
         self.currentEntry = None
         
@@ -28,23 +28,23 @@ class Model():
         self.db = Database(self.log, path)
     
     def getEntries(self, word):        
-        '''Searches entries in the db by name, keyword or description in sequence. 
-        Returns all matches in a dict, with keys = name, keyword and description. 
+        '''Searches entries in the db by name, tag or description in sequence. 
+        Returns all matches in a dict, with keys = name, tag and description. 
         The key says according to which characteristic the entry has been found. 
         The entries are then saved as a list: '''
         # get all entries
         byName = self.db.getEntriesByName(word)
-        byKeyword = self.db.getEntriesByKeyword(word)
+        byTag = self.db.getEntriesByTag(word)
         byDescription = self.db.getEntriesByDescription(word)
         
         
         found = {"name" : list(byName),
-                 "keyword" : list(byKeyword),
+                 "tag" : list(byTag),
                  "description" : list(byDescription)}
         self.foundEntries = found
         
         self.log.add(self.log.Info, __file__, "found " + str(found["name"].__len__()) + " by name" )
-        self.log.add(self.log.Info, __file__, "found " + str(found["keyword"].__len__()) + " by keyword" )
+        self.log.add(self.log.Info, __file__, "found " + str(found["tag"].__len__()) + " by tag" )
         self.log.add(self.log.Info, __file__, "found " + str(found["description"].__len__()) + " by description" )
             
         return found
@@ -80,7 +80,7 @@ class Model():
         for e in self.foundEntries["description"]:
             if e.name == entryName:
                 return e
-        for e in self.foundEntries["keyword"]:
+        for e in self.foundEntries["tag"]:
             if e.name == entryName:
                 return e
         return None

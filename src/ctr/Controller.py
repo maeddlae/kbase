@@ -26,8 +26,8 @@ class Controller():
                         "pathChangeAction" : self.changePathAction,
                         "newImageAction" : self.newImageAction,
                         "fileSelectedAction" : self.imageSelectedAction,
-                        "addKeywordAction" : self.newKeywordAction,
-                        "deleteKeywordAction" : self.deleteKeywordAction}
+                        "addTagAction" : self.newTagAction,
+                        "deleteTagAction" : self.deleteTagAction}
         if log != None:
             self.log = log
         else:
@@ -44,9 +44,9 @@ class Controller():
     def run(self):        
         self.view.run()
         
-    def searchAction(self, keyword):
-        self.log.add(self.log.Info, __file__, "search for : " + keyword)
-        results = self.model.getEntries(keyword)
+    def searchAction(self, tag):
+        self.log.add(self.log.Info, __file__, "search for : " + tag)
+        results = self.model.getEntries(tag)
         self.view.drawSearch(results)
             
     def entryChangeAction(self, newName, newDescription):
@@ -135,16 +135,16 @@ class Controller():
             self.view.removeEntry(self.model.currentEntry)
             self.view.drawEntry(self.model.currentEntry)
             
-    def newKeywordAction(self, newKeyword):
-        '''This action is called when user entered a new keyword'''
-        self.model.currentEntry.keywords.append(newKeyword)
+    def newTagAction(self, newTag):
+        '''This action is called when user entered a new tag'''
+        self.model.currentEntry.tags.append(newTag)
         self.model.updateContentOfEntry(self.model.currentEntry)
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)
         
-    def deleteKeywordAction(self, keywordToDelete):
-        '''Is called when user deletes a keyword'''
-        self.model.currentEntry.keywords.remove(keywordToDelete)
+    def deleteTagAction(self, tagToDelete):
+        '''Is called when user deletes a tag'''
+        self.model.currentEntry.tags.remove(tagToDelete)
         self.model.updateContentOfEntry(self.model.currentEntry)
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)

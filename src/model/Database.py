@@ -24,7 +24,7 @@ class Database(object):
         # create empty database if not already exists
         if not os.path.exists(self.path):
             db = sqlite3.connect(self.path)
-            db.execute("CREATE TABLE entries(name TEXT, description TEXT, keywords BLOB, images BLOB, files BLOB)")
+            db.execute("CREATE TABLE entries(name TEXT, description TEXT, tags BLOB, images BLOB, files BLOB)")
             db.commit()
             db.close()
         
@@ -59,7 +59,7 @@ class Database(object):
         try:
             db = sqlite3.connect(self.path)
             c = db.cursor()
-            s = buffer(self.fileHandle.getStreamFromFiles(entry.keywords))
+            s = buffer(self.fileHandle.getStreamFromFiles(entry.tags))
             p = buffer(self.fileHandle.getStreamFromFiles(entry.images))
             f = buffer(self.fileHandle.getStreamFromFiles(entry.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, p, f))
@@ -80,10 +80,10 @@ class Database(object):
         try:
             db = sqlite3.connect(self.path)
             c = db.cursor()
-            s = buffer(self.fileHandle.getStreamFromFiles(e.keywords))
+            s = buffer(self.fileHandle.getStreamFromFiles(e.tags))
             img = buffer(self.fileHandle.getStreamFromFiles(e.images))
             fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
-            c.execute('''UPDATE entries SET description=?, keywords=?, images=?, files=? WHERE name=?''', [e.description, s, img, fil, e.name])
+            c.execute('''UPDATE entries SET description=?, tags=?, images=?, files=? WHERE name=?''', [e.description, s, img, fil, e.name])
             db.commit()
             db.close()
             
@@ -104,7 +104,7 @@ class Database(object):
             c = db.cursor()
             c.execute("DELETE FROM entries WHERE name=?", [e.name])
             e.name = newName
-            s = buffer(self.fileHandle.getStreamFromFiles(e.keywords))
+            s = buffer(self.fileHandle.getStreamFromFiles(e.tags))
             img = buffer(self.fileHandle.getStreamFromFiles(e.images))
             fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", [e.name, e.description, s, img, fil])
@@ -162,27 +162,27 @@ class Database(object):
         
         return found
     
-    def getEntriesByKeyword(self, keyword):
-        '''Searches entries by keyword. Returns a list of found entries'''
+    def getEntriesByTag(self, tag):
+        '''Searches entries by tag. Returns a list of found entries'''
         found = []
         
         try:
             db = sqlite3.connect(self.path)
             db.row_factory = sqlite3.Row
             c = db.cursor()
-            search = "%" + keyword + "%"
-            c.execute("SELECT * FROM entries WHERE keywords LIKE ?", (search,))
+            search = "%" + tag + "%"
+            c.execute("SELECT * FROM entries WHERE tags LIKE ?", (search,))
             data=c.fetchall()
             db.close()
             
             if data.__len__() == 0:
-                self.log.add(self.log.Warning, __file__, "no entry with keyword: " + keyword + " found" )
+                self.log.add(self.log.Warning, __file__, "no entry with tag: " + tag + " found" )
             else:
                 for e in data:
                     found.append(self.getEntryFromRowObject(e))
                 
         except sqlite3.Error, e:
-            self.log.add(self.log.Warning, __file__, "get by keyword fail: " + e.message)
+            self.log.add(self.log.Warning, __file__, "get by tag fail: " + e.message)
         
         return found
     
@@ -195,7 +195,7 @@ class Database(object):
         e = ModelEntry(self.log, s)
         s = data["description"].encode("ascii")
         e.description = s
-        e.keywords = self.fileHandle.getFilesFromStrean(bytearray(data["keywords"]))
+        e.tags = self.fileHandle.getFilesFromStrean(bytearray(data["tags"]))
         e.images = self.fileHandle.getFilesFromStrean(bytearray(data["images"]))
         e.files = self.fileHandle.getFilesFromStrean(bytearray(data["files"]))
         return e
@@ -211,6 +211,6 @@ class Database(object):
             db.close()
             
         except sqlite3.Error, e:
-            self.log.add(self.log.Warning, __file__, "get by keyword fail: " + e.message)
+            self.log.add(self.log.Warning, __file__, "get by tag fail: " + e.message)
         
         
