@@ -22,6 +22,7 @@ class VEntry(Frame):
     tagPrompt = "right click here and add tags"
     tagEnterPrompt = "enter tag"
     imagePrompt = "right click here and add images"
+    filePrompt = "right click here and add files"
 
     def __init__(self, parent, log, actions):
         '''
@@ -93,34 +94,27 @@ class VEntry(Frame):
                     imgLabel.bind("<Button-3>", self.showImageRightClickMenu)
             self.images.grid(sticky=W)
             
+            self.fileRightClickMenu = Menu(self, tearoff=0)
+            self.fileRightClickMenu.add_command(label="new", 
+                                       command=self.newFileClicked)
+            self.fileRightClickMenu.add_command(label="delete", 
+                                       command=self.deleteFileClicked)
+            
             self.files = Frame(self)
-            for i, fil in enumerate(entry.files):
-                lbl = Label(self.files)
-                lbl["text"] = "file"
-                lbl.grid(row=4, column=i, sticky=W)
+            # if there are no files, place label which prompts user to enter some
+            if entry.files.__len__() == 0:
+                prompt = Label(self.files, text=self.filePrompt)
+                prompt.grid(row=4, column=0, sticky=W)
+                prompt.bind("<Button-3>", self.showFilesRightClickMenu)
+            else:
+                for i, fil in enumerate(entry.files):
+                    lbl = Label(self.files)
+                    lbl["text"] = str(i)
+                    lbl.grid(row=4, column=i, sticky=W)
+                    lbl.bind("<Button-3>", self.showFilesRightClickMenu)
             self.files.grid(sticky=W)
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
-            
-    def showTagRightClickMenu(self, event):
-        '''This menu appears if user right clicks on a tag'''
-        try:
-            self.clickedTag = event.widget
-            self.tagRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
-        finally:
-            self.tagRightClickMenu.grab_release()
-
-    def showImageRightClickMenu(self, event):
-        '''Tries to show the right click menu'''
-        try:
-            self.clickedImage = event.widget
-            self.imageRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
-        finally:
-            self.imageRightClickMenu.grab_release()
-
-    def getName(self):
-        '''Returns the name of the displayed entry'''
-        return self.nameText.get("1.0", 'end-1c')
 
     def returnPressedInTextFields(self, _event):
         '''Is called when user hits Return key while writing in name field'''
@@ -132,32 +126,17 @@ class VEntry(Frame):
             if "entryChangeAction" in self.actions:
                 self.actions["entryChangeAction"](name, description)
 
-    def deleteImageClicked(self):
-        '''Is called when user right clicks on an image and selects delete'''
-        self.log.add(self.log.Info, __file__, "delete image clicked" )
-                
-        # only call delete action if there is an image
-        if (self.images.winfo_children().__len__() == 1 and 
-            self.images.winfo_children()[0]["text"] == self.imagePrompt):
-            return
-        else:
-            imageToDelete = int(self.clickedImage["text"])
+    def getName(self):
+        '''Returns the name of the displayed entry'''
+        return self.nameText.get("1.0", 'end-1c')
             
-            if self.actions != None:
-                if "deleteImageAction" in self.actions:
-                    self.actions["deleteImageAction"](imageToDelete)
-
-    def newImageClicked(self):
-        '''Is called when user right clicks on an image and selects new'''
-        self.log.add(self.log.Info, __file__, "new image clicked" )
-                
-        # remove enter image prompt
-        if self.tags.winfo_children()[0]["text"] == self.imagePrompt:
-            self.tags.winfo_children()[0].destroy()
-                
-        if self.actions != None:
-            if "newImageAction" in self.actions:
-                self.actions["newImageAction"]()
+    def showTagRightClickMenu(self, event):
+        '''This menu appears if user right clicks on a tag'''
+        try:
+            self.clickedTag = event.widget
+            self.tagRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+        finally:
+            self.tagRightClickMenu.grab_release()
                 
     def newTagClicked(self):
         '''Is called when user right clicks on a tag and selects new'''
@@ -197,3 +176,73 @@ class VEntry(Frame):
         if self.actions != None:
             if "addTagAction" in self.actions:
                 self.actions["addTagAction"](newTag)
+
+    def showImageRightClickMenu(self, event):
+        '''Tries to show the right click menu'''
+        try:
+            self.clickedImage = event.widget
+            self.imageRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+        finally:
+            self.imageRightClickMenu.grab_release()
+
+    def deleteImageClicked(self):
+        '''Is called when user right clicks on an image and selects delete'''
+        self.log.add(self.log.Info, __file__, "delete image clicked" )
+                
+        # only call delete action if there is an image
+        if (self.images.winfo_children().__len__() == 1 and 
+            self.images.winfo_children()[0]["text"] == self.imagePrompt):
+            return
+        else:
+            imageToDelete = int(self.clickedImage["text"])
+            
+            if self.actions != None:
+                if "deleteImageAction" in self.actions:
+                    self.actions["deleteImageAction"](imageToDelete)
+
+    def newImageClicked(self):
+        '''Is called when user right clicks on an image and selects new'''
+        self.log.add(self.log.Info, __file__, "new image clicked" )
+                
+        # remove enter image prompt
+        if self.images.winfo_children()[0]["text"] == self.imagePrompt:
+            self.images.winfo_children()[0].destroy()
+                
+        if self.actions != None:
+            if "newImageAction" in self.actions:
+                self.actions["newImageAction"]()
+
+    def showFilesRightClickMenu(self, event):
+        '''Tries to show the right click menu'''
+        try:
+            self.clickedFile = event.widget
+            self.fileRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+        finally:
+            self.fileRightClickMenu.grab_release()
+
+    def deleteFileClicked(self):
+        '''Is called when user right clicks on a file and selects delete'''
+        self.log.add(self.log.Info, __file__, "delete file clicked" )
+                
+        # only call delete action if there is a file
+        if (self.files.winfo_children().__len__() == 1 and 
+            self.files.winfo_children()[0]["text"] == self.filePrompt):
+            return
+        else:
+            fileToDelete = int(self.clickedFile["text"])
+            
+            if self.actions != None:
+                if "deleteFileAction" in self.actions:
+                    self.actions["deleteFileAction"](fileToDelete)
+
+    def newFileClicked(self):
+        '''Is called when user right clicks on a file and selects new'''
+        self.log.add(self.log.Info, __file__, "new file clicked" )
+                
+        # remove enter file prompt
+        if self.files.winfo_children()[0]["text"] == self.filePrompt:
+            self.files.winfo_children()[0].destroy()
+                
+        if self.actions != None:
+            if "newFileAction" in self.actions:
+                self.actions["newFileAction"]()

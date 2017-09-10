@@ -30,12 +30,14 @@ class TestVEntry(unittest.TestCase):
         self.dummy5 = MagicMock()
         self.dummy6 = MagicMock()
         self.dummy7 = MagicMock()
+        self.dummy8 = MagicMock()
         
         self.actionlist = {"entryChangeAction" : self.dummy1,
                   "newImageAction" : self.dummy4,
                   "addTagAction" : self.dummy5,
                   "deleteImageAction" : self.dummy6,
-                  "deleteTagAction" : self.dummy7}
+                  "deleteTagAction" : self.dummy7,
+                  "deleteFileAction" : self.dummy8}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
@@ -96,6 +98,33 @@ class TestVEntry(unittest.TestCase):
         self.assertEqual(1, self.ventry.images.children.__len__())
         
         self.assertEqual(2, self.ventry.files.children.__len__())
+
+    def testDrawEntryIfHasNoFiles(self):
+        '''Tests whether all elements of the entry are drawn'''
+        self.entry.files = []
+        
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid(sticky=W)
+        self.root.update()
+        
+        exp = "animals"
+        act = self.ventry.nameText.get("1.0", 'end-1c')
+        self.assertEqual(exp, act)
+        
+        exp = "these are animals"
+        act = self.ventry.description.get("1.0", 'end-1c')
+        self.assertEqual(exp, act)
+        
+        self.assertEqual(2, self.ventry.tags.children.__len__())
+        for exp, act in zip(self.entry.tags, self.ventry.tags.winfo_children()):
+            self.assertEqual(exp, act["text"])
+        
+        self.assertEqual(1, self.ventry.images.children.__len__())
+        
+        self.assertEqual(1, self.ventry.files.children.__len__())
+        exp = self.ventry.filePrompt
+        act = self.ventry.files.winfo_children()[0]["text"]
+        self.assertEqual(exp, act)
 
     def testDrawEntryIfHasNoImages(self):
         '''Tests whether all elements of the entry are drawn'''
@@ -192,6 +221,18 @@ class TestVEntry(unittest.TestCase):
         tags[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
         self.ventry.showTagRightClickMenu.assert_called_once()
         
+    def testRightClickOnFile(self):
+        '''Tests if right click menu would be drawn at right click'''
+        self.ventry.showFilesRightClickMenu = MagicMock()
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        files = self.ventry.files.winfo_children()
+        xpos = files[0].winfo_x()
+        ypos = files[0].winfo_y()
+        files[0].event_generate("<Button-3>", x=xpos+1, y=ypos+1)
+        self.ventry.showFilesRightClickMenu.assert_called_once()
+        
     def testNewTagClicked(self):
         '''Checks what happens if new tag is called. This test does 
         not include the calling mechanism of newTagClicked method 
@@ -260,7 +301,6 @@ class TestVEntry(unittest.TestCase):
         #todo
         pass
         
-        
     def testDeleteTagClickedWithTag(self):
         '''Tests if delete tag works. This test does not include the 
         event calling of the widget, it tests the content of 
@@ -284,6 +324,34 @@ class TestVEntry(unittest.TestCase):
         self.ventry.clickedTag = self.ventry.tags.winfo_children()[0]
         self.ventry.deleteTagClicked()
         self.dummy7.assert_not_called()
+        
+    def testNewFileClick(self):
+        '''Tests if new file is clicked correctly'''
+        #todo
+        pass
+        
+    def testDeleteFileClickedWithImage(self):
+        '''Tests if delete file works. This test does not include the 
+        event calling of the widget, it tests the content of 
+        deleteFileClicked method only'''
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.clickedFile = self.ventry.files.winfo_children()[0]
+        self.ventry.deleteFileClicked()
+        self.dummy8.assert_called_once_with(0)
+        
+    def testDeleteFileClickedWithoutImage(self):
+        '''Tests if delete file works. This test does not include the 
+        event calling of the widget, it tests the content of 
+        deleteFileClicked method only'''
+        self.entry.files = []
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.clickedFile = self.ventry.files.winfo_children()[0]
+        self.ventry.deleteFileClicked()
+        self.dummy8.assert_not_called()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
