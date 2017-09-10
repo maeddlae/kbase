@@ -21,6 +21,7 @@ class VEntry(Frame):
     imageSize=100,100
     tagPrompt = "right click here and add tags"
     tagEnterPrompt = "enter tag"
+    imagePrompt = "right click here and add images"
 
     def __init__(self, parent, log, actions):
         '''
@@ -67,22 +68,28 @@ class VEntry(Frame):
                     keyLabel.bind("<Button-3>", self.showTagRightClickMenu)
             self.tags.grid(sticky=W)
             
-            self.rightClickMenu = Menu(self, tearoff=0)
-            self.rightClickMenu.add_command(label="new", 
+            self.imageRightClickMenu = Menu(self, tearoff=0)
+            self.imageRightClickMenu.add_command(label="new", 
                                        command=self.newImageClicked)
-            self.rightClickMenu.add_command(label="delete", 
+            self.imageRightClickMenu.add_command(label="delete", 
                                        command=self.deleteImageClicked)
             
             self.images = Frame(self)
-            for i, img in enumerate(entry.images):
-                iobytes = io.BytesIO(img)
-                img = Image.open(iobytes)
-                img.thumbnail(self.imageSize, Image.ANTIALIAS )
-                photoimg = ImageTk.PhotoImage(img)
-                imgLabel = Label(self.images, image=photoimg)
-                imgLabel.image = photoimg
-                imgLabel.grid(row=3, column=i, sticky=W)
-                imgLabel.bind("<Button-3>", self.showRightClickMenu)
+            # if there are no images, place label which prompts user to enter some
+            if entry.images.__len__() == 0:
+                prompt = Label(self.images, text=self.imagePrompt)
+                prompt.grid(row=3, column=0, sticky=W)
+                prompt.bind("<Button-3>", self.showImageRightClickMenu)
+            else:
+                for i, img in enumerate(entry.images):
+                    iobytes = io.BytesIO(img)
+                    img = Image.open(iobytes)
+                    img.thumbnail(self.imageSize, Image.ANTIALIAS )
+                    photoimg = ImageTk.PhotoImage(img)
+                    imgLabel = Label(self.images, image=photoimg)
+                    imgLabel.image = photoimg
+                    imgLabel.grid(row=3, column=i, sticky=W)
+                    imgLabel.bind("<Button-3>", self.showImageRightClickMenu)
             self.images.grid(sticky=W)
             
             self.files = Frame(self)
@@ -102,12 +109,13 @@ class VEntry(Frame):
         finally:
             self.tagRightClickMenu.grab_release()
 
-    def showRightClickMenu(self, event):
+    def showImageRightClickMenu(self, event):
         '''Tries to show the right click menu'''
         try:
-            self.rightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
+            self.clickedImage = event.widget
+            self.imageRightClickMenu.tk_popup(event.x_root, event.y_root+20, 0)
         finally:
-            self.rightClickMenu.grab_release()
+            self.imageRightClickMenu.grab_release()
 
     def getName(self):
         '''Returns the name of the displayed entry'''
@@ -134,6 +142,10 @@ class VEntry(Frame):
     def newImageClicked(self):
         '''Is called when user right clicks on an image and selects new'''
         self.log.add(self.log.Info, __file__, "new image clicked" )
+                
+        # remove enter image prompt
+        if self.tags.winfo_children()[0]["text"] == self.imagePrompt:
+            self.tags.winfo_children()[0].destroy()
                 
         if self.actions != None:
             if "newImageAction" in self.actions:
