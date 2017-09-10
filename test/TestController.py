@@ -12,6 +12,7 @@ from view.View import View
 from model.ModelEntry import ModelEntry
 import os
 from mock import mock_open, patch
+import copy
 
 
 class TestController(unittest.TestCase):
@@ -32,6 +33,8 @@ class TestController(unittest.TestCase):
         self.ctr.model.currentEntry.description = "This is the description of furniture"
         self.ctr.model.currentEntry.tags.append("chair")
         self.ctr.model.currentEntry.tags.append("table")
+        self.ctr.model.currentEntry.images.append("thisisnoimage")
+        self.ctr.model.currentEntry.images.append("thisanotherimage")
         self.ctr.view.drawEntry = MagicMock()
         self.ctr.view.drawSearch = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
@@ -181,7 +184,7 @@ class TestController(unittest.TestCase):
         self.ctr.newImageAction()
         self.ctr.view.showFileDialog.assert_called_once()
         
-    def testImageSelectedActionWithFilename(self):
+    def testNewImageSelectedActionWithFilename(self):
         filename = self.configPath
         data = "some data"
         
@@ -189,14 +192,14 @@ class TestController(unittest.TestCase):
         with patch('__builtin__.open', mopen):
             manager = mopen.return_value.__enter__.return_value
             manager.read.return_value = data
-            self.ctr.imageSelectedAction(filename)
+            self.ctr.newImageSelectedAction(filename)
             
         mopen.assert_called_once_with(filename, "rb")
         self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
-    def testImageSelectedActionWithoutFilename(self):
+    def testNewImageSelectedActionWithoutFilename(self):
         filename = "blublu"
         data = "some data"
         
@@ -204,7 +207,7 @@ class TestController(unittest.TestCase):
         with patch('__builtin__.open', mopen):
             manager = mopen.return_value.__enter__.return_value
             manager.read.return_value = data
-            self.ctr.imageSelectedAction(filename)
+            self.ctr.newImageSelectedAction(filename)
             
         mopen.assert_not_called()
         self.ctr.model.updateContentOfEntry.assert_not_called()
@@ -227,12 +230,26 @@ class TestController(unittest.TestCase):
         
     def testDeleteTagAction(self):
         tagToDelete = self.ctr.model.currentEntry.tags[0]
-        exp = self.ctr.model.currentEntry.tags
+        exp = copy.copy(self.ctr.model.currentEntry.tags)
         exp.remove(tagToDelete)
         
-        self.ctr.newTagAction(tagToDelete)
+        self.ctr.deleteTagAction(tagToDelete)
         
         act = self.ctr.model.currentEntry.tags
+        self.assertEqual(exp.__len__(), act.__len__())
+        self.assertSequenceEqual(exp, act)
+        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        
+    def testDeleteImageAction(self):
+        imageToDelete = 1
+        exp = copy.copy(self.ctr.model.currentEntry.images)
+        del exp[imageToDelete]
+        
+        self.ctr.deleteImageAction(imageToDelete)
+        
+        act = self.ctr.model.currentEntry.images
         self.assertEqual(exp.__len__(), act.__len__())
         self.assertSequenceEqual(exp, act)
         self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)

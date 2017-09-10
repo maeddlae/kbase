@@ -87,6 +87,7 @@ class VEntry(Frame):
                     img.thumbnail(self.imageSize, Image.ANTIALIAS )
                     photoimg = ImageTk.PhotoImage(img)
                     imgLabel = Label(self.images, image=photoimg)
+                    imgLabel["text"] = str(i)
                     imgLabel.image = photoimg
                     imgLabel.grid(row=3, column=i, sticky=W)
                     imgLabel.bind("<Button-3>", self.showImageRightClickMenu)
@@ -135,9 +136,11 @@ class VEntry(Frame):
         '''Is called when user right clicks on an image and selects delete'''
         self.log.add(self.log.Info, __file__, "delete image clicked" )
                 
+        imageToDelete = int(self.clickedImage["text"])
+        
         if self.actions != None:
             if "deleteImageAction" in self.actions:
-                self.actions["deleteImageAction"]()
+                self.actions["deleteImageAction"](imageToDelete)
 
     def newImageClicked(self):
         '''Is called when user right clicks on an image and selects new'''

@@ -25,9 +25,10 @@ class Controller():
                         "deleteAction" : self.deleteEntryAction,
                         "pathChangeAction" : self.changePathAction,
                         "newImageAction" : self.newImageAction,
-                        "fileSelectedAction" : self.imageSelectedAction,
+                        "fileSelectedAction" : self.newImageSelectedAction,
                         "addTagAction" : self.newTagAction,
-                        "deleteTagAction" : self.deleteTagAction}
+                        "deleteTagAction" : self.deleteTagAction,
+                        "deleteImageAction" : self.deleteImageAction}
         if log != None:
             self.log = log
         else:
@@ -122,7 +123,7 @@ class Controller():
         by button click'''
         self.view.showFileDialog()
         
-    def imageSelectedAction(self, filename):
+    def newImageSelectedAction(self, filename):
         '''Is called when user has selected a new image. Method 
         adds the image to the model and shows it in view'''
         self.log.add(self.log.Info, __file__, "image " + filename + " selected")
@@ -134,6 +135,13 @@ class Controller():
             self.model.updateContentOfEntry(self.model.currentEntry)
             self.view.removeEntry(self.model.currentEntry)
             self.view.drawEntry(self.model.currentEntry)
+            
+    def deleteImageAction(self, imageToDelete):
+        '''Deletes image number imageToDelete of current entry'''
+        del self.model.currentEntry.images[imageToDelete]
+        self.model.updateContentOfEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
             
     def newTagAction(self, newTag):
         '''This action is called when user entered a new tag'''
