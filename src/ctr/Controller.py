@@ -25,13 +25,13 @@ class Controller():
                         "deleteAction" : self.deleteEntryAction,
                         "pathChangeAction" : self.changePathAction,
                         "newImageAction" : self.newImageAction,
-                        "imageSelectedAction" : self.newImageSelectedAction,
+                        "imageSelectedAction" : self.newFileOrImageSelectedAction,
                         "addTagAction" : self.newTagAction,
                         "deleteTagAction" : self.deleteTagAction,
                         "deleteImageAction" : self.deleteImageAction,
                         "deleteFileAction" : self.deleteFileAction,
                         "newFileAction" : self.newFileAction,
-                        "fileSelectedAction" : self.newFileSelectedAction}
+                        "fileSelectedAction" : self.newFileOrImageSelectedAction}
         if log != None:
             self.log = log
         else:
@@ -125,19 +125,6 @@ class Controller():
         '''Is called when user wants to add a new image 
         by button click'''
         self.view.showNewImageSelectDialog()
-        
-    def newImageSelectedAction(self, filename):
-        '''Is called when user has selected a new image. Method 
-        adds the image to the model and shows it in view'''
-        self.log.add(self.log.Info, __file__, "image " + filename + " selected")
-        if os.path.exists(filename):
-            f = open(filename, "rb")
-            content = f.read()
-            f.close()
-            self.model.currentEntry.images.append(content)
-            self.model.updateContentOfEntry(self.model.currentEntry)
-            self.view.removeEntry(self.model.currentEntry)
-            self.view.drawEntry(self.model.currentEntry)
             
     def deleteImageAction(self, imageToDelete):
         '''Deletes image number imageToDelete of current entry'''
@@ -165,23 +152,43 @@ class Controller():
         by button click'''
         self.view.showNewFileSelectDialog()
         
-    def newFileSelectedAction(self, filename):
-        '''Is called when user has selected a new file. Method 
-        adds the file to the model and shows it in view'''
-        self.log.add(self.log.Info, __file__, "file " + filename + " selected")
+    def newFileOrImageSelectedAction(self, filename):
+        '''Is called when user has selected a new file/image. Method 
+        adds the file/image to the model and shows it in view'''
+        self.log.add(self.log.Info, __file__, filename + " selected")
+        
         if os.path.exists(filename):
-            f = open(filename, "rb")
-            content = f.read()
-            f.close()
-            name = os.path.basename(filename)
-            self.model.currentEntry.files[name] = content
-            self.model.updateContentOfEntry(self.model.currentEntry)
-            self.view.removeEntry(self.model.currentEntry)
-            self.view.drawEntry(self.model.currentEntry)
+            if self.model.currentEntry.isSupportedImageFile(filename):
+                self.addImage(filename)
+            else:
+                self.addFile(filename)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
             
     def deleteFileAction(self, fileToDelete):
         '''Deletes file in current entry'''
         del self.model.currentEntry.files[fileToDelete]
+        self.model.updateContentOfEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
+        
+    def addFile(self, filename):
+        '''Adds a file to currentEntry and updates the view'''
+        f = open(filename, "rb")
+        content = f.read()
+        f.close()
+        name = os.path.basename(filename)
+        self.model.currentEntry.files[name] = content
+        self.model.updateContentOfEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
+            
+    def addImage(self, filename):
+        '''Adds an image to current entry and updates the view'''
+        f = open(filename, "rb")
+        content = f.read()
+        f.close()
+        self.model.currentEntry.images.append(content)
         self.model.updateContentOfEntry(self.model.currentEntry)
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)

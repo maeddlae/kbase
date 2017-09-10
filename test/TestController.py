@@ -193,36 +193,6 @@ class TestController(unittest.TestCase):
         self.ctr.newImageAction()
         self.ctr.view.showNewImageSelectDialog.assert_called_once()
         
-    def testNewImageSelectedActionWithFilename(self):
-        filename = self.configPath
-        data = "some data"
-        
-        mopen = MagicMock()
-        with patch('__builtin__.open', mopen):
-            manager = mopen.return_value.__enter__.return_value
-            manager.read.return_value = data
-            self.ctr.newImageSelectedAction(filename)
-            
-        mopen.assert_called_once_with(filename, "rb")
-        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
-        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
-        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
-        
-    def testNewImageSelectedActionWithoutFilename(self):
-        filename = "blublu"
-        data = "some data"
-        
-        mopen = MagicMock()
-        with patch('__builtin__.open', mopen):
-            manager = mopen.return_value.__enter__.return_value
-            manager.read.return_value = data
-            self.ctr.newImageSelectedAction(filename)
-            
-        mopen.assert_not_called()
-        self.ctr.model.updateContentOfEntry.assert_not_called()
-        self.ctr.view.removeEntry.assert_not_called()
-        self.ctr.view.drawEntry.assert_not_called()
-        
     def testNewTagAction(self):
         newTag = "asdfa"
         exp = self.ctr.model.currentEntry.tags
@@ -269,40 +239,6 @@ class TestController(unittest.TestCase):
         self.ctr.newFileAction()
         self.ctr.view.showNewFileSelectDialog.assert_called_once()
         
-    def testNewFileSelectedActionWithFilename(self):
-        filename = self.configPath
-        fullPath = os.path.abspath(filename)
-        data = "some data"
-        
-        mopen = MagicMock()
-        with patch('__builtin__.open', mopen):
-            manager = mopen.return_value.__enter__.return_value
-            manager.read.return_value = data
-            self.ctr.newFileSelectedAction(fullPath)
-            
-        mopen.assert_called_once_with(fullPath, "rb")
-        exp = filename
-        act = next(iter(self.ctr.model.currentEntry.files))
-        self.assertEqual(exp, act)
-        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
-        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
-        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
-        
-    def testNewFileSelectedActionWithoutFilename(self):
-        filename = "blublu"
-        data = "some data"
-        
-        mopen = MagicMock()
-        with patch('__builtin__.open', mopen):
-            manager = mopen.return_value.__enter__.return_value
-            manager.read.return_value = data
-            self.ctr.newFileSelectedAction(filename)
-            
-        mopen.assert_not_called()
-        self.ctr.model.updateContentOfEntry.assert_not_called()
-        self.ctr.view.removeEntry.assert_not_called()
-        self.ctr.view.drawEntry.assert_not_called()
-        
     def testDeleteFileAction(self):
         fileToDelete = self.testWordPath
         exp = copy.copy(self.ctr.model.currentEntry.files)
@@ -314,6 +250,79 @@ class TestController(unittest.TestCase):
         self.assertEqual(exp.__len__(), act.__len__())
         self.assertSequenceEqual(exp, act)
         self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+
+    def testAddFile(self):
+        filename = self.configPath
+        fullPath = os.path.abspath(filename)
+        data = "some data"
+        
+        mopen = MagicMock()
+        with patch('__builtin__.open', mopen):
+            manager = mopen.return_value.__enter__.return_value
+            manager.read.return_value = data
+            self.ctr.addFile(fullPath)
+            
+        mopen.assert_called_once_with(fullPath, "rb")
+        exp = filename
+        act = next(iter(self.ctr.model.currentEntry.files))
+        self.assertEqual(exp, act)
+        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        
+    def testAddImage(self):
+        filename = self.configPath
+        data = "some data"
+        
+        mopen = MagicMock()
+        with patch('__builtin__.open', mopen):
+            manager = mopen.return_value.__enter__.return_value
+            manager.read.return_value = data
+            self.ctr.addImage(filename)
+            
+        mopen.assert_called_once_with(filename, "rb")
+        self.ctr.model.updateContentOfEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        
+    def testNewFileOrImageSelectedAction(self):
+        self.ctr.addFile = MagicMock()
+        self.ctr.addImage = MagicMock()
+        self.ctr.model.currentEntry.isSupportedImageFile = MagicMock()
+        filename = self.testWordPath
+        
+        # test add image if exists
+        self.ctr.model.currentEntry.isSupportedImageFile.return_value = True
+        self.ctr.newFileOrImageSelectedAction(filename)
+        self.ctr.addImage.assert_called_once_with(filename)
+        self.ctr.addFile.assert_not_called()
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        
+        # test add file if exists
+        self.ctr.addFile.reset_mock()
+        self.ctr.addImage.reset_mock()
+        self.ctr.view.removeEntry.reset_mock()
+        self.ctr.view.drawEntry.reset_mock()
+        self.ctr.model.currentEntry.isSupportedImageFile.return_value = False
+        self.ctr.newFileOrImageSelectedAction(filename)
+        self.ctr.addImage.assert_not_called()
+        self.ctr.addFile.assert_called_once_with(filename)
+        self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
+        
+        # test add file if not exists
+        filename = "blublu.adf"
+        self.ctr.addFile.reset_mock()
+        self.ctr.addImage.reset_mock()
+        self.ctr.view.removeEntry.reset_mock()
+        self.ctr.view.drawEntry.reset_mock()
+        self.ctr.model.currentEntry.isSupportedImageFile.return_value = False
+        self.ctr.newFileOrImageSelectedAction(filename)
+        self.ctr.addImage.assert_not_called()
+        self.ctr.addFile.assert_not_called()
         self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
 

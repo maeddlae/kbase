@@ -21,6 +21,11 @@ class TestModelEntry(unittest.TestCase):
 
     def tearDown(self):
         pass
+    
+    def testIsSupportedImageFile(self):
+        self.assertTrue(self.entry.isSupportedImageFile("asdf/blublu/bloblo.jpg"))
+        self.assertTrue(self.entry.isSupportedImageFile("bloblo.png"))
+        self.assertFalse(self.entry.isSupportedImageFile("asdf/bloblo.aaa"))
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

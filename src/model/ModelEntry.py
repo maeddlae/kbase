@@ -21,3 +21,14 @@ class ModelEntry():
         self.files = dict()
         
         self.log.add(self.log.Info, __file__, "init: " + name)
+        
+    def isSupportedImageFile(self, filename):
+        '''Returns true if the file is a supported image file type'''
+        if filename.lower().endswith((".bmp", ".eps", ".gif", ".icns", 
+                                     ".im", ".jpeg", ".jpeg 2000", 
+                                     ".msp", ".pcx", ".png", ".ppm",
+                                     ".spider", ".tiff", ".webp",
+                                     ".xbm", ".jpg")):
+            return True
+        else:
+            return False
