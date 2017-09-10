@@ -136,11 +136,16 @@ class VEntry(Frame):
         '''Is called when user right clicks on an image and selects delete'''
         self.log.add(self.log.Info, __file__, "delete image clicked" )
                 
-        imageToDelete = int(self.clickedImage["text"])
-        
-        if self.actions != None:
-            if "deleteImageAction" in self.actions:
-                self.actions["deleteImageAction"](imageToDelete)
+        # only call delete action if there is an image
+        if (self.images.winfo_children().__len__() == 1 and 
+            self.images.winfo_children()[0]["text"] == self.imagePrompt):
+            return
+        else:
+            imageToDelete = int(self.clickedImage["text"])
+            
+            if self.actions != None:
+                if "deleteImageAction" in self.actions:
+                    self.actions["deleteImageAction"](imageToDelete)
 
     def newImageClicked(self):
         '''Is called when user right clicks on an image and selects new'''
@@ -173,11 +178,16 @@ class VEntry(Frame):
         '''Is called when user right clicks on a tag and selects new'''
         self.log.add(self.log.Info, __file__, "delete tag clicked" )
         
-        tagToDelete = self.clickedTag["text"]
-                
-        if self.actions != None:
-            if "deleteTagAction" in self.actions:
-                self.actions["deleteTagAction"](tagToDelete)
+        # only call delete action if there is a tag
+        if (self.tags.winfo_children().__len__() == 1 and 
+            self.tags.winfo_children()[0]["text"] == self.tagPrompt):
+            return
+        else:
+            tagToDelete = self.clickedTag["text"]
+                    
+            if self.actions != None:
+                if "deleteTagAction" in self.actions:
+                    self.actions["deleteTagAction"](tagToDelete)
                 
     def returnPressedAtNewTag(self, _event):
         '''Is called when user hits Return key while adding a new tag'''

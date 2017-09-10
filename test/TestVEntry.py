@@ -28,10 +28,14 @@ class TestVEntry(unittest.TestCase):
         self.dummy1 = MagicMock()
         self.dummy4 = MagicMock()
         self.dummy5 = MagicMock()
+        self.dummy6 = MagicMock()
+        self.dummy7 = MagicMock()
         
         self.actionlist = {"entryChangeAction" : self.dummy1,
                   "newImageAction" : self.dummy4,
-                  "addTagAction" : self.dummy5}
+                  "addTagAction" : self.dummy5,
+                  "deleteImageAction" : self.dummy6,
+                  "deleteTagAction" : self.dummy7}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
@@ -228,21 +232,58 @@ class TestVEntry(unittest.TestCase):
         #todo
         pass
         
-    def testDeleteImageClick(self):
-        '''Tests if delete image is clicked correctly'''
-        #todo
-        pass
+    def testDeleteImageClickedWithImage(self):
+        '''Tests if delete image works. This test does not include the 
+        event calling of the widget, it tests the content of 
+        deleteImageClicked method only'''
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.clickedImage = self.ventry.images.winfo_children()[0]
+        self.ventry.deleteImageClicked()
+        self.dummy6.assert_called_once_with(0)
+        
+    def testDeleteImageClickedWithoutImage(self):
+        '''Tests if delete image works. This test does not include the 
+        event calling of the widget, it tests the content of 
+        deleteImageClicked method only'''
+        self.entry.images = []
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.clickedImage = self.ventry.images.winfo_children()[0]
+        self.ventry.deleteImageClicked()
+        self.dummy6.assert_not_called()
         
     def testNewTagClick(self):
         '''Tests if new tag is clicked correctly'''
         #todo
         pass
         
-    def testDeleteTagClick(self):
-        '''Tests if delete tag is clicked correctly'''
-        #todo
-        pass
         
+    def testDeleteTagClickedWithTag(self):
+        '''Tests if delete tag works. This test does not include the 
+        event calling of the widget, it tests the content of 
+        deleteTagClicked method only'''
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.clickedTag = self.ventry.tags.winfo_children()[1]
+        expArg = self.ventry.clickedTag["text"]
+        self.ventry.deleteTagClicked()
+        self.dummy7.assert_called_once_with(expArg)
+        
+    def testDeleteTagClickedWithoutTag(self):
+        '''Tests if delete tag works. This test does not include the 
+        event calling of the widget, it tests the content of 
+        deleteTagClicked method only'''
+        self.entry.tags = []
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        self.ventry.clickedTag = self.ventry.tags.winfo_children()[0]
+        self.ventry.deleteTagClicked()
+        self.dummy7.assert_not_called()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
