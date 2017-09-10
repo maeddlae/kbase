@@ -26,6 +26,8 @@ class FileHandle(object):
         followed by its content (=value of files dict)'''
         barray = []
         for key, value in files.iteritems():
+            if isinstance(key, unicode):
+                key = key.encode("utf-8")
             barray.append(bytearray(key))
             barray.append(value)
         stream = self.insertSyncWords(barray)

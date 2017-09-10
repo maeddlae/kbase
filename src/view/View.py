@@ -73,7 +73,16 @@ class View():
     def changeDbPath(self, newPath):
         self.dbPath.changePath(newPath)
         
-    def showFileDialog(self):
+    def showNewImageSelectDialog(self):
+        '''Shows a file dialog where user can select the 
+        image to load'''
+        filename = tkFileDialog.askopenfilename()
+        
+        if self.actions != None:
+            if "imageSelectedAction" in self.actions:
+                self.actions["imageSelectedAction"](filename)
+        
+    def showNewFileSelectDialog(self):
         '''Shows a file dialog where user can select the 
         file to load'''
         filename = tkFileDialog.askopenfilename()

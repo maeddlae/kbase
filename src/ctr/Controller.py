@@ -25,10 +25,13 @@ class Controller():
                         "deleteAction" : self.deleteEntryAction,
                         "pathChangeAction" : self.changePathAction,
                         "newImageAction" : self.newImageAction,
-                        "fileSelectedAction" : self.newImageSelectedAction,
+                        "imageSelectedAction" : self.newImageSelectedAction,
                         "addTagAction" : self.newTagAction,
                         "deleteTagAction" : self.deleteTagAction,
-                        "deleteImageAction" : self.deleteImageAction}
+                        "deleteImageAction" : self.deleteImageAction,
+                        "deleteFileAction" : self.deleteFileAction,
+                        "newFileAction" : self.newFileAction,
+                        "fileSelectedAction" : self.newFileSelectedAction}
         if log != None:
             self.log = log
         else:
@@ -121,7 +124,7 @@ class Controller():
     def newImageAction(self):
         '''Is called when user wants to add a new image 
         by button click'''
-        self.view.showFileDialog()
+        self.view.showNewImageSelectDialog()
         
     def newImageSelectedAction(self, filename):
         '''Is called when user has selected a new image. Method 
@@ -153,6 +156,32 @@ class Controller():
     def deleteTagAction(self, tagToDelete):
         '''Is called when user deletes a tag'''
         self.model.currentEntry.tags.remove(tagToDelete)
+        self.model.updateContentOfEntry(self.model.currentEntry)
+        self.view.removeEntry(self.model.currentEntry)
+        self.view.drawEntry(self.model.currentEntry)
+        
+    def newFileAction(self):
+        '''Is called when user wants to add a new file 
+        by button click'''
+        self.view.showNewFileSelectDialog()
+        
+    def newFileSelectedAction(self, filename):
+        '''Is called when user has selected a new file. Method 
+        adds the file to the model and shows it in view'''
+        self.log.add(self.log.Info, __file__, "file " + filename + " selected")
+        if os.path.exists(filename):
+            f = open(filename, "rb")
+            content = f.read()
+            f.close()
+            name = os.path.basename(filename)
+            self.model.currentEntry.files[name] = content
+            self.model.updateContentOfEntry(self.model.currentEntry)
+            self.view.removeEntry(self.model.currentEntry)
+            self.view.drawEntry(self.model.currentEntry)
+            
+    def deleteFileAction(self, fileToDelete):
+        '''Deletes file in current entry'''
+        del self.model.currentEntry.files[fileToDelete]
         self.model.updateContentOfEntry(self.model.currentEntry)
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)

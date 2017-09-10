@@ -102,6 +102,20 @@ class TestFileHandle(unittest.TestCase):
             self.assertEqual(k1, k2)
             self.assertEqual(v1, v2)
             
+    def testSingleDictFileWithUnicode(self):
+        inp = dict()
+        inp[unicode(self.testWordPath)] = self.testWordStream
+        exp = dict()
+        exp[self.testWordPath] = self.testWordStream
+        
+        stream = self.filehandle.getStreamFromDictFiles(inp)
+        act = self.filehandle.getDictFilesFromStream(stream)
+        
+        self.assertEqual(exp.__len__(), act.__len__())
+        for (k1, v1), (k2, v2) in zip(exp.items(), act.items()):
+            self.assertEqual(k1, k2)
+            self.assertEqual(v1, v2)
+            
     def testMultiDictFile(self):
         exp = dict()
         exp[self.testWordPath] = self.testWordStream

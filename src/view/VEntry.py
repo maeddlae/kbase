@@ -107,9 +107,9 @@ class VEntry(Frame):
                 prompt.grid(row=4, column=0, sticky=W)
                 prompt.bind("<Button-3>", self.showFilesRightClickMenu)
             else:
-                for i, fil in enumerate(entry.files):
+                for i, (key, _content) in enumerate(entry.files.iteritems()):
                     lbl = Label(self.files)
-                    lbl["text"] = str(i)
+                    lbl["text"] = key
                     lbl.grid(row=4, column=i, sticky=W)
                     lbl.bind("<Button-3>", self.showFilesRightClickMenu)
             self.files.grid(sticky=W)
@@ -229,7 +229,7 @@ class VEntry(Frame):
             self.files.winfo_children()[0]["text"] == self.filePrompt):
             return
         else:
-            fileToDelete = int(self.clickedFile["text"])
+            fileToDelete = self.clickedFile["text"]
             
             if self.actions != None:
                 if "deleteFileAction" in self.actions:

@@ -98,6 +98,13 @@ class TestVEntry(unittest.TestCase):
         self.assertEqual(1, self.ventry.images.children.__len__())
         
         self.assertEqual(2, self.ventry.files.children.__len__())
+        exp = self.testWordPath
+        act = self.ventry.files.winfo_children()[1]["text"]
+        self.assertEqual(exp, act)
+        self.assertEqual(2, self.ventry.files.children.__len__())
+        exp = self.testImagePath
+        act = self.ventry.files.winfo_children()[0]["text"]
+        self.assertEqual(exp, act)
 
     def testDrawEntryIfHasNoFiles(self):
         '''Tests whether all elements of the entry are drawn'''
@@ -152,6 +159,13 @@ class TestVEntry(unittest.TestCase):
         self.assertEqual(exp, act)
         
         self.assertEqual(2, self.ventry.files.children.__len__())
+        exp = self.testWordPath
+        act = self.ventry.files.winfo_children()[1]["text"]
+        self.assertEqual(exp, act)
+        self.assertEqual(2, self.ventry.files.children.__len__())
+        exp = self.testImagePath
+        act = self.ventry.files.winfo_children()[0]["text"]
+        self.assertEqual(exp, act)
 
     def testDrawEntry(self):
         '''Tests whether all elements of the entry are drawn'''
@@ -174,6 +188,13 @@ class TestVEntry(unittest.TestCase):
         self.assertEqual(1, self.ventry.images.children.__len__())
         
         self.assertEqual(2, self.ventry.files.children.__len__())
+        exp = self.testWordPath
+        act = self.ventry.files.winfo_children()[1]["text"]
+        self.assertEqual(exp, act)
+        self.assertEqual(2, self.ventry.files.children.__len__())
+        exp = self.testImagePath
+        act = self.ventry.files.winfo_children()[0]["text"]
+        self.assertEqual(exp, act)
         
     def testReturnPressedAtFields(self):
         '''Tests whether the right method is called at Return keypress'''
@@ -339,7 +360,7 @@ class TestVEntry(unittest.TestCase):
         self.root.update()
         self.ventry.clickedFile = self.ventry.files.winfo_children()[0]
         self.ventry.deleteFileClicked()
-        self.dummy8.assert_called_once_with(0)
+        self.dummy8.assert_called_once_with(self.ventry.clickedFile["text"])
         
     def testDeleteFileClickedWithoutImage(self):
         '''Tests if delete file works. This test does not include the 
