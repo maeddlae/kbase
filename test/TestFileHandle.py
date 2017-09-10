@@ -76,7 +76,7 @@ class TestFileHandle(unittest.TestCase):
         exp = self.testImageStream
         
         stream = self.filehandle.getStreamFromFiles(exp)
-        act = self.filehandle.getFilesFromStrean(stream)
+        act = self.filehandle.getFilesFromStream(stream)
         self.assertEqual(exp.__len__(), act.__len__())
         self.assertSequenceEqual(exp, act)
             
@@ -84,7 +84,7 @@ class TestFileHandle(unittest.TestCase):
         exp = [self.testImageStream, self.testWordStream]
         
         stream = self.filehandle.getStreamFromFiles(exp)
-        act = self.filehandle.getFilesFromStrean(stream)
+        act = self.filehandle.getFilesFromStream(stream)
         self.assertEqual(exp.__len__(), act.__len__())
         for e, a in zip(exp,act):
             self.assertEqual(e.__len__(), a.__len__())

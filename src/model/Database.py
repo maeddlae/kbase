@@ -195,9 +195,9 @@ class Database(object):
         e = ModelEntry(self.log, s)
         s = data["description"].encode("ascii")
         e.description = s
-        e.tags = self.fileHandle.getFilesFromStrean(bytearray(data["tags"]))
-        e.images = self.fileHandle.getFilesFromStrean(bytearray(data["images"]))
-        e.files = self.fileHandle.getFilesFromStrean(bytearray(data["files"]))
+        e.tags = self.fileHandle.getFilesFromStream(bytearray(data["tags"]))
+        e.images = self.fileHandle.getFilesFromStream(bytearray(data["images"]))
+        e.files = self.fileHandle.getFilesFromStream(bytearray(data["files"]))
         return e
     
     def removeEntry(self, entry):

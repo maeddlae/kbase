@@ -27,7 +27,7 @@ class FileHandle(object):
         separates the files by sync word'''
         return self.insertSyncWords(files)
     
-    def getFilesFromStrean(self, stream):
+    def getFilesFromStream(self, stream):
         '''Converts the stream into files. The files 
         must be separated by sync words'''
         return self.removeSyncWords(stream)
