@@ -58,8 +58,8 @@ class TestVEntry(unittest.TestCase):
         self.entry.tags.append("deer")
         self.entry.tags.append("bear")
         self.entry.images.append(self.testImageStream)
-        self.entry.files.append(self.testWordStream)
-        self.entry.files.append(self.testImageStream)
+        self.entry.files[self.testWordPath] = self.testWordStream
+        self.entry.files[self.testImagePath] = self.testImageStream
         
     def tearDown(self):
         self.ventry.grid()

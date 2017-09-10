@@ -47,7 +47,7 @@ class TestDatabase(unittest.TestCase):
         self.e[0].description = "This is a building"
         self.e[0].tags = ["Louvre"]
         self.e[0].images.append(self.testImageStream)
-        self.e[0].files.append(self.testWordStream)
+        self.e[0].files[self.testWordPath] = self.testWordStream
         self.e.append(ModelEntry(self.log,"planes"))
         self.e[1].description = "These are planes"
         self.e[1].tags = ["F16", "F35"]
@@ -73,7 +73,7 @@ class TestDatabase(unittest.TestCase):
             
             ima = self.filehandle.getStreamFromFiles(entry.images)
             img = buffer(ima)
-            fil = buffer(self.filehandle.getStreamFromFiles(entry.files))
+            fil = buffer(self.filehandle.getStreamFromDictFiles(entry.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, img, fil))
         
         testdb.commit()
@@ -117,7 +117,7 @@ class TestDatabase(unittest.TestCase):
         n.tags.append("Yamaha")
         n.tags.append("Kawasaki")
         n.images.append(self.filehandle.getStreamFromFiles(self.testImageStream))
-        n.files.append(self.filehandle.getStreamFromFiles(self.testWordStream))
+        n.files[self.testWordPath] = self.filehandle.getStreamFromFiles(self.testWordStream)
         
         self.db.addEntry(n)
         
@@ -321,7 +321,7 @@ class TestDatabase(unittest.TestCase):
         
         tags = self.filehandle.getStreamFromFiles(entry.tags)
         images = self.filehandle.getStreamFromFiles(entry.images)
-        files = self.filehandle.getStreamFromFiles(entry.files)
+        files = self.filehandle.getStreamFromDictFiles(entry.files)
         
         for row in rows:
             nameDescTagOk = False

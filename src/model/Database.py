@@ -61,7 +61,7 @@ class Database(object):
             c = db.cursor()
             s = buffer(self.fileHandle.getStreamFromFiles(entry.tags))
             p = buffer(self.fileHandle.getStreamFromFiles(entry.images))
-            f = buffer(self.fileHandle.getStreamFromFiles(entry.files))
+            f = buffer(self.fileHandle.getStreamFromDictFiles(entry.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, p, f))
             db.commit()
             db.close()
@@ -82,7 +82,7 @@ class Database(object):
             c = db.cursor()
             s = buffer(self.fileHandle.getStreamFromFiles(e.tags))
             img = buffer(self.fileHandle.getStreamFromFiles(e.images))
-            fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
+            fil = buffer(self.fileHandle.getStreamFromDictFiles(e.files))
             c.execute('''UPDATE entries SET description=?, tags=?, images=?, files=? WHERE name=?''', [e.description, s, img, fil, e.name])
             db.commit()
             db.close()
@@ -106,7 +106,7 @@ class Database(object):
             e.name = newName
             s = buffer(self.fileHandle.getStreamFromFiles(e.tags))
             img = buffer(self.fileHandle.getStreamFromFiles(e.images))
-            fil = buffer(self.fileHandle.getStreamFromFiles(e.files))
+            fil = buffer(self.fileHandle.getStreamFromDictFiles(e.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", [e.name, e.description, s, img, fil])
             db.commit()
             db.close()
@@ -197,7 +197,7 @@ class Database(object):
         e.description = s
         e.tags = self.fileHandle.getFilesFromStream(bytearray(data["tags"]))
         e.images = self.fileHandle.getFilesFromStream(bytearray(data["images"]))
-        e.files = self.fileHandle.getFilesFromStream(bytearray(data["files"]))
+        e.files = self.fileHandle.getDictFilesFromStream(bytearray(data["files"]))
         return e
     
     def removeEntry(self, entry):

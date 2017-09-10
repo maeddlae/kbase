@@ -20,7 +20,37 @@ class FileHandle(object):
         self.log = log    
         self.log.add(self.log.Info, __file__, "init" )
      
-
+        
+    def getStreamFromDictFiles(self, files):
+        '''Returns a binary stream where each filename (=key of files dict) is 
+        followed by its content (=value of files dict)'''
+        barray = []
+        for key, value in files.iteritems():
+            barray.append(bytearray(key))
+            barray.append(value)
+        stream = self.insertSyncWords(barray)
+        return stream
+        
+    def getDictFilesFromStream(self, stream):
+        '''Returns the files in a dictionary, where key = filename 
+        and value = content. This method expects a bytestream where 
+        filename is followed by content, separated by sync words'''
+        blist = self.removeSyncWords(stream)
+        
+        files = dict()
+        for i, b in enumerate(blist):
+            
+            # even elements are keys (=filenames)
+            if i%2 == 0:
+                key = str(b)
+                files[key] = bytearray()
+                
+            # odd elements are values (=file contents)
+            else:
+                key = str(blist[i-1])
+                files[key] = b
+        return files
+    
     def getStreamFromFiles(self, files):
         '''Converts the files list into a bytestream, 
         which can be stored in a database. The stream 

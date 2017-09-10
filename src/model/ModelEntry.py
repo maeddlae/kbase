@@ -18,6 +18,6 @@ class ModelEntry():
         self.description = "This is the description"
         self.tags = []
         self.images = []
-        self.files = []
+        self.files = dict()
         
         self.log.add(self.log.Info, __file__, "init: " + name)

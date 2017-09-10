@@ -89,6 +89,30 @@ class TestFileHandle(unittest.TestCase):
         for e, a in zip(exp,act):
             self.assertEqual(e.__len__(), a.__len__())
             self.assertSequenceEqual(e, a)
+            
+    def testSingleDictFile(self):
+        exp = dict()
+        exp[self.testWordPath] = self.testWordStream
+        
+        stream = self.filehandle.getStreamFromDictFiles(exp)
+        act = self.filehandle.getDictFilesFromStream(stream)
+        
+        self.assertEqual(exp.__len__(), act.__len__())
+        for (k1, v1), (k2, v2) in zip(exp.items(), act.items()):
+            self.assertEqual(k1, k2)
+            self.assertEqual(v1, v2)
+            
+    def testMultiDictFile(self):
+        exp = dict()
+        exp[self.testWordPath] = self.testWordStream
+        exp[self.testImagePath] = self.testImageStream
+        
+        stream = self.filehandle.getStreamFromDictFiles(exp)
+        act = self.filehandle.getDictFilesFromStream(stream)
+        
+        self.assertEqual(exp.__len__(), act.__len__())
+        self.assertSequenceEqual(exp[self.testWordPath], act[self.testWordPath])
+        self.assertSequenceEqual(exp[self.testImagePath], act[self.testImagePath])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
