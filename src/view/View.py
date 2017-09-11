@@ -4,11 +4,12 @@ Created on 24 Jul 2017
 @author: Mathias Bucher
 '''
 
-from Tkinter import *
-import Tkinter, tkFileDialog
+from Tkinter import W
+import tkFileDialog
 from VMenubar import VMenubar
 from VTab import VTab
 from VDbPath import VDbPath
+from VStyles import getRoot
 
 class View():
     '''
@@ -21,9 +22,8 @@ class View():
         self.log = log
         self.actions = actions
         
-        self.root = Tk()
-        self.root.title("kbase")
-        self.root.geometry("400x500")
+        
+        self.root = getRoot()
         
         self.dbPath = VDbPath(self.root, self.log, self.actions)
         self.dbPath.draw(dbPath)

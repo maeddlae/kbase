@@ -11,6 +11,7 @@ from Tkinter import END, W
 from Tkinter import Scrollbar
 from PIL import Image, ImageTk
 import io
+from VStyles import rootColor, getLargeText, getSmallText, getScrollbar
 
 class VEntry(Frame):
     '''
@@ -29,6 +30,7 @@ class VEntry(Frame):
         Constructor
         '''
         Frame.__init__(self, parent)
+        self.configure(bg=rootColor)
         self.log = log
         self.actions = actions
         self.log.add(self.log.Info, __file__, "init" )
@@ -36,19 +38,16 @@ class VEntry(Frame):
     def drawEntry(self, entry):
         '''Draws an entry. If the entry is None, it does nothing'''
         if entry != None:
-            self.nameText = Text(self, height=1, width=self.width15, font=("Helvetica", 15, "bold"))
-            self.nameText.insert(END, entry.name)
-            self.nameText.grid(row=0, column=0, sticky=W)
+            self.nameText = getLargeText(self, entry.name)
+            self.nameText.grid(row=0, column=0)
             self.nameText.bind( "<Return>", self.returnPressedInTextFields)
             
-            self.description = Text(self, height=6, width=self.width10, font=("Helvetica", 10))
-            self.description.insert(END, entry.description)
+            self.description = getSmallText(self, entry.description)
             self.description.grid(row=1, column=0, sticky=W)
             self.description.bind( "<Return>", self.returnPressedInTextFields)
             
-            descScrollbar = Scrollbar(self, command=self.description.yview)
-            descScrollbar.grid(row=1, column=1, sticky=W)
-            self.description['yscrollcommand'] = descScrollbar.set    
+            descScrollbar = getScrollbar(self, self.description)
+            descScrollbar.grid(row=1, column=1)   
             
             self.tagRightClickMenu = Menu(self, tearoff=0)
             self.tagRightClickMenu.add_command(label="new", 

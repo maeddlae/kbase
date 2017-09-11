@@ -3,19 +3,20 @@ Created on 17 Aug 2017
 
 @author: Mathias Bucher
 '''
-from Tkinter import *
+from Tkinter import Frame, StringVar, DISABLED, NORMAL
+from VStyles import rootColor, getButtonMenu, getEntry
 
 class VMenubar(Frame):
     '''
     Draws and handles the menubar
     '''
-
-
+    
     def __init__(self, parent, log, actions):
         '''
         Constructor
         '''
         Frame.__init__(self, parent)
+        self.configure(bg=rootColor)
         self.log = log
         self.actions = actions
         self.log.add(self.log.Info, __file__, "init" )
@@ -23,31 +24,31 @@ class VMenubar(Frame):
     def draw(self):
         '''Draws the menu bar at the top of the window'''
         self.entrySearchText = StringVar()
-        self.entrySearch = Entry(self)
+        self.entrySearch = getEntry(self)
         self.entrySearch["textvariable"] = self.entrySearchText
-        self.entrySearchText.set("...")
-        self.entrySearch.grid(row=0, column=0, sticky=W)
+        self.entrySearchText.set("search here")
+        self.entrySearch.grid(row=0, column=0)
         self.entrySearch.bind( "<Return>", self.returnPressedAtSearch)
         
-        self.buttonGo = Button(self)
-        self.buttonGo.grid(row=0, column=1, sticky=W)
+        self.buttonGo = getButtonMenu(self)
+        self.buttonGo.grid(row=0, column=1)
         self.buttonGo["text"] = "go"
         self.buttonGo["command"] = self.buttonGoClicked
         
-        self.buttonNew = Button(self)
-        self.buttonNew.grid(row=0, column=2, sticky=W)
+        self.buttonNew = getButtonMenu(self)
+        self.buttonNew.grid(row=0, column=2)
         self.buttonNew["text"] = "new"
         self.buttonNew["command"] = self.buttonNewClicked
         
-        self.buttonClose = Button(self)
+        self.buttonClose = getButtonMenu(self)
         self.buttonClose["state"] = DISABLED
-        self.buttonClose.grid(row=0, column=3, sticky=W)
+        self.buttonClose.grid(row=0, column=3)
         self.buttonClose["text"] = "close"
         self.buttonClose["command"] = self.buttonCloseClicked
         
-        self.buttonDelete = Button(self)
+        self.buttonDelete = getButtonMenu(self)
         self.buttonDelete["state"] = DISABLED
-        self.buttonDelete.grid(row=0, column=4, sticky=W)
+        self.buttonDelete.grid(row=0, column=4)
         self.buttonDelete["text"] = "delete"
         self.buttonDelete["command"] = self.buttonDeleteClicked
         
@@ -56,25 +57,25 @@ class VMenubar(Frame):
     def enableButtonClose(self):
         '''Makes close button clickable'''
         self.buttonClose["state"] = NORMAL
-        self.buttonClose.grid(row=0, column=3, sticky=W)
+        self.buttonClose.grid()
         self.log.add(self.log.Info, __file__, "close button enabled")
         
     def disableButtonClose(self):
         '''Makes close button no more clickable'''
         self.buttonClose["state"] = DISABLED
-        self.buttonClose.grid(row=0, column=3, sticky=W)
+        self.buttonClose.grid()
         self.log.add(self.log.Info, __file__, "close button disabled")
     
     def enableButtonDelete(self):
         '''Makes delete button clickable'''
         self.buttonDelete["state"] = NORMAL
-        self.buttonDelete.grid(row=0, column=4, sticky=W)
+        self.buttonDelete.grid()
         self.log.add(self.log.Info, __file__, "delete button enabled")
         
     def disableButtonDelete(self):
         '''Makes delete button no more clickable'''
         self.buttonDelete["state"] = DISABLED
-        self.buttonDelete.grid(row=0, column=4, sticky=W)
+        self.buttonDelete.grid()
         self.log.add(self.log.Info, __file__, "delete button disabled")
     
     def buttonGoClicked(self):
