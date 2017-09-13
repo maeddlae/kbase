@@ -6,11 +6,11 @@ Created on 11 Sep 2017
 from Tkinter import Tk
 from Tkinter import Button
 from Tkinter import Entry
-from Tkinter import W, END
+from Tkinter import W, END, FLAT
 from Tkinter import Label
 from Tkinter import Frame
 from Tkinter import Text
-from Tkinter import Scrollbar
+from Tkinter import Menu
 
 # used colors
 blue0 = "#99CCFF"
@@ -60,11 +60,22 @@ def getEntry(parent):
 
 def getLabel(parent, text):
     label = Label(parent, text=text)
-    label["activebackground"] = rootColor  # background when clicked
     label["background"] = rootColor    # unclicked background
     label["borderwidth"] = 0
     label["activeforeground"] = "black"    # text when clicked
     label["foreground"] = "black"  # unclicked text
+    label["activebackground"] = blue2  # background when clicked
+    label["font"] = ("Helvetica", 15, "bold")
+    label.grid(padx=5, pady=5, sticky=W) # padding
+    return label
+
+def getImageLabel(parent, image):
+    label = Label(parent, image=image)
+    label["background"] = rootColor    # unclicked background
+    label["borderwidth"] = 0
+    label["activeforeground"] = "black"    # text when clicked
+    label["foreground"] = "black"  # unclicked text
+    label["activebackground"] = blue2  # background when clicked
     label["font"] = ("Helvetica", 15, "bold")
     label.grid(padx=5, pady=5, sticky=W) # padding
     return label
@@ -100,12 +111,14 @@ def getSmallText(parent, text):
     t.grid(sticky=W)
     return t
 
-def getScrollbar(parent, target):
-    scrollbar = Scrollbar(parent, command=target.yview)
-    scrollbar["activebackground"] = rootColor  # background when clicked
-    scrollbar["background"] = rootColor    # unclicked background
-    scrollbar["borderwidth"] = 0
-    scrollbar["troughcolor"] = rootColor    # unclicked background
-    scrollbar.grid(sticky=W)
-    target['yscrollcommand'] = scrollbar.set  
-    return scrollbar
+def getMenu(parent):
+    menu = Menu(parent, tearoff=0)
+    menu["activebackground"] = blue2  # background when clicked
+    menu["background"] = rootColor    # unclicked background
+    menu["borderwidth"] = 0
+    menu["activeborderwidth"] = 0
+    menu["activeforeground"] = "black"    # text when clicked
+    menu["foreground"] = "black"  # unclicked text
+    menu["relief"] = FLAT  # unclicked text
+    menu["font"] = ("Helvetica", 15, "bold")
+    return menu

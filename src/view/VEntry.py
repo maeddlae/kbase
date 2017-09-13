@@ -4,14 +4,9 @@ Created on 12 Aug 2017
 @author: Mathias Bucher
 '''
 from Tkinter import Frame
-from Tkinter import Menu
-from Tkinter import Label
-from Tkinter import Text
-from Tkinter import END, W
-from Tkinter import Scrollbar
 from PIL import Image, ImageTk
 import io
-from VStyles import rootColor, getLargeText, getSmallText, getScrollbar
+from VStyles import rootColor, getImageLabel, getLargeText, getSmallText, getLabel, getFrame, getMenu
 
 class VEntry(Frame):
     '''
@@ -43,42 +38,39 @@ class VEntry(Frame):
             self.nameText.bind( "<Return>", self.returnPressedInTextFields)
             
             self.description = getSmallText(self, entry.description)
-            self.description.grid(row=1, column=0, sticky=W)
+            self.description.grid(row=1, column=0)
             self.description.bind( "<Return>", self.returnPressedInTextFields)
             
-            descScrollbar = getScrollbar(self, self.description)
-            descScrollbar.grid(row=1, column=1)   
-            
-            self.tagRightClickMenu = Menu(self, tearoff=0)
+            self.tagRightClickMenu = getMenu(self)
             self.tagRightClickMenu.add_command(label="new", 
                                        command=self.newTagClicked)
             self.tagRightClickMenu.add_command(label="delete", 
                                        command=self.deleteTagClicked)     
             
-            self.tags = Frame(self)
+            self.tags = getFrame(self)
             # if there are no tags, place label which prompts user to enter some
             if entry.tags.__len__() == 0:
-                prompt = Label(self.tags, text=self.tagPrompt)
-                prompt.grid(row=2, column=0, sticky=W)
+                prompt = getLabel(self.tags, text=self.tagPrompt)
+                prompt.grid(row=2, column=0)
                 prompt.bind("<Button-3>", self.showTagRightClickMenu)
             else:
                 for i, key in enumerate(entry.tags):
-                    keyLabel = Label(self.tags, text=key)
-                    keyLabel.grid(row=2, column=i, sticky=W)
+                    keyLabel = getLabel(self.tags, text=key)
+                    keyLabel.grid(row=2, column=i)
                     keyLabel.bind("<Button-3>", self.showTagRightClickMenu)
-            self.tags.grid(sticky=W)
+            self.tags.grid()
             
-            self.imageRightClickMenu = Menu(self, tearoff=0)
+            self.imageRightClickMenu = getMenu(self)
             self.imageRightClickMenu.add_command(label="new", 
                                        command=self.newImageClicked)
             self.imageRightClickMenu.add_command(label="delete", 
                                        command=self.deleteImageClicked)
             
-            self.images = Frame(self)
+            self.images = getFrame(self)
             # if there are no images, place label which prompts user to enter some
             if entry.images.__len__() == 0:
-                prompt = Label(self.images, text=self.imagePrompt)
-                prompt.grid(row=3, column=0, sticky=W)
+                prompt = getLabel(self.images, text=self.imagePrompt)
+                prompt.grid(row=3, column=0)
                 prompt.bind("<Button-3>", self.showImageRightClickMenu)
             else:
                 for i, img in enumerate(entry.images):
@@ -86,32 +78,31 @@ class VEntry(Frame):
                     img = Image.open(iobytes)
                     img.thumbnail(self.imageSize, Image.ANTIALIAS )
                     photoimg = ImageTk.PhotoImage(img)
-                    imgLabel = Label(self.images, image=photoimg)
+                    imgLabel = getImageLabel(self.images, image=photoimg)
                     imgLabel["text"] = str(i)
                     imgLabel.image = photoimg
-                    imgLabel.grid(row=3, column=i, sticky=W)
+                    imgLabel.grid(row=3, column=i)
                     imgLabel.bind("<Button-3>", self.showImageRightClickMenu)
-            self.images.grid(sticky=W)
+            self.images.grid()
             
-            self.fileRightClickMenu = Menu(self, tearoff=0)
+            self.fileRightClickMenu = getMenu(self)
             self.fileRightClickMenu.add_command(label="new", 
                                        command=self.newFileClicked)
             self.fileRightClickMenu.add_command(label="delete", 
                                        command=self.deleteFileClicked)
             
-            self.files = Frame(self)
+            self.files = getFrame(self)
             # if there are no files, place label which prompts user to enter some
             if entry.files.__len__() == 0:
-                prompt = Label(self.files, text=self.filePrompt)
-                prompt.grid(row=4, column=0, sticky=W)
+                prompt = getLabel(self.files, text=self.filePrompt)
+                prompt.grid(row=4, column=0)
                 prompt.bind("<Button-3>", self.showFilesRightClickMenu)
             else:
                 for i, (key, _content) in enumerate(entry.files.iteritems()):
-                    lbl = Label(self.files)
-                    lbl["text"] = key
-                    lbl.grid(row=4, column=i, sticky=W)
+                    lbl = getLabel(self.files, key)
+                    lbl.grid(row=4, column=i)
                     lbl.bind("<Button-3>", self.showFilesRightClickMenu)
-            self.files.grid(sticky=W)
+            self.files.grid()
             
             self.log.add(self.log.Info, __file__, "entry " + entry.name + " drawn" )
 
@@ -146,11 +137,10 @@ class VEntry(Frame):
             self.tags.winfo_children()[0].destroy()
                 
         # add text widget for entering new tag
-        self.newTagText = Text(self.tags, height=1, width=self.width15)
-        self.newTagText.insert(END, self.tagEnterPrompt)
-        self.newTagText.grid(row=3, column=0, sticky=W)
+        self.newTagText = getSmallText(self.tags, self.tagEnterPrompt)
+        self.newTagText.grid(row=3, column=0)
         self.newTagText.bind( "<Return>", self.returnPressedAtNewTag)
-        self.tags.grid(sticky=W)
+        self.tags.grid()
                 
     def deleteTagClicked(self):
         '''Is called when user right clicks on a tag and selects new'''
