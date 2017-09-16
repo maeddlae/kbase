@@ -73,13 +73,13 @@ class VEntry(Frame):
                 prompt.grid(row=3, column=0)
                 prompt.bind("<Button-3>", self.showImageRightClickMenu)
             else:
-                for i, img in enumerate(entry.images):
-                    iobytes = io.BytesIO(img)
+                for i, (key, _content) in enumerate(entry.images.iteritems()):
+                    iobytes = io.BytesIO(_content)
                     img = Image.open(iobytes)
                     img.thumbnail(self.imageSize, Image.ANTIALIAS )
                     photoimg = ImageTk.PhotoImage(img)
                     imgLabel = getImageLabel(self.images, image=photoimg)
-                    imgLabel["text"] = str(i)
+                    imgLabel["text"] = key
                     imgLabel.image = photoimg
                     imgLabel.grid(row=3, column=i)
                     imgLabel.bind("<Button-1>", self.fileLeftClicked)
@@ -185,7 +185,7 @@ class VEntry(Frame):
             self.images.winfo_children()[0]["text"] == self.imagePrompt):
             return
         else:
-            imageToDelete = int(self.clickedImage["text"])
+            imageToDelete = self.clickedImage["text"]
             
             if self.actions != None:
                 if "deleteImageAction" in self.actions:

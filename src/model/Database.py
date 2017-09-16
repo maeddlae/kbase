@@ -60,7 +60,7 @@ class Database(object):
             db = sqlite3.connect(self.path)
             c = db.cursor()
             s = buffer(self.fileHandle.getStreamFromFiles(entry.tags))
-            p = buffer(self.fileHandle.getStreamFromFiles(entry.images))
+            p = buffer(self.fileHandle.getStreamFromDictFiles(entry.images))
             f = buffer(self.fileHandle.getStreamFromDictFiles(entry.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, p, f))
             db.commit()
@@ -81,7 +81,7 @@ class Database(object):
             db = sqlite3.connect(self.path)
             c = db.cursor()
             s = buffer(self.fileHandle.getStreamFromFiles(e.tags))
-            img = buffer(self.fileHandle.getStreamFromFiles(e.images))
+            img = buffer(self.fileHandle.getStreamFromDictFiles(e.images))
             fil = buffer(self.fileHandle.getStreamFromDictFiles(e.files))
             c.execute('''UPDATE entries SET description=?, tags=?, images=?, files=? WHERE name=?''', [e.description, s, img, fil, e.name])
             db.commit()
@@ -105,7 +105,7 @@ class Database(object):
             c.execute("DELETE FROM entries WHERE name=?", [e.name])
             e.name = newName
             s = buffer(self.fileHandle.getStreamFromFiles(e.tags))
-            img = buffer(self.fileHandle.getStreamFromFiles(e.images))
+            img = buffer(self.fileHandle.getStreamFromDictFiles(e.images))
             fil = buffer(self.fileHandle.getStreamFromDictFiles(e.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", [e.name, e.description, s, img, fil])
             db.commit()
@@ -196,7 +196,7 @@ class Database(object):
         s = data["description"].encode("ascii")
         e.description = s
         e.tags = self.fileHandle.getFilesFromStream(bytearray(data["tags"]))
-        e.images = self.fileHandle.getFilesFromStream(bytearray(data["images"]))
+        e.images = self.fileHandle.getDictFilesFromStream(bytearray(data["images"]))
         e.files = self.fileHandle.getDictFilesFromStream(bytearray(data["files"]))
         return e
     

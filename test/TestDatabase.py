@@ -16,8 +16,11 @@ from model.FileHandle import FileHandle
 class TestDatabase(unittest.TestCase):
     dbPath = "testdb.db"
     notExistingDbPath = "notexistingdb.db"
-    testImagePath = "testimage.jpg"
-    testWordPath = "testword.docx"
+    testPath = os.path.dirname(os.path.realpath(__file__))
+    testWordName = "testword.docx"
+    testWordPath = testPath + "\\" + testWordName
+    testImageName = "testimage.jpg"
+    testImagePath =  testPath + "\\" + testImageName
 
     def setUp(self):
         self.log = Log("testlog.txt")
@@ -27,12 +30,7 @@ class TestDatabase(unittest.TestCase):
         if os.path.exists(self.dbPath):
             os.remove(self.dbPath)
             
-        # create test entries
-        
-        if not os.path.exists(self.testImagePath):
-            self.testImagePath = "../../test/" + self.testImagePath
-            self.testWordPath = "../../test/" + self.testWordPath
-            
+        # create test entries            
         self.filehandle = FileHandle(self.log)
         f = open(self.testImagePath, "rb")
         self.testImageStream = f.read()
@@ -46,8 +44,8 @@ class TestDatabase(unittest.TestCase):
         self.e.append(ModelEntry(self.log,"buildings"))
         self.e[0].description = "This is a building"
         self.e[0].tags = ["Louvre"]
-        self.e[0].images.append(self.testImageStream)
-        self.e[0].files[self.testWordPath] = self.testWordStream
+        self.e[0].images[self.testImageName] = self.testImageStream
+        self.e[0].files[self.testWordName] = self.testWordStream
         self.e.append(ModelEntry(self.log,"planes"))
         self.e[1].description = "These are planes"
         self.e[1].tags = ["F16", "F35"]
@@ -71,8 +69,7 @@ class TestDatabase(unittest.TestCase):
         for entry in self.e:
             s = buffer(self.filehandle.getStreamFromFiles(entry.tags))
             
-            ima = self.filehandle.getStreamFromFiles(entry.images)
-            img = buffer(ima)
+            img = buffer(self.filehandle.getStreamFromDictFiles(entry.images))
             fil = buffer(self.filehandle.getStreamFromDictFiles(entry.files))
             c.execute("INSERT INTO entries VALUES (?, ?, ?, ?, ?)", (entry.name, entry.description, s, img, fil))
         
@@ -116,8 +113,8 @@ class TestDatabase(unittest.TestCase):
         n.description = "These are bikes"
         n.tags.append("Yamaha")
         n.tags.append("Kawasaki")
-        n.images.append(self.filehandle.getStreamFromFiles(self.testImageStream))
-        n.files[self.testWordPath] = self.filehandle.getStreamFromFiles(self.testWordStream)
+        n.images[self.testImageName] = self.filehandle.getStreamFromFiles(self.testImageStream)
+        n.files[self.testWordName] = self.filehandle.getStreamFromFiles(self.testWordStream)
         
         self.db.addEntry(n)
         
@@ -320,7 +317,7 @@ class TestDatabase(unittest.TestCase):
         hasRow = False
         
         tags = self.filehandle.getStreamFromFiles(entry.tags)
-        images = self.filehandle.getStreamFromFiles(entry.images)
+        images = self.filehandle.getStreamFromDictFiles(entry.images)
         files = self.filehandle.getStreamFromDictFiles(entry.files)
         
         for row in rows:
@@ -331,8 +328,8 @@ class TestDatabase(unittest.TestCase):
                 row["description"] == entry.description and
                 row["tags"] == tags):
                 nameDescTagOk = True
+                
             br = bytearray(row["images"])
-            
             if images == br:
                 imagesOk = True
             

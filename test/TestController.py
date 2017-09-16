@@ -19,18 +19,24 @@ class TestController(unittest.TestCase):
     dbPath = "testdb.db"
     configPath = "config.txt"
     changePath = "adsfasd.txt"
-    testWordPath = "testword.docx"
+    testPath = os.path.dirname(os.path.realpath(__file__))
+    testWordName = "testword.docx"
+    testWordPath = testPath + "\\" + testWordName
+    testImageName = "testimage.jpg"
+    testImagePath =  testPath + "\\" + testImageName
 
     def setUp(self):
         self.log = Log("testlog.txt")
         self.log.add = MagicMock()
         
+        f = open(self.testImagePath, "rb")
+        self.testImageStream = f.read()
+        f.close()
+        
         f = open(self.configPath, "w+")
         f.write("databasepath = " + self.dbPath + "\n")
         f.close()
         
-        if not os.path.exists(self.testWordPath):
-            self.testWordPath = "../../test/" + self.testWordPath
         f = open(self.testWordPath, "rb")
         self.testWordStream = f.read()
         f.close()
@@ -40,9 +46,8 @@ class TestController(unittest.TestCase):
         self.ctr.model.currentEntry.description = "This is the description of furniture"
         self.ctr.model.currentEntry.tags.append("chair")
         self.ctr.model.currentEntry.tags.append("table")
-        self.ctr.model.currentEntry.images.append("thisisnoimage")
-        self.ctr.model.currentEntry.images.append("thisanotherimage")
-        self.ctr.model.currentEntry.files[self.testWordPath] = self.testWordStream
+        self.ctr.model.currentEntry.images[self.testImageName] = self.testImageStream
+        self.ctr.model.currentEntry.files[self.testWordName] = self.testWordStream
         self.ctr.view.drawEntry = MagicMock()
         self.ctr.view.drawSearch = MagicMock()
         self.ctr.view.removeEntry = MagicMock()
@@ -223,7 +228,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
     def testDeleteImageAction(self):
-        imageToDelete = 1
+        imageToDelete = self.testImageName
         exp = copy.copy(self.ctr.model.currentEntry.images)
         del exp[imageToDelete]
         
@@ -241,7 +246,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.showNewFileSelectDialog.assert_called_once()
         
     def testDeleteFileAction(self):
-        fileToDelete = self.testWordPath
+        fileToDelete = self.testWordName
         exp = copy.copy(self.ctr.model.currentEntry.files)
         del exp[fileToDelete]
         
@@ -292,9 +297,9 @@ class TestController(unittest.TestCase):
         self.ctr.addFile = MagicMock()
         self.ctr.addImage = MagicMock()
         self.ctr.model.currentEntry.isSupportedImageFile = MagicMock()
-        filename = self.testWordPath
         
         # test add image if exists
+        filename = self.testImageName
         self.ctr.model.currentEntry.isSupportedImageFile.return_value = True
         self.ctr.newFileOrImageSelectedAction(filename)
         self.ctr.addImage.assert_called_once_with(filename)
@@ -303,6 +308,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
         # test add file if exists
+        filename = self.testWordName
         self.ctr.addFile.reset_mock()
         self.ctr.addImage.reset_mock()
         self.ctr.view.removeEntry.reset_mock()
@@ -328,8 +334,10 @@ class TestController(unittest.TestCase):
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
 
     def testOpenFileAction(self):
-        self.ctr.openFileAction(self.testWordPath)
-        os.startfile.assert_called_with(os.path.abspath(self.testWordPath))
+        self.ctr.openFileAction(self.testWordName)
+        os.startfile.assert_called_with(os.path.abspath(self.testWordName))
+        self.ctr.openFileAction(self.testImageName)
+        os.startfile.assert_called_with(os.path.abspath(self.testImageName))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']

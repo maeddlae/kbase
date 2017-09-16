@@ -11,8 +11,11 @@ import os
 
 
 class TestFileHandle(unittest.TestCase):
-    testImagePath = "testimage.jpg"
-    testWordPath = "testword.docx"
+    testPath = os.path.dirname(os.path.realpath(__file__))
+    testWordName = "testword.docx"
+    testWordPath = testPath + "\\" + testWordName
+    testImageName = "testimage.jpg"
+    testImagePath =  testPath + "\\" + testImageName
 
     def setUp(self):
         self.log = Log("testlog.txt")
@@ -33,11 +36,7 @@ class TestFileHandle(unittest.TestCase):
                          0xAA, 0xBB, 0xAA,
                          0x34, 0xAA, 0xBB, 0xBB, 0x56,
                          0xAA, 0xBB, 0xAA])
-        
-        if not os.path.exists(self.testImagePath):
-            self.testImagePath = "../../test/" + self.testImagePath
-            self.testWordPath = "../../test/" + self.testWordPath
-        
+                
         f = open(self.testImagePath, "rb")
         self.testImageStream = f.read()
         f.close()
@@ -92,7 +91,7 @@ class TestFileHandle(unittest.TestCase):
             
     def testSingleDictFile(self):
         exp = dict()
-        exp[self.testWordPath] = self.testWordStream
+        exp[self.testWordName] = self.testWordStream
         
         stream = self.filehandle.getStreamFromDictFiles(exp)
         act = self.filehandle.getDictFilesFromStream(stream)
@@ -104,9 +103,9 @@ class TestFileHandle(unittest.TestCase):
             
     def testSingleDictFileWithUnicode(self):
         inp = dict()
-        inp[unicode(self.testWordPath)] = self.testWordStream
+        inp[unicode(self.testWordName)] = self.testWordStream
         exp = dict()
-        exp[self.testWordPath] = self.testWordStream
+        exp[self.testWordName] = self.testWordStream
         
         stream = self.filehandle.getStreamFromDictFiles(inp)
         act = self.filehandle.getDictFilesFromStream(stream)
@@ -118,15 +117,15 @@ class TestFileHandle(unittest.TestCase):
             
     def testMultiDictFile(self):
         exp = dict()
-        exp[self.testWordPath] = self.testWordStream
-        exp[self.testImagePath] = self.testImageStream
+        exp[self.testWordName] = self.testWordStream
+        exp[self.testImageName] = self.testImageStream
         
         stream = self.filehandle.getStreamFromDictFiles(exp)
         act = self.filehandle.getDictFilesFromStream(stream)
         
         self.assertEqual(exp.__len__(), act.__len__())
-        self.assertSequenceEqual(exp[self.testWordPath], act[self.testWordPath])
-        self.assertSequenceEqual(exp[self.testImagePath], act[self.testImagePath])
+        self.assertSequenceEqual(exp[self.testWordName], act[self.testWordName])
+        self.assertSequenceEqual(exp[self.testImageName], act[self.testImageName])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

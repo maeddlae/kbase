@@ -191,7 +191,8 @@ class Controller():
         f = open(filename, "rb")
         content = f.read()
         f.close()
-        self.model.currentEntry.images.append(content)
+        name = os.path.basename(filename)
+        self.model.currentEntry.images[name] = content
         self.model.updateContentOfEntry(self.model.currentEntry)
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)

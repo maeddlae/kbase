@@ -13,8 +13,11 @@ import os
 
 
 class TestVEntry(unittest.TestCase):
-    testImagePath = "testimage.jpg"
-    testWordPath = "testword.docx"
+    testPath = os.path.dirname(os.path.realpath(__file__))
+    testWordName = "testword.docx"
+    testWordPath = testPath + "\\" + testWordName
+    testImageName = "testimage.jpg"
+    testImagePath =  testPath + "\\" + testImageName
 
 
     def setUp(self):
@@ -42,11 +45,6 @@ class TestVEntry(unittest.TestCase):
                   "openFileAction" : self.dummy9}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
-
-        
-        if not os.path.exists(self.testImagePath):
-            self.testImagePath = "../../test/" + self.testImagePath
-            self.testWordPath = "../../test/" + self.testWordPath
         
         f = open(self.testImagePath, "rb")
         self.testImageStream = f.read()
@@ -59,9 +57,8 @@ class TestVEntry(unittest.TestCase):
         self.entry.description = "these are animals"
         self.entry.tags.append("deer")
         self.entry.tags.append("bear")
-        self.entry.images.append(self.testImageStream)
-        self.entry.files[self.testWordPath] = self.testWordStream
-        self.entry.files[self.testImagePath] = self.testImageStream
+        self.entry.images[self.testImageName] = self.testImageStream
+        self.entry.files[self.testWordName] = self.testWordStream
         
     def tearDown(self):
         self.ventry.grid()
@@ -99,13 +96,9 @@ class TestVEntry(unittest.TestCase):
         
         self.assertEqual(1, self.ventry.images.children.__len__())
         
-        self.assertEqual(2, self.ventry.files.children.__len__())
-        exp = self.testWordPath
+        self.assertEqual(1, self.ventry.files.children.__len__())
+        exp = self.testWordName
         act = self.ventry.files.winfo_children()[0]["text"]
-        self.assertEqual(exp, act)
-        self.assertEqual(2, self.ventry.files.children.__len__())
-        exp = self.testImagePath
-        act = self.ventry.files.winfo_children()[1]["text"]
         self.assertEqual(exp, act)
 
     def testDrawEntryIfHasNoFiles(self):
@@ -160,13 +153,9 @@ class TestVEntry(unittest.TestCase):
         act = self.ventry.images.winfo_children()[0]["text"]
         self.assertEqual(exp, act)
         
-        self.assertEqual(2, self.ventry.files.children.__len__())
-        exp = self.testWordPath
+        self.assertEqual(1, self.ventry.files.children.__len__())
+        exp = self.testWordName
         act = self.ventry.files.winfo_children()[0]["text"]
-        self.assertEqual(exp, act)
-        self.assertEqual(2, self.ventry.files.children.__len__())
-        exp = self.testImagePath
-        act = self.ventry.files.winfo_children()[1]["text"]
         self.assertEqual(exp, act)
 
     def testDrawEntry(self):
@@ -189,13 +178,9 @@ class TestVEntry(unittest.TestCase):
         
         self.assertEqual(1, self.ventry.images.children.__len__())
         
-        self.assertEqual(2, self.ventry.files.children.__len__())
-        exp = self.testWordPath
+        self.assertEqual(1, self.ventry.files.children.__len__())
+        exp = self.testWordName
         act = self.ventry.files.winfo_children()[0]["text"]
-        self.assertEqual(exp, act)
-        self.assertEqual(2, self.ventry.files.children.__len__())
-        exp = self.testImagePath
-        act = self.ventry.files.winfo_children()[1]["text"]
         self.assertEqual(exp, act)
         
     def testReturnPressedAtFields(self):
@@ -305,7 +290,7 @@ class TestVEntry(unittest.TestCase):
         self.root.update()
         self.ventry.clickedImage = self.ventry.images.winfo_children()[0]
         self.ventry.deleteImageClicked()
-        self.dummy6.assert_called_once_with(0)
+        self.dummy6.assert_called_once_with(self.testImageName)
         
     def testDeleteImageClickedWithoutImage(self):
         '''Tests if delete image works. This test does not include the 
