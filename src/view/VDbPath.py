@@ -4,7 +4,7 @@ Created on 25 Aug 2017
 @author: Mathias Bucher
 '''
 from Tkinter import Frame, StringVar
-from VStyles import rootColor, getEntry
+from VStyles import rootColor, getEntrySmall, getLabelSmall
 
 class VDbPath(Frame):
     '''
@@ -24,11 +24,14 @@ class VDbPath(Frame):
         
     def draw(self, dbPath):
         '''Draws the database path widget'''
+        self.dbLabel = getLabelSmall(self, "Database:")
+        self.dbLabel.grid(row=0, column=0)
+        
         self.dbPathEntryText = StringVar()
-        self.dbPathEntry = getEntry(self)
+        self.dbPathEntry = getEntrySmall(self)
         self.dbPathEntry["textvariable"] = self.dbPathEntryText
         self.dbPathEntryText.set(dbPath)
-        self.dbPathEntry.grid()
+        self.dbPathEntry.grid(row=0, column=1)
         self.dbPathEntry.bind( "<Return>", self.returnPressedAtPath)
         
     def changePath(self, newDbPath):

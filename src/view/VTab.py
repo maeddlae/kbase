@@ -7,6 +7,7 @@ from Tkinter import *
 from VEntry import VEntry
 from VSearch import VSearch
 from ttk import Notebook
+from VStyles import styleNotebook, getFrame
 
 class VTab(Notebook):
     '''
@@ -19,6 +20,8 @@ class VTab(Notebook):
         Constructor
         '''
         Notebook.__init__(self, parent)
+        self = styleNotebook(self)
+        
         self.log = log
         self.actions = actions
         self.vsearch=None

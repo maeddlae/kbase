@@ -6,7 +6,7 @@ Created on 12 Aug 2017
 from Tkinter import Frame
 from PIL import Image, ImageTk
 import io
-from VStyles import rootColor, getImageLabel, getLargeText, getSmallText, getLabel, getFrame, getMenu
+from VStyles import rootColor, getLargeTextBlue, getLabelBlue, getImageLabel, getLargeText, getSmallText, getLabel, getFrame, getMenu
 
 class VEntry(Frame):
     '''
@@ -50,12 +50,12 @@ class VEntry(Frame):
             self.tags = getFrame(self)
             # if there are no tags, place label which prompts user to enter some
             if entry.tags.__len__() == 0:
-                prompt = getLabel(self.tags, text=self.tagPrompt)
+                prompt = getLabelBlue(self.tags, text=self.tagPrompt)
                 prompt.grid(row=2, column=0)
                 prompt.bind("<Button-3>", self.showTagRightClickMenu)
             else:
                 for i, key in enumerate(entry.tags):
-                    keyLabel = getLabel(self.tags, text=key)
+                    keyLabel = getLabelBlue(self.tags, text=key)
                     keyLabel.grid(row=2, column=i)
                     keyLabel.bind("<Button-3>", self.showTagRightClickMenu)
             self.tags.grid()
@@ -137,7 +137,7 @@ class VEntry(Frame):
             self.tags.winfo_children()[0].destroy()
                 
         # add text widget for entering new tag
-        self.newTagText = getSmallText(self.tags, self.tagEnterPrompt)
+        self.newTagText = getLargeTextBlue(self.tags, self.tagEnterPrompt)
         self.newTagText.grid(row=3, column=0)
         self.newTagText.bind( "<Return>", self.returnPressedAtNewTag)
         self.tags.grid()
