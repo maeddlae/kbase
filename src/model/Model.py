@@ -4,6 +4,7 @@ Created on 24 Jul 2017
 @author: Mathias Bucher
 '''
 from model.Database import Database
+from string import ascii_lowercase
 
 class Model():
     '''
@@ -26,6 +27,18 @@ class Model():
     def setDatabase(self, path):
         '''Changes the active database'''
         self.db = Database(self.log, path)
+        
+    def getAllEntriesSorted(self):
+        '''Returns all entries alphabetically sorted by name'''
+        # get all entries from db
+        entries = self.db.getEntriesByName("")
+        
+        s = dict()
+        for e in entries:
+            if not e.name[0] in s:
+                s[e.name[0]] = list()
+            s[e.name[0]].append(e)
+        return s
     
     def getEntries(self, word):        
         '''Searches entries in the db by name, tag or description in sequence. 

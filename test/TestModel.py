@@ -9,6 +9,7 @@ from ctr.Log import Log
 import unittest
 from mock import MagicMock
 import os
+from string import ascii_lowercase
 
 
 class TestModel(unittest.TestCase):
@@ -44,6 +45,17 @@ class TestModel(unittest.TestCase):
             os.remove(self.dbPath)
         if os.path.exists(self.newDbPath):
             os.remove(self.newDbPath)
+            
+    def testGetAllEntriesSorted(self):
+        exp = dict()
+        exp["f"] = [self.fruits]
+        exp["l"] = [self.legumes, ModelEntry(self.log, "legs")]
+        
+        act = self.model.getAllEntriesSorted()
+        
+        for liste, lista in zip(exp.values(),act.values()):
+            for e, a in zip(liste, lista):
+                self.assertEqual(e.name, a.name)
 
     def testSetDatabase(self):
         '''Tests whether database can be changed'''
