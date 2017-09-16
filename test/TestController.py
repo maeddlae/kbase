@@ -59,6 +59,7 @@ class TestController(unittest.TestCase):
         self.ctr.model.getEntries = MagicMock()
         self.ctr.model.removeEntry = MagicMock()
         self.ctr.config.setValue = MagicMock()
+        os.startfile = MagicMock()
 
     def tearDown(self):
         if os.path.exists(self.dbPath):
@@ -326,6 +327,10 @@ class TestController(unittest.TestCase):
         self.ctr.view.removeEntry.assert_called_once_with(self.ctr.model.currentEntry)
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
 
+    def testOpenFileAction(self):
+        self.ctr.openFileAction(self.testWordPath)
+        os.startfile.assert_called_with(os.path.abspath(self.testWordPath))
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testads']
     unittest.main()

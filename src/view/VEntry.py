@@ -69,7 +69,7 @@ class VEntry(Frame):
             self.images = getFrame(self)
             # if there are no images, place label which prompts user to enter some
             if entry.images.__len__() == 0:
-                prompt = getLabel(self.images, text=self.imagePrompt)
+                prompt = getLabelBlue(self.images, text=self.imagePrompt)
                 prompt.grid(row=3, column=0)
                 prompt.bind("<Button-3>", self.showImageRightClickMenu)
             else:
@@ -82,6 +82,7 @@ class VEntry(Frame):
                     imgLabel["text"] = str(i)
                     imgLabel.image = photoimg
                     imgLabel.grid(row=3, column=i)
+                    imgLabel.bind("<Button-1>", self.fileLeftClicked)
                     imgLabel.bind("<Button-3>", self.showImageRightClickMenu)
             self.images.grid()
             
@@ -94,13 +95,14 @@ class VEntry(Frame):
             self.files = getFrame(self)
             # if there are no files, place label which prompts user to enter some
             if entry.files.__len__() == 0:
-                prompt = getLabel(self.files, text=self.filePrompt)
+                prompt = getLabelBlue(self.files, text=self.filePrompt)
                 prompt.grid(row=4, column=0)
                 prompt.bind("<Button-3>", self.showFilesRightClickMenu)
             else:
                 for i, (key, _content) in enumerate(entry.files.iteritems()):
-                    lbl = getLabel(self.files, key)
+                    lbl = getLabelBlue(self.files, key)
                     lbl.grid(row=4, column=i)
+                    lbl.bind("<Button-1>", self.fileLeftClicked)
                     lbl.bind("<Button-3>", self.showFilesRightClickMenu)
             self.files.grid()
             
@@ -235,3 +237,11 @@ class VEntry(Frame):
         if self.actions != None:
             if "newFileAction" in self.actions:
                 self.actions["newFileAction"]()
+                
+    def fileLeftClicked(self, event):
+        '''Is called when user left clicks a file'''
+        self.log.add(self.log.Info, __file__, "file left clicked" )
+        
+        if self.actions != None:
+            if "openFileAction" in self.actions:
+                self.actions["openFileAction"](event.widget["text"])

@@ -31,13 +31,15 @@ class TestVEntry(unittest.TestCase):
         self.dummy6 = MagicMock()
         self.dummy7 = MagicMock()
         self.dummy8 = MagicMock()
+        self.dummy9 = MagicMock()
         
         self.actionlist = {"entryChangeAction" : self.dummy1,
                   "newImageAction" : self.dummy4,
                   "addTagAction" : self.dummy5,
                   "deleteImageAction" : self.dummy6,
                   "deleteTagAction" : self.dummy7,
-                  "deleteFileAction" : self.dummy8}
+                  "deleteFileAction" : self.dummy8,
+                  "openFileAction" : self.dummy9}
         
         self.ventry = VEntry(self.root, self.log, self.actionlist)
 
@@ -99,11 +101,11 @@ class TestVEntry(unittest.TestCase):
         
         self.assertEqual(2, self.ventry.files.children.__len__())
         exp = self.testWordPath
-        act = self.ventry.files.winfo_children()[1]["text"]
+        act = self.ventry.files.winfo_children()[0]["text"]
         self.assertEqual(exp, act)
         self.assertEqual(2, self.ventry.files.children.__len__())
         exp = self.testImagePath
-        act = self.ventry.files.winfo_children()[0]["text"]
+        act = self.ventry.files.winfo_children()[1]["text"]
         self.assertEqual(exp, act)
 
     def testDrawEntryIfHasNoFiles(self):
@@ -160,11 +162,11 @@ class TestVEntry(unittest.TestCase):
         
         self.assertEqual(2, self.ventry.files.children.__len__())
         exp = self.testWordPath
-        act = self.ventry.files.winfo_children()[1]["text"]
+        act = self.ventry.files.winfo_children()[0]["text"]
         self.assertEqual(exp, act)
         self.assertEqual(2, self.ventry.files.children.__len__())
         exp = self.testImagePath
-        act = self.ventry.files.winfo_children()[0]["text"]
+        act = self.ventry.files.winfo_children()[1]["text"]
         self.assertEqual(exp, act)
 
     def testDrawEntry(self):
@@ -189,11 +191,11 @@ class TestVEntry(unittest.TestCase):
         
         self.assertEqual(2, self.ventry.files.children.__len__())
         exp = self.testWordPath
-        act = self.ventry.files.winfo_children()[1]["text"]
+        act = self.ventry.files.winfo_children()[0]["text"]
         self.assertEqual(exp, act)
         self.assertEqual(2, self.ventry.files.children.__len__())
         exp = self.testImagePath
-        act = self.ventry.files.winfo_children()[0]["text"]
+        act = self.ventry.files.winfo_children()[1]["text"]
         self.assertEqual(exp, act)
         
     def testReturnPressedAtFields(self):
@@ -373,6 +375,17 @@ class TestVEntry(unittest.TestCase):
         self.ventry.clickedFile = self.ventry.files.winfo_children()[0]
         self.ventry.deleteFileClicked()
         self.dummy8.assert_not_called()
+        
+    def testFileLeftClicked(self):
+        '''Tests if the right method is called at left clicking a file'''
+        self.ventry.drawEntry(self.entry)
+        self.ventry.grid()
+        self.root.update()
+        files = self.ventry.files.winfo_children()
+        xpos = files[0].winfo_x()
+        ypos = files[0].winfo_y()
+        files[0].event_generate("<Button-1>", x=xpos+1, y=ypos+1)
+        self.dummy9.assert_called_with(files[0]["text"])
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

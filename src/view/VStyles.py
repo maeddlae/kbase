@@ -168,15 +168,20 @@ def getMenu(parent):
     return menu
 
 def styleNotebook(notebook):
+    theme = "maeddlaevtabtheme"
     style = Style()
 
-    style.theme_create( "yummy", parent="alt", settings={
-        "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0], "background" : rootColor} },
-        "TNotebook.Tab": {
-            "configure": {"padding": [5, 1], "background": rootColor, 
-                          "font" : ("Helvetica", 15, "bold") },
-            "map":       {"background": [("selected", rootColor)] } } } )
+    # only create theme if not exists
+    s = Style()
+    if not theme in s.theme_names():
+        style.theme_create( theme, parent="alt", settings={
+            "TNotebook": {"configure": {"tabmargins": [2, 5, 2, 0], "background" : rootColor} },
+            "TNotebook.Tab": {
+                "configure": {"padding": [5, 1], "background": rootColor, 
+                              "font" : ("Helvetica", 15, "bold") },
+                "map":       {"background": [("selected", rootColor)] } } } )
 
-    style.theme_use("yummy")
+    
+    style.theme_use(theme)
     return notebook
 

@@ -13,6 +13,7 @@ import os
 
 class Controller():
     configDataBase = "databasepath"
+    tempFilePath = "tempfilepath"
     
     def __init__(self, log, config):
         '''Constructor'''
@@ -31,7 +32,8 @@ class Controller():
                         "deleteImageAction" : self.deleteImageAction,
                         "deleteFileAction" : self.deleteFileAction,
                         "newFileAction" : self.newFileAction,
-                        "fileSelectedAction" : self.newFileOrImageSelectedAction}
+                        "fileSelectedAction" : self.newFileOrImageSelectedAction,
+                        "openFileAction" : self.openFileAction}
         if log != None:
             self.log = log
         else:
@@ -39,6 +41,7 @@ class Controller():
         
         self.config = ConfigFile( self.log, config )
         self.dbPath = self.config.getValue(self.configDataBase)
+        self.tempFilePath = self.config.getValue(self.tempFilePath)
         self.view = View(self.log, self.dbPath, self.actions)
         self.model = Model(self.log, self.dbPath)
         self.isSearchActive = False
@@ -192,3 +195,25 @@ class Controller():
         self.model.updateContentOfEntry(self.model.currentEntry)
         self.view.removeEntry(self.model.currentEntry)
         self.view.drawEntry(self.model.currentEntry)
+        
+    def openFileAction(self, filename):
+        '''Opens a file of current entry'''
+        temppath = os.path.abspath(self.tempFilePath)
+        if not os.path.exists(temppath):
+            os.makedirs(temppath)
+        
+        path = temppath + "\\" + filename
+        
+        if filename in self.model.currentEntry.files:
+            content = self.model.currentEntry.files[filename]
+        elif filename in self.model.currentEntry.images:
+            content = self.model.currentEntry.images[filename]
+        else:
+            self.log.add(self.log.Warning, __file__, filename + " not in db" )
+            return
+        
+        f = open(path, "wb")
+        f.write(content)
+        f.close()
+        
+        os.startfile(path)
