@@ -11,6 +11,7 @@ class VOverview(Frame):
     '''
     classdocs
     '''
+    name = "Overview"
 
 
     def __init__(self, parent, log, actions):
@@ -21,6 +22,7 @@ class VOverview(Frame):
         self.configure(bg=rootColor)
         self.log = log
         self.actions = actions
+        self.sortedEntries = dict()
         self.log.add(self.log.Info, __file__, "init" )
         
     def show(self, entries):
@@ -31,7 +33,7 @@ class VOverview(Frame):
             
             for e in v:
                 but = getButtonEntry(self.sortedEntries[k], command=lambda n=e.name: self.entryClicked(n))
-                self.sortedEntries[k].add(but)
+                but["text"] = e.name
             self.sortedEntries[k].grid(row=currentRow)
             currentRow += 1
     
@@ -42,3 +44,9 @@ class VOverview(Frame):
         if self.actions != None:
             if "showEntryOverviewAction" in self.actions:
                 self.actions["showEntryOverviewAction"](entryName)
+                
+    def removeAll(self):
+        '''Removes all showed entries'''
+        for k, v in self.sortedEntries.iteritems():
+            self.sortedEntries[k].destroy()
+        self.sortedEntries = dict()

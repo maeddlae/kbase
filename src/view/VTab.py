@@ -3,11 +3,11 @@ Created on 19 Aug 2017
 
 @author: Mathias Bucher
 '''
-from Tkinter import *
 from VEntry import VEntry
 from VSearch import VSearch
+from VOverview import VOverview
 from ttk import Notebook
-from VStyles import styleNotebook, getFrame
+from VStyles import styleNotebook
 
 class VTab(Notebook):
     '''
@@ -28,8 +28,20 @@ class VTab(Notebook):
         self.ventries = {}
         self.tabIds = {}
         self.vsearchDrawn = False
+        self.overview = None
         self.bind("<<NotebookTabChanged>>", self.tabChanged)
         self.log.add(self.log.Info, __file__, "init" )
+        
+    def setOverview(self, entries):
+        '''Shows the overview of all entries'''
+        if self.overview == None:
+            self.overview = VOverview(log=self.log, parent=self, actions=self.actions)
+            self.add(self.overview, text=self.overview.name)
+        else:
+            self.overview.removeAll()
+        self.overview.show(entries)
+        self.select(self.getTabId(self.overview))
+        self.log.add(self.log.Info, __file__, "draw overview tab" )        
         
     def setSearch(self, results):
         '''Adds the search view or updates it, if it already exists'''
@@ -37,7 +49,7 @@ class VTab(Notebook):
         if self.vsearch == None:
             # ..then make search object and add it
             self.vsearch = VSearch(log=self.log, parent=self, actions=self.actions)
-            self.add(self.vsearch, text="Search")
+            self.add(self.vsearch, text=self.vsearch.name)
             self.vsearchDrawn = True
         else:
             # ..otherwise update the existing one

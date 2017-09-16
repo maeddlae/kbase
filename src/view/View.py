@@ -41,6 +41,10 @@ class View():
         '''Calls Tkinter mainloop, which never returns!'''
         self.root.mainloop() # this is an infinite loop!
         
+    def drawOverview(self, entries):
+        self.tabs.setOverview(entries)
+        self.tabs.grid(sticky=W)
+        
     def drawEntry(self, entry):
         self.menubar.enableButtonClose()
         self.menubar.enableButtonDelete()

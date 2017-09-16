@@ -49,6 +49,8 @@ class Controller():
         self.log.add(self.log.Info, __file__, "init" )
         
     def run(self):        
+        entries = self.model.getAllEntriesSorted()
+        self.view.drawOverview(entries)
         self.view.run()
         
     def searchAction(self, tag):

@@ -10,6 +10,7 @@ import unittest
 from mock import MagicMock
 import os
 from string import ascii_lowercase
+from collections import OrderedDict
 
 
 class TestModel(unittest.TestCase):
@@ -31,9 +32,13 @@ class TestModel(unittest.TestCase):
         self.cars.tags.append("mustang")
         self.cars.tags.append("volvo")
         self.cars.text = "This entry is about cars"
+        self.legs = ModelEntry(self.log, "legs")
+        self.aerocrafts = ModelEntry( self.log, "aerocraft")
         
         self.model.db.addEntry(self.fruits)
+        self.model.db.addEntry(self.legs)
         self.model.db.addEntry(self.legumes)
+        self.model.db.addEntry(self.aerocrafts)
         self.model.foundEntries["name"].append(self.cars)
         self.model.foundEntries["description"].append(self.fruits)
         self.model.foundEntries["tag"].append(self.legumes)
@@ -47,9 +52,10 @@ class TestModel(unittest.TestCase):
             os.remove(self.newDbPath)
             
     def testGetAllEntriesSorted(self):
-        exp = dict()
+        exp = OrderedDict()
+        exp["a"] = [self.aerocrafts]
         exp["f"] = [self.fruits]
-        exp["l"] = [self.legumes, ModelEntry(self.log, "legs")]
+        exp["l"] = [self.legs, self.legumes]
         
         act = self.model.getAllEntriesSorted()
         

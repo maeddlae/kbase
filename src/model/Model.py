@@ -5,6 +5,7 @@ Created on 24 Jul 2017
 '''
 from model.Database import Database
 from string import ascii_lowercase
+from collections import OrderedDict
 
 class Model():
     '''
@@ -33,12 +34,20 @@ class Model():
         # get all entries from db
         entries = self.db.getEntriesByName("")
         
-        s = dict()
+        s = OrderedDict()
         for e in entries:
             if not e.name[0] in s:
                 s[e.name[0]] = list()
             s[e.name[0]].append(e)
-        return s
+            
+        # sort by key
+        sortedByKey = OrderedDict()
+        key = s.keys()
+        key.sort()
+        for k in key:
+            sortedByKey[k] = s[k]
+        
+        return sortedByKey
     
     def getEntries(self, word):        
         '''Searches entries in the db by name, tag or description in sequence. 

@@ -299,7 +299,7 @@ class TestController(unittest.TestCase):
         self.ctr.model.currentEntry.isSupportedImageFile = MagicMock()
         
         # test add image if exists
-        filename = self.testImageName
+        filename = self.testImagePath
         self.ctr.model.currentEntry.isSupportedImageFile.return_value = True
         self.ctr.newFileOrImageSelectedAction(filename)
         self.ctr.addImage.assert_called_once_with(filename)
@@ -308,7 +308,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.drawEntry.assert_called_once_with(self.ctr.model.currentEntry)
         
         # test add file if exists
-        filename = self.testWordName
+        filename = self.testWordPath
         self.ctr.addFile.reset_mock()
         self.ctr.addImage.reset_mock()
         self.ctr.view.removeEntry.reset_mock()
