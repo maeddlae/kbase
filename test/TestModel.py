@@ -53,6 +53,29 @@ class TestModel(unittest.TestCase):
         
         self.assertFalse(self.model.hasEntry(self.fruits))
         self.assertTrue(self.model.hasEntry(e1))
+        
+    def testGetEntriesIfHasMultiple(self):
+        '''Tests whether model only shows each entry once'''
+        newTag = "muha"
+        e = ModelEntry(self.log, "test")
+        e.description = "balbalb " + newTag
+        e.tags.append(newTag)
+        self.model.db.addEntry(e)    
+        results = self.model.getEntries(newTag)
+        self.assertEqual(0, results["name"].__len__())
+        self.assertEqual(0, results["description"].__len__())
+        self.assertEqual(1, results["tag"].__len__())
+        
+        newName = "scheenae"
+        e = ModelEntry(self.log, newName)
+        e.description = "balbalb " + newName
+        e.tags.append(newName)
+        self.model.db.addEntry(e)    
+        results = self.model.getEntries(newName)
+        self.assertEqual(1, results["name"].__len__())
+        self.assertEqual(0, results["description"].__len__())
+        self.assertEqual(0, results["tag"].__len__())
+        
 
     def testGetEntryByTag(self):
         exp = self.fruits

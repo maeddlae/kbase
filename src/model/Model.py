@@ -37,6 +37,15 @@ class Model():
         byTag = self.db.getEntriesByTag(word)
         byDescription = self.db.getEntriesByDescription(word)
         
+        # make sure every entry is showed only once
+        for ed in byDescription:
+            for et in byTag:
+                if ed.name == et.name:
+                    byDescription.remove(ed)
+        for et in byTag:
+            for en in byName:
+                if et.name == en.name:
+                    byTag.remove(et)
         
         found = {"name" : list(byName),
                  "tag" : list(byTag),
