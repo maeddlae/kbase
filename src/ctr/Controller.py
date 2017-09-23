@@ -33,7 +33,8 @@ class Controller():
                         "deleteFileAction" : self.deleteFileAction,
                         "newFileAction" : self.newFileAction,
                         "fileSelectedAction" : self.newFileOrImageSelectedAction,
-                        "openFileAction" : self.openFileAction}
+                        "openFileAction" : self.openFileAction,
+                        "openEntryOverviewAction" : self.openEntryOverviewAction}
         if log != None:
             self.log = log
         else:
@@ -220,3 +221,13 @@ class Controller():
         f.close()
         
         os.startfile(path)
+        
+    def openEntryOverviewAction(self, entryName):
+        '''Opens the clicked entry, which is currently showed in overview'''
+        entry = self.model.getEntryByName(entryName)
+        if entry != None:
+            self.model.currentEntry = entry
+            self.model.openedEntries.append(entry)
+            self.view.drawEntry(entry)
+            
+        

@@ -115,3 +115,16 @@ class Model():
             if e.name == entryName:
                 return e
         return None
+    
+    def getEntryByName(self, entryName):
+        '''Returns the entry from database, whose name is entryName literally. Returns None if 
+        entry does not exist'''
+        entries = self.db.getEntriesByName(entryName)
+        
+        if entries.__len__() != 1:
+            return None
+        
+        if entries[0].name != entryName:
+            return None
+        
+        return entries[0]

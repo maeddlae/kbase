@@ -103,7 +103,7 @@ class TestModel(unittest.TestCase):
         self.assertEqual(exp.description, act.description)
         self.assertSequenceEqual(exp.tags, act.tags, str)
 
-    def testGetEntryByName(self):
+    def testGetEntriesByName(self):
         exp = self.legumes
         act = self.model.getEntries("legumes")["name"][0]
         
@@ -163,3 +163,17 @@ class TestModel(unittest.TestCase):
         exp = None
         act = self.model.getFoundEntry("muhaa")
         self.assertEqual(exp, act)
+
+    def testGetEntryByName(self):
+        exp = self.fruits
+        act = self.model.getEntryByName(self.fruits.name)
+        self.assertEqual(exp.name, act.name)
+        
+        exp = None
+        act = self.model.getEntryByName("blublu")
+        self.assertEqual(exp, act)
+        
+        exp = None
+        act = self.model.getEntryByName(self.fruits.name[2:])
+        self.assertEqual(exp, act)
+        

@@ -42,8 +42,8 @@ class VOverview(Frame):
         self.log.add(self.log.Info, __file__, entryName + " clicked")
         
         if self.actions != None:
-            if "showEntryOverviewAction" in self.actions:
-                self.actions["showEntryOverviewAction"](entryName)
+            if "openEntryOverviewAction" in self.actions:
+                self.actions["openEntryOverviewAction"](entryName)
                 
     def removeAll(self):
         '''Removes all showed entries'''
