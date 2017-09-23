@@ -94,4 +94,8 @@ class View():
         if self.actions != None:
             if "fileSelectedAction" in self.actions:
                 self.actions["fileSelectedAction"](filename)
+                
+    def getActiveTab(self):
+        '''Returns the name of the currently showed tab'''
+        return self.tabs.getNameOfActiveTab()
         

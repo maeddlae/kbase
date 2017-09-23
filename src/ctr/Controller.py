@@ -45,7 +45,6 @@ class Controller():
         self.tempFilePath = self.config.getValue(self.tempFilePath)
         self.view = View(self.log, self.dbPath, self.actions)
         self.model = Model(self.log, self.dbPath)
-        self.isSearchActive = False
         
         self.log.add(self.log.Info, __file__, "init" )
         
@@ -94,8 +93,10 @@ class Controller():
             
         
     def closeTabAction(self):
-        '''Closes the currently active tab'''
-        if self.isSearchActive:
+        '''Closes the currently active tab'''  
+        activeTab = self.view.getActiveTab()
+        
+        if activeTab == "Search":
             self.view.removeSearch()
             self.model.currentEntry = None
         else:

@@ -97,6 +97,11 @@ class TestView(unittest.TestCase):
         #todo
         pass
     
+    def testGetActiveTab(self):
+        self.view.tabs.getNameOfActiveTab = MagicMock()
+        self.view.getActiveTab()
+        self.view.tabs.getNameOfActiveTab.assert_called_once()
+    
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

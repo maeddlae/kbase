@@ -67,6 +67,7 @@ class TestController(unittest.TestCase):
         os.startfile = MagicMock()
         self.ctr.model.getEntryByName = MagicMock()
         self.ctr.view.drawOverview = MagicMock()
+        self.ctr.view.getActiveTab = MagicMock()
 
     def tearDown(self):
         if os.path.exists(self.dbPath):
@@ -161,6 +162,7 @@ class TestController(unittest.TestCase):
         
     def testCloseTabAction(self):
         # close entry
+        self.ctr.view.getActiveTab.return_value = "entry"
         e = ModelEntry(self.log, "entry")
         self.ctr.model.currentEntry = e
         self.ctr.model.openedEntries.append(e)
@@ -169,7 +171,7 @@ class TestController(unittest.TestCase):
         self.ctr.view.removeEntry.assert_called_with(e)    
         
         # close search
-        self.ctr.isSearchActive = True
+        self.ctr.view.getActiveTab.return_value = "Search"
         self.ctr.closeTabAction()
         self.ctr.view.removeSearch.assert_called_once()
         
@@ -183,7 +185,6 @@ class TestController(unittest.TestCase):
         self.ctr.model.currentEntry = e1
         self.ctr.tabChangeAction(e2.name)
         self.assertEqual(e2, self.ctr.model.currentEntry)
-        self.assertFalse(self.ctr.isSearchActive)
         self.ctr.view.setDeleteButton.assert_called_with(True)
         
         self.ctr.tabChangeAction("Search")
