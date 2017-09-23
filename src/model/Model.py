@@ -19,10 +19,10 @@ class Model():
         self.log = log
         self.db = Database(self.log, path)
         self.log.add(self.log.Info, __file__, "init" )
-        self.openedEntries = []
+        self.openedEntries = [] # contains all entries, that are currently opened
         self.foundEntries = {"name" : [],
                             "tag" : [],
-                            "description" : []}
+                            "description" : []} # contains all entries, that have been found
         self.currentEntry = None
         
     def setDatabase(self, path):
