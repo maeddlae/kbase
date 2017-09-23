@@ -1,0 +1,2 @@
+databasepath = example.db
+tempfilepath = temp

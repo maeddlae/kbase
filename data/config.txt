@@ -1,2 +1,0 @@
-databasepath = ../../data/d.db
-tempfilepath = ../../temp
