@@ -102,32 +102,47 @@ class VTab(Notebook):
         '''Returns true if there is at least one active tab'''
         return self.tabs().__len__() != 0
     
-    def getEntryNameByTabId(self, tabId):
-        '''Returns the name of a displayed entry'''
-        name = None
-        
-        splitted = tabId.rsplit(".", 1)
+    def getActiveTabId(self):
+        '''Returns the tab id of the currently active tab. Tab id is 
+        a unique number, which identifies the widget. Tab id is stored 
+        in _name field of every widget'''
+        fullId = self.select()
+        splitted = fullId.rsplit(".", 1)
         if splitted.__len__() == 1:
             tabId = splitted[0]
         else:
             tabId = splitted[1]
-        for e in self.ventries.values():
-            if tabId == e._name:
-                name = e.getName()
-        return name
+        return tabId
     
-    def tabChanged(self, event):
+    def getNameOfActiveTab(self):
+        '''Returns the name of the currently active tab'''
+        tabid = self.getActiveTabId()
+        
+        if tabid == None:
+            return None
+        
+        # check if active tab is overview
+        if self.overview != None:
+            if tabid == self.overview._name:
+                return self.overview.name
+        
+        # check if active tab is vsearch
+        if self.vsearch != None:
+            if tabid == self.vsearch._name:
+                return self.vsearch.name
+        
+        # check if is entry
+        for e in self.ventries.values():
+            if tabid == e._name:
+                return e.getName()
+    
+    def tabChanged(self, _event):
         '''Is called every time the active tab changes'''
         self.log.add(self.log.Info, __file__, "tab changed" )
         
-        nameOfActiveTab = self.getEntryNameByTabId(self.select())
-        
-        if nameOfActiveTab == None:
-            isSearchActive = True
-        else:
-            isSearchActive = False
+        nameOfActiveTab = self.getNameOfActiveTab()
         
         if self.actions != None:
             if "tabChangeAction" in self.actions:
-                self.actions["tabChangeAction"](nameOfActiveTab, isSearchActive)
+                self.actions["tabChangeAction"](nameOfActiveTab)
         

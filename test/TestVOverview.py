@@ -25,7 +25,7 @@ class TestVOverview(unittest.TestCase):
         
         self.dummy = MagicMock()
         
-        self.actionlist = {"showEntryOverviewAction" : self.dummy}
+        self.actionlist = {"openEntryOverviewAction" : self.dummy}
         
         self.voverview = VOverview(self.root, self.log, self.actionlist)
 

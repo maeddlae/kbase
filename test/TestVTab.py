@@ -47,28 +47,23 @@ class TestVTab(unittest.TestCase):
         self.root.update()
         self.root.destroy()
         
-    def testGetEntryNameByTabId(self):
-        '''Tests if name is returned correctly'''      
-        self.vtab.setSearch(self.results)
-        exp = None
-        act = self.vtab.getEntryNameByTabId(self.vtab.select())
-        self.assertEqual(exp, act)
-        
-        e1 = ModelEntry(self.log, "e1")
-        self.vtab.addEntry(e1)
-        exp = e1.name
-        act = self.vtab.getEntryNameByTabId(self.vtab.select())
-        self.assertEqual(exp, act)
-        
     def testTabChangedEvent(self):
         '''Tests if right method is called at tab change event'''    
+        # test with overview active
+        self.vtab.setOverview(dict())
+        self.vtab.grid()
+        self.root.update()
+        self.vtab.focus_force()
+        self.vtab.event_generate("<<NotebookTabChanged>>")
+        self.dummy.assert_called_with(self.vtab.overview.name)
+        
         # test with search active
         self.vtab.setSearch(self.results)
         self.vtab.grid()
         self.root.update()
         self.vtab.focus_force()
         self.vtab.event_generate("<<NotebookTabChanged>>")
-        self.dummy.assert_called_with(None, True)
+        self.dummy.assert_called_with(self.vtab.vsearch.name)
         
         # test with entry active
         e = ModelEntry(self.log, "entry")
@@ -77,7 +72,7 @@ class TestVTab(unittest.TestCase):
         self.root.update()
         self.vtab.focus_force()
         self.vtab.event_generate("<<NotebookTabChanged>>")
-        self.dummy.assert_called_with(e.name, False)
+        self.dummy.assert_called_with(e.name)
         
     def testHasTabs(self):
         '''Tests whether hasTabs works correctly'''
@@ -178,6 +173,48 @@ class TestVTab(unittest.TestCase):
         self.vtab.removeSearch()
         self.assertEqual(0, self.vtab.children.values().__len__())
         
+    def testGetActiveTabId(self):
+        exp = "2342342"
+        inp = "98739457345." + exp
+        self.vtab.select = MagicMock()
+        self.vtab.select.return_value = inp
+        act = self.vtab.getActiveTabId()
+        self.assertEqual(exp, act)
+        
+    def testGetNameOfActiveTab(self):        
+        # test overview
+        self.vtab.setOverview(dict())
+        self.vtab.grid()
+        self.vtab.update()
+        id = self.vtab.getTabId(self.vtab.overview)
+        self.vtab.select(id)
+        self.vtab.update()
+        exp = self.vtab.overview.name
+        act = self.vtab.getNameOfActiveTab()
+        self.assertEqual(exp, act)
+        
+        # test search
+        self.vtab.setSearch(None)
+        self.vtab.grid()
+        self.vtab.update()
+        id = self.vtab.getTabId(self.vtab.vsearch)
+        self.vtab.select(id)
+        self.vtab.update()
+        exp = self.vtab.vsearch.name
+        act = self.vtab.getNameOfActiveTab()
+        self.assertEqual(exp, act)
+        
+        # test entry
+        self.vtab.addEntry(ModelEntry(self.log, "blu"))
+        self.vtab.grid()
+        self.vtab.update()
+        id = self.vtab.getTabId(self.vtab.ventries["blu"])
+        self.vtab.select(id)
+        self.vtab.update()
+        exp = self.vtab.ventries["blu"].getName()
+        act = self.vtab.getNameOfActiveTab()
+        self.assertEqual(exp, act)
+                
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

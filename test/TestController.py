@@ -66,6 +66,7 @@ class TestController(unittest.TestCase):
         self.ctr.config.setValue = MagicMock()
         os.startfile = MagicMock()
         self.ctr.model.getEntryByName = MagicMock()
+        self.ctr.view.drawOverview = MagicMock()
 
     def tearDown(self):
         if os.path.exists(self.dbPath):
@@ -180,15 +181,19 @@ class TestController(unittest.TestCase):
         self.ctr.model.openedEntries.append(e1)
         self.ctr.model.openedEntries.append(e2)
         self.ctr.model.currentEntry = e1
-        self.ctr.tabChangeAction(e2.name, False)
+        self.ctr.tabChangeAction(e2.name)
         self.assertEqual(e2, self.ctr.model.currentEntry)
         self.assertFalse(self.ctr.isSearchActive)
         self.ctr.view.setDeleteButton.assert_called_with(True)
         
-        self.ctr.tabChangeAction(None, True)
+        self.ctr.tabChangeAction("Search")
         self.assertEqual(e2, self.ctr.model.currentEntry)
-        self.assertTrue(self.ctr.isSearchActive)
+        self.ctr.view.drawSearch.assert_called_once()
+        
+        self.ctr.tabChangeAction("Overview")
+        self.assertEqual(e2, self.ctr.model.currentEntry)
         self.ctr.view.setDeleteButton.assert_called_with(False)
+        self.ctr.view.drawOverview.assert_called_once()
         
     def testDeleteEntryAction(self):
         self.ctr.model.currentEntry = ModelEntry(self.log, "e1")

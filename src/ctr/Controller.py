@@ -102,18 +102,20 @@ class Controller():
             self.model.openedEntries.remove(self.model.currentEntry)
             self.view.removeEntry(self.model.currentEntry)
         
-    def tabChangeAction(self, activeTabName, isSearchActive):
+    def tabChangeAction(self, activeTabName):
         '''Is called when tab focus changes'''
         # only do something when has a valid name
         if activeTabName != None:
+            if activeTabName == "Overview":
+                entries = self.model.getAllEntriesSorted()
+                self.view.setDeleteButton(False)
+                self.view.drawOverview(entries)
+            if activeTabName == "Search":
+                self.view.drawSearch(self.model.foundEntries)
             for e in self.model.openedEntries:
                 if activeTabName == e.name:
                     self.model.currentEntry = e
                     self.view.setDeleteButton(True)
-                    
-        self.isSearchActive = isSearchActive
-        if isSearchActive == True:
-            self.view.setDeleteButton(False)
             
     def deleteEntryAction(self):
         '''Deletes the currently active entry'''
